@@ -1,0 +1,12 @@
+[init]
+	defaultBranch = main
+[user]
+	name = y-brehm
+	email = yannikbrehm@web.de
+[mergetool "smerge"]
+	cmd = smerge mergetool \"$BASE\" \"$LOCAL\" \"$REMOTE\" -o \"$MERGED\"
+	trustExitCode = true
+[merge]
+	tool = smerge
+[core]
+	editor = nvim
