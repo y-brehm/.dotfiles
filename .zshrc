@@ -121,6 +121,9 @@ source $ZSH/oh-my-zsh.sh
 source /opt/homebrew/opt/powerlevel10k/powerlevel10k.zsh-theme
 source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
+#enable vim keybindings in terminal
+#set -o vi
+
 #ALIASES
 alias vim="nvim"
 alias git_rinse="git clean -xfd
@@ -131,6 +134,7 @@ alias git_rinse="git clean -xfd
 
 # alias for config git repo
 alias config="git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
+alias kitdiff="git difftool --no-symlinks --dir-diff"
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
@@ -151,3 +155,4 @@ unset __conda_setup
 
 # environment variables
 export CONAN_REVISIONS_ENABLED=1
+export TERM=xterm-256color
