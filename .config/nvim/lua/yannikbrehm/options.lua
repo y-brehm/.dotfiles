@@ -14,6 +14,7 @@ local options = {
     hlsearch = false,
     incsearch = true,
     scrolloff = 8,
+    swapfile = false,
     clipboard = 'unnamedplus',
     cmdheight = 0,
 }
@@ -22,3 +23,6 @@ for key, value in pairs(options) do
     vim.opt[key] = value
 end
 
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+vim.g.noswapfile = 1
