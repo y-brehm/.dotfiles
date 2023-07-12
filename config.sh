@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-git clone --bare git@github.com:y-brehm/.dotfiles.git 
-$HOME/.dotfiles
+git clone --bare git@github.com:y-brehm/.dotfiles.git $HOME/.dotfiles
 
 # define config alias locally since the dotfiles
 # aren't installed on the system yet
@@ -11,13 +10,13 @@ function config
 }
 
 # create a directory to backup existing dotfiles to
-mkdir -p .dotfiles-backup
+mkdir -p $HOME/.dotfiles-backup
 config checkout
 if [ $? = 0 ]; then
   echo "Checked out dotfiles from git@github.com:y-brehm/.dotfiles.git";
   else
     echo "Moving existing dotfiles to ~/.dotfiles-backup";
-    config checkout 2>&1 | egrep "\s+\." | awk {'print $1'} | xargs -I{} mv {} .dotfiles-backup/{}
+    config checkout 2>&1 | egrep "\s+\." | awk {'print $1'} | xargs -I{} mv {} $HOME/.dotfiles-backup/{}
 fi
 
 # checkout dotfiles from repo
