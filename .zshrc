@@ -96,7 +96,9 @@ plugins=(
   )
 
 source $ZSH/oh-my-zsh.sh
-
+if [ -f "$HOME/.zprofil" ] ; then
+    source $HOME/.zprofil
+fi
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
@@ -122,8 +124,6 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-source /opt/homebrew/opt/powerlevel10k/powerlevel10k.zsh-theme
-source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 #enable vim keybindings in terminal
 #set -o vi
@@ -139,11 +139,35 @@ alias git_rinse="git clean -xfd
 # alias for config git repo
 alias config="git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
 alias kitdiff="git difftool --no-symlinks --dir-diff"
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+source $(brew --prefix powerlevel10k)/powerlevel10k.zsh-theme
+source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+export CONAN_REVISIONS_ENABLED=1
 export PATH="$HOMEBREW_PREFIX/opt/python@3.9/libexec/bin:$PATH"
 
-# environment variables
-export CONAN_REVISIONS_ENABLED=1
-export TERM=xterm-256color
+
+# MACOS Linux specific setup
+case "$(uname -s)" in
+
+    Darwin)
+        # PLACE macOS specific commands here
+    ;;
+
+    Linux)
+        # PLACE Linux specific commands here
+	# set PATH so it includes user's private bin if it exists
+	if [ -d "$HOME/bin" ] ; then
+	    PATH="$HOME/bin:$PATH"
+	fi
+	 
+	# set PATH so it includes user's private bin if it exists
+	if [ -d "$HOME/.local/bin" ] ; then
+	    PATH="$HOME/.local/bin:$PATH"
+	fi
+    ;;
+
+esac
+
