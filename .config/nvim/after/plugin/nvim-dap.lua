@@ -8,8 +8,7 @@ local dap = require('dap')
 
 vim.fn.sign_define('DapBreakpoint', { text='●', texthl='LspDiagnosticsDefaultError' })
 vim.fn.sign_define('DapLogPoint' , { text='◉', texthl='LspDiagnosticsDefaultError' })
-vim.fn.sign_define('DapStopped' , { text='➔', texthl='LspDiagnosticsDefaultInformation',
-                                    linehl='CursorLine' })
+vim.fn.sign_define('DapStopped' , { text='➔', texthl='LspDiagnosticsDefaultInformation', linehl='CursorLine' })
 
 -- dap UI
 local ui  = require 'dapui'
@@ -41,17 +40,17 @@ ui.setup {
                 'stacks',
                 'scopes',
             },
-            size = 150,
+            size = 70,
             position = 'right',
         }, {
             elements = {'repl'},
-            size = 10,
+            size = 20,
             position = 'bottom',
         },
     },
     floating = {
-        max_height = nil,  -- Either absolute integer or float
-        max_width  = nil,  -- between 0 and 1 (size relative to screen size)
+        max_height = nil,
+        max_width  = nil,
     },
 }
 
@@ -80,7 +79,7 @@ require('dap').adapters.lldb = {
 local lldb = {
 	name = 'Launch lldb',
 	type = 'lldb',
-	request = 'launch', -- could also attach to a currently running process
+	request = 'launch',
 	program = function()
 		return vim.fn.input(
 			'Path to executable: ',
@@ -94,5 +93,7 @@ local lldb = {
 	runInTerminal = false,
 }
 
-dap.configurations.rust = { lldb }
 dap.configurations.cpp = { lldb }
+
+-- Rust
+dap.configurations.rust = { lldb }

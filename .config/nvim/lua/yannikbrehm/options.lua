@@ -9,6 +9,7 @@ local options = {
     shiftwidth = 4,
     expandtab = true,
     smartindent = true,
+    wildmenu = true,
     wrap = false,
     termguicolors = true,
     hlsearch = false,
@@ -23,6 +24,4 @@ for key, value in pairs(options) do
     vim.opt[key] = value
 end
 
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
 vim.g.noswapfile = 1
