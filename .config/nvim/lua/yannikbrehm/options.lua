@@ -16,7 +16,7 @@ local options = {
     incsearch = true,
     scrolloff = 8,
     swapfile = false,
-    clipboard = 'unnamedplus',
+    -- clipboard = 'unnamedplus',  -- deactivated since there is a dedicated remap in remap.lua
     cmdheight = 0,
 }
 
