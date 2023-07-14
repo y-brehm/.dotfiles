@@ -5,6 +5,7 @@ bare repository for dotfiles and config scripts
 
 ```bash
 curl -Lks https://raw.githubusercontent.com/y-brehm/.dotfiles/main/config.sh | /bin/bash
+curl -LKs https://raw.githubusercontent.com/y-brehm/.dotfiles/main/install_fonts.sh | /bin/bash
 ```
 
 # Modify (owner only)
