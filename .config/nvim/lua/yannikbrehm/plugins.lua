@@ -14,14 +14,6 @@ vim.g.mapleader = " "
 require("lazy").setup(
 {
     'nvim-treesitter/nvim-treesitter',
-    {
-        'AlexvZyl/nordic.nvim',
-        lazy = false,
-        priority = 1000,
-        config = function()
-            require 'nordic'.load()
-        end
-    },
     'folke/trouble.nvim',
     'nvim-telescope/telescope.nvim',
     'jvgrootveld/telescope-zoxide',
@@ -36,6 +28,7 @@ require("lazy").setup(
     'folke/twilight.nvim',
     'lewis6991/gitsigns.nvim',
     'Pocco81/auto-save.nvim',
+    'rhysd/vim-clang-format',
     {'akinsho/bufferline.nvim', version = "*", dependencies = 'nvim-tree/nvim-web-devicons'},
     -- autocompletion
     'hrsh7th/nvim-cmp',
@@ -47,14 +40,27 @@ require("lazy").setup(
     'onsails/lspkind.nvim',
     'github/copilot.vim',
     'windwp/nvim-autopairs', -- Autopairs, integrates with cmp
+    'rmagatti/goto-preview',
+    'RRethy/vim-illuminate',
     -- debugging
     'mfussenegger/nvim-dap',
     'rcarriga/nvim-dap-ui',
     'theHamsta/nvim-dap-virtual-text',
-    'mfussenegger/nvim-dap-python'
+    'mfussenegger/nvim-dap-python',
+    -- colourschemes
+    --'tiagovla/tokyodark.nvim',
+    --'AlexvZyl/nordic.nvim',
+    'folke/tokyonight.nvim',
 })
 
-require("bufferline").setup{}
+require('bufferline').setup{}
 require('gitsigns').setup()
 require('mason').setup()
 require('auto-save').setup()
+require('goto-preview').setup {}
+
+--colour schemes
+--vim.g.tokyodark_color_gamma = "0.8"
+--vim.cmd[[colorscheme tokyodark]]
+--require('nordic').load()
+vim.cmd[[colorscheme tokyonight]]

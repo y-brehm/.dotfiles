@@ -5,13 +5,14 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
-
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
+
+#Basics
+export VISUAL=nvim
+export EDITOR="$VISUAL"
 
 # Octave settings
 export LC_ALL="en_US.UTF-8"
@@ -22,6 +23,8 @@ export LANGUAGE="en_US.UTF-8"
 export CONAN_REVISIONS_ENABLED=1
 export TERM=xterm-256color
 
+autoload -U colors && colors
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#7f7f7f"
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME

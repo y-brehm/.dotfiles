@@ -64,3 +64,9 @@ require 'nvim-tree'.setup {
         enable = true
     }
 }
+
+vim.cmd[[highlight NvimTreeGitNew guifg=#83a598 guibg=NONE gui=bold]]
+vim.cmd[[highlight NvimTreeGitStaged guifg=#8ec07c guibg=NONE gui=bold]]
+vim.cmd[[highlight NvimTreeGitMerge guifg=#b8bb26 guibg=NONE gui=bold]]
+vim.cmd[[highlight NvimTreeGitRenamed guifg=#fe8019 guibg=NONE gui=bold]]
+vim.cmd[[highlight NvimTreeGitDeleted guifg=#fb4934 guibg=NONE gui=bold]]
