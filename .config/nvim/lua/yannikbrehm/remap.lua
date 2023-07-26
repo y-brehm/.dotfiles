@@ -1,6 +1,11 @@
 vim.g.mapleader = " "
-vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
 
+-- create new tab
+vim.keymap.set("n", "<leader>tn", ":tabnew<CR>")
+
+-- block nvim editor (causes error)
+vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
+-- move text in visual mode
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 

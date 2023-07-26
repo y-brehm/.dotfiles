@@ -53,7 +53,6 @@ require("lazy").setup(
     'folke/tokyonight.nvim',
 })
 
-require('bufferline').setup{}
 require('gitsigns').setup()
 require('mason').setup()
 require('auto-save').setup()
