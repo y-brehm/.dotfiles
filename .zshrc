@@ -156,6 +156,15 @@ source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 export CONAN_REVISIONS_ENABLED=1
 export PATH="$HOMEBREW_PREFIX/opt/python@3.9/libexec/bin:$PATH"
 
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/bin" ] ; then
+    PATH="$HOME/bin:$PATH"
+fi
+ 
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/.local/bin" ] ; then
+    PATH="$HOME/.local/bin:$PATH"
+fi
 
 # MACOS Linux specific setup
 case "$(uname -s)" in
@@ -166,15 +175,6 @@ case "$(uname -s)" in
 
     Linux)
         # PLACE Linux specific commands here
-	# set PATH so it includes user's private bin if it exists
-	if [ -d "$HOME/bin" ] ; then
-	    PATH="$HOME/bin:$PATH"
-	fi
-	 
-	# set PATH so it includes user's private bin if it exists
-	if [ -d "$HOME/.local/bin" ] ; then
-	    PATH="$HOME/.local/bin:$PATH"
-	fi
     ;;
 
 esac

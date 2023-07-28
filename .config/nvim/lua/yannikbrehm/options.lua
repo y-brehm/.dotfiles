@@ -9,19 +9,23 @@ local options = {
     shiftwidth = 4,
     expandtab = true,
     smartindent = true,
+
     wildmenu = true,
     wrap = false,
+
     termguicolors = true,
+
     hlsearch = false,
     incsearch = true,
+
     scrolloff = 8,
     swapfile = false,
-    -- clipboard = 'unnamedplus',  -- deactivated since there is a dedicated remap in remap.lua
-    cmdheight = 0,
+    clipboard = 'unnamedplus',  -- deactivated since there is a dedicated remap in remap.lua
+    --cmdheight = 0, --currently disables makro recording
 }
 
 for key, value in pairs(options) do
     vim.opt[key] = value
 end
 
-vim.g.noswapfile = 1
+vim.g.noswapfile = true 

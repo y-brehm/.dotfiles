@@ -14,7 +14,7 @@ vim.g.mapleader = " "
 require("lazy").setup(
 {
     'nvim-treesitter/nvim-treesitter',
-    'folke/trouble.nvim',
+    'folke/trouble.nvim',  --problems tab
     'nvim-telescope/telescope.nvim',
     'jvgrootveld/telescope-zoxide',
     'nvim-lua/plenary.nvim',
@@ -56,7 +56,7 @@ require("lazy").setup(
 require('gitsigns').setup()
 require('mason').setup()
 require('auto-save').setup()
-require('goto-preview').setup {}
+require('nvim-autopairs').setup()
 
 --colour schemes
 --vim.g.tokyodark_color_gamma = "0.8"

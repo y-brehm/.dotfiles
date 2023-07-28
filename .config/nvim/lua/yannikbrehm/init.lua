@@ -1,4 +1,3 @@
-require("yannikbrehm.remap")
-require("yannikbrehm.options")
 require("yannikbrehm.plugins")
-
+require("yannikbrehm.options")
+require("yannikbrehm.remap")
