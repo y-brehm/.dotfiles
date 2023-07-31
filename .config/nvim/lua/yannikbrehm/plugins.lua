@@ -22,6 +22,7 @@ require("lazy").setup(
     'neovim/nvim-lspconfig',
     'williamboman/mason.nvim',
     'williamboman/mason-lspconfig.nvim',
+    'jose-elias-alvarez/null-ls.nvim',
     'nvim-tree/nvim-tree.lua',
     'nvim-tree/nvim-web-devicons',
     'folke/todo-comments.nvim',

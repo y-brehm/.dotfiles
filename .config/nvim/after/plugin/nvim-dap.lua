@@ -1,7 +1,7 @@
 vim.keymap.set('n', '<leader>db', '<cmd>lua require"dap".toggle_breakpoint()<CR>', { desc = '[D]ebug [B]reakpoint' })
 vim.keymap.set('n', '<leader>dc', '<cmd>lua require"dap".continue()<CR>', { desc = '[D]ebug [C]ontinue' })
-vim.keymap.set('n', '<leader>do', '<cmd>lua require"dap".step_over()<CR>', { desc = '[D]ebug Step [O]ver' })
-vim.keymap.set('n', '<leader>di', '<cmd>lua require"dap".step_into()<CR>', { desc = '[D]ebug Step [I]nto' })
+vim.keymap.set('n', '<leader>dso', '<cmd>lua require"dap".step_over()<CR>', { desc = '[D]ebug [S]tep [O]ver' })
+vim.keymap.set('n', '<leader>dsi', '<cmd>lua require"dap".step_into()<CR>', { desc = '[D]ebug [S]tep [I]nto' })
 vim.keymap.set('n', '<leader>dt', '<cmd>lua require"dap-python".test_method()<CR>', { desc = '[D]ebug [T]est' })
 
 local dap = require('dap')

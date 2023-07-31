@@ -1,7 +1,7 @@
 vim.g.loaded_netrw = true
 vim.g.loaded_netrwPlugin = true
 
-vim.keymap.set('n', '<leader>tt', '<cmd>NvimTreeToggle<cr>', { desc = '[T]oggle [T]ree' })
+vim.keymap.set('n', '<leader>tt', '<cmd>NvimTreeToggle<cr>', { desc = '[t]ree [t]oggle' })
 
 local renderer = {
     root_folder_label = root_label,

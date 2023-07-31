@@ -4,6 +4,8 @@ lsp.ensure_installed({
     'clangd',
     'pylsp',
     'cmake',
+    'black',
+    'flake8',
 })
 
 -- Python

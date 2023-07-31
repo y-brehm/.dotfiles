@@ -16,10 +16,10 @@ bufferline.setup {
         offsets = {
             {
                 filetype = "NvimTree",
-                text = "Bruder zeig files", 
+                text = "Nvim Tree", 
                 text_align = "center", 
                 padding = 1,
-                separator = true
+                separator = false
             }
         },
         color_icons = true,

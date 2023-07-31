@@ -9,7 +9,7 @@ function u.length(table)
     return count
 end
 
-u.border_chars_outer_telescope = { "▔", "▕", "▁", "▏", "🭽", "🭾", "🭿", "🭼" }
+ u.border_chars_outer_telescope = { "▔", "▕", "▁", "▏", "🭽", "🭾", "🭿", "🭼" }
 
 -- Setup.
 ts.setup({
