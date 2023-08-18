@@ -14,10 +14,11 @@ vim.g.mapleader = " "
 require("lazy").setup(
 {
     'nvim-treesitter/nvim-treesitter',
-    'folke/trouble.nvim',  --problems tab
+    'folke/trouble.nvim',
     'nvim-telescope/telescope.nvim',
     'jvgrootveld/telescope-zoxide',
     'nvim-lua/plenary.nvim',
+    'nvim-pack/nvim-spectre',
     'VonHeikemen/lsp-zero.nvim',
     'neovim/nvim-lspconfig',
     'williamboman/mason.nvim',
@@ -40,7 +41,7 @@ require("lazy").setup(
     'rafamadriz/friendly-snippets',
     'onsails/lspkind.nvim',
     'github/copilot.vim',
-    'windwp/nvim-autopairs', -- Autopairs, integrates with cmp
+    'windwp/nvim-autopairs',
     'rmagatti/goto-preview',
     'RRethy/vim-illuminate',
     -- debugging
@@ -48,6 +49,10 @@ require("lazy").setup(
     'rcarriga/nvim-dap-ui',
     'theHamsta/nvim-dap-virtual-text',
     'mfussenegger/nvim-dap-python',
+    "jay-babu/mason-nvim-dap.nvim",
+    'antoinemadec/FixCursorHold.nvim',
+    'nvim-neotest/neotest',
+    'nvim-neotest/neotest-python',
     -- colourschemes
     --'tiagovla/tokyodark.nvim',
     --'AlexvZyl/nordic.nvim',
@@ -58,7 +63,17 @@ require('gitsigns').setup()
 require('mason').setup()
 require('auto-save').setup()
 require('nvim-autopairs').setup()
-
+require("mason-nvim-dap").setup({
+    ensure_installed = { "python", "cppdbg" },
+    handlers = {},
+})
+require("neotest").setup({
+  adapters = {
+    require("neotest-python")({
+        runner = "pytest",
+    })
+  }
+})
 --colour schemes
 --vim.g.tokyodark_color_gamma = "0.8"
 --vim.cmd[[colorscheme tokyodark]]

@@ -65,6 +65,7 @@ end
 vim.keymap.set({'n', 'v'}, '<M-k>', ui.eval, {})
 vim.keymap.set('n', '<M-K>', dapui_eval, {})
 
+--[[
 -- Python
 -- requires the below referenced virtual environment with debugpy installed
 require('dap-python').setup('~/.virtualenvs/debugpy/bin/python')
@@ -97,3 +98,5 @@ dap.configurations.cpp = { lldb }
 
 -- Rust
 dap.configurations.rust = { lldb }
+
+--]]

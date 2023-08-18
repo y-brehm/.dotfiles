@@ -1,6 +1,6 @@
 -- :help options
 local options = {
-    cursorline = true,
+    cursorline = false,
     updatetime = 300,
     nu = true,
     relativenumber = true,
