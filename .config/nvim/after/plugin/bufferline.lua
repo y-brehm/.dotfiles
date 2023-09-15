@@ -27,8 +27,8 @@ bufferline.setup {
         show_buffer_close_icons = true,
         show_close_icon = true,
         separator_style = "thin",
-        --close_command = "bdelete! %d",      
-    }
+        --close_command = "bdelete! %d",
+    },
 }
 
 vim.keymap.set('n', '<leader>bp', '<CMD>BufferLinePick<CR>', { desc = '[b]ufferline [p]ick' })

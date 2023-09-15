@@ -57,6 +57,7 @@ require("lazy").setup(
     --'tiagovla/tokyodark.nvim',
     --'AlexvZyl/nordic.nvim',
     'folke/tokyonight.nvim',
+    { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
 })
 
 require('gitsigns').setup()
@@ -78,4 +79,6 @@ require("neotest").setup({
 --vim.g.tokyodark_color_gamma = "0.8"
 --vim.cmd[[colorscheme tokyodark]]
 --require('nordic').load()
-vim.cmd[[colorscheme tokyonight]]
+--vim.cmd[[colorscheme tokyonight]]
+--vim.cmd.colorscheme "catppuccin"
+
