@@ -29,21 +29,19 @@ require("lazy").setup(
     'folke/todo-comments.nvim',
     'folke/twilight.nvim',
     'lewis6991/gitsigns.nvim',
-    'Pocco81/auto-save.nvim',
     'rhysd/vim-clang-format',
-    {'akinsho/bufferline.nvim', version = "*", dependencies = 'nvim-tree/nvim-web-devicons'},
     -- autocompletion
     'hrsh7th/nvim-cmp',
     'hrsh7th/cmp-buffer',
     'hrsh7th/cmp-path',
     'hrsh7th/cmp-nvim-lsp',
     'hrsh7th/cmp-nvim-lua',
-    'rafamadriz/friendly-snippets',
     'onsails/lspkind.nvim',
     'github/copilot.vim',
     'windwp/nvim-autopairs',
     'rmagatti/goto-preview',
     'RRethy/vim-illuminate',
+    'L3MON4D3/LuaSnip',
     -- debugging
     'mfussenegger/nvim-dap',
     'rcarriga/nvim-dap-ui',
@@ -54,15 +52,11 @@ require("lazy").setup(
     'nvim-neotest/neotest',
     'nvim-neotest/neotest-python',
     -- colourschemes
-    --'tiagovla/tokyodark.nvim',
-    --'AlexvZyl/nordic.nvim',
-    'folke/tokyonight.nvim',
     { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
 })
 
 require('gitsigns').setup()
 require('mason').setup()
-require('auto-save').setup()
 require('nvim-autopairs').setup()
 require("mason-nvim-dap").setup({
     ensure_installed = { "python", "cppdbg" },
@@ -75,10 +69,15 @@ require("neotest").setup({
     })
   }
 })
---colour schemes
---vim.g.tokyodark_color_gamma = "0.8"
---vim.cmd[[colorscheme tokyodark]]
---require('nordic').load()
---vim.cmd[[colorscheme tokyonight]]
---vim.cmd.colorscheme "catppuccin"
+
+local cmp_nvim_lsp = require "cmp_nvim_lsp"
+
+require("lspconfig").clangd.setup {
+  on_attach = on_attach,
+  capabilities = cmp_nvim_lsp.default_capabilities(),
+  cmd = {
+    "clangd",
+    "--offset-encoding=utf-16",
+  },
+}
 
