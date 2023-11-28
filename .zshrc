@@ -43,14 +43,15 @@ alias git_rinse="git clean -xfd
 alias config="git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
 alias kitdiff="git difftool --no-symlinks --dir-diff"
 alias ll='ls -lG'
-alias ciab="conan install . -s build_type=Debug
-            cmake -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -B .
-            cmake --build ."
 alias build_pd="conan install . -s build_type=Debug --install-folder=cmake-build-debug
                 cmake -G Ninja -B cmake-build-debug .
                 cmake --build cmake-build-debug 
                 rm ~/Documents/Pd/externals/*pd_darwin 
                 cp externals/Mac/*pd_darwin ~/Documents/Pd/externals"
+alias create_venv="python3 -m venv venv
+                   source venv/bin/activate"
+alias install_req="pip install -r requirements.txt
+                   pip install -r dev_requirements.txt"
 
 # set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/bin" ] ; then
@@ -74,3 +75,10 @@ case "$(uname -s)" in
     ;;
 
 esac
+
+ciab() {
+    conan install . -s build_type=Debug --install-folder=cmake-build-debug \
+    && cmake -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -B cmake-build-debug . \
+    && cmake --build cmake-build-debug \
+    && ln -sf $(pwd)/cmake-build-debug/compile_commands.json $(pwd)/
+}
