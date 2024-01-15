@@ -1,9 +1,3 @@
-vim.keymap.set('n', '<leader>db', '<cmd>lua require"dap".toggle_breakpoint()<CR>', { desc = '[D]ebug [B]reakpoint' })
-vim.keymap.set('n', '<leader>dc', '<cmd>lua require"dap".continue()<CR>', { desc = '[D]ebug [C]ontinue' })
-vim.keymap.set('n', '<leader>dso', '<cmd>lua require"dap".step_over()<CR>', { desc = '[D]ebug [S]tep [O]ver' })
-vim.keymap.set('n', '<leader>dsi', '<cmd>lua require"dap".step_into()<CR>', { desc = '[D]ebug [S]tep [I]nto' })
-vim.keymap.set('n', '<leader>dt', '<cmd>lua require"dap-python".test_method()<CR>', { desc = '[D]ebug [T]est' })
-
 local dap = require('dap')
 
 vim.fn.sign_define('DapBreakpoint', { text='●', texthl='LspDiagnosticsDefaultError' })
@@ -62,41 +56,33 @@ local function dapui_eval()
 	ui.eval(expr, {})
 end
 
-vim.keymap.set({'n', 'v'}, '<M-k>', ui.eval, {})
-vim.keymap.set('n', '<M-K>', dapui_eval, {})
 
 --[[
 -- Python
 -- requires the below referenced virtual environment with debugpy installed
 require('dap-python').setup('~/.virtualenvs/debugpy/bin/python')
-
--- CPP
-require('dap').adapters.lldb = {
-	type = 'executable',
-	command = '/usr/local/opt/llvm/bin/lldb-vscode',
-	name = 'lldb',
-}
-
-local lldb = {
-	name = 'Launch lldb',
-	type = 'lldb',
-	request = 'launch',
-	program = function()
-		return vim.fn.input(
-			'Path to executable: ',
-			vim.fn.getcwd() .. '/',
-			'file'
-		)
-	end,
-	cwd = '${workspaceFolder}',
-	stopOnEntry = true,
-	args = {},
-	runInTerminal = false,
-}
-
-dap.configurations.cpp = { lldb }
-
--- Rust
-dap.configurations.rust = { lldb }
-
 --]]
+--
+
+function AttachToProcess()
+    local dap = require('dap')
+    dap.configurations.cpp = {
+        {
+            type = 'codelldb',
+            request = 'attach',
+            name = 'Attach to process',
+            pid = require'dap.utils'.pick_process(),
+            args = {},
+        }
+    }
+end
+
+vim.keymap.set('n', '<leader>db', '<cmd>lua require"dap".toggle_breakpoint()<CR>', { desc = '[D]ebug [B]reakpoint' })
+vim.keymap.set('n', '<leader>dc', '<cmd>lua require"dap".continue()<CR>', { desc = '[D]ebug [C]ontinue' })
+vim.keymap.set('n', '<leader>dso', '<cmd>lua require"dap".step_over()<CR>', { desc = '[D]ebug [S]tep [O]ver' })
+vim.keymap.set('n', '<leader>dsi', '<cmd>lua require"dap".step_into()<CR>', { desc = '[D]ebug [S]tep [I]nto' })
+vim.keymap.set('n', '<leader>dt', '<cmd>lua require"dap-python".test_method()<CR>', { desc = '[D]ebug [T]est' })
+vim.keymap.set('n', '<leader>ds', '<cmd>lua AttachToProcess()<CR>', { desc = '[D]ebug [S]tart' })
+
+vim.keymap.set({'n', 'v'}, '<M-k>', ui.eval, {})
+vim.keymap.set('n', '<M-K>', dapui_eval, {})

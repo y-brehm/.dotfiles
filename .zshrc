@@ -76,9 +76,15 @@ case "$(uname -s)" in
 
 esac
 
+cc_vim() {
+    conan install . -s build_type=Debug --install-folder=cmake-build-debug \
+    && cmake -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_BUILD_TYPE=Debug -B cmake-build-debug . \
+    && ln -sf $(pwd)/cmake-build-debug/compile_commands.json $(pwd)/
+}
+
 ciab() {
     conan install . -s build_type=Debug --install-folder=cmake-build-debug \
-    && cmake -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -B cmake-build-debug . \
-    && cmake --build cmake-build-debug \
-    && ln -sf $(pwd)/cmake-build-debug/compile_commands.json $(pwd)/
+    && cmake -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_BUILD_TYPE=Debug -B cmake-build-debug . \
+    && ln -sf $(pwd)/cmake-build-debug/compile_commands.json $(pwd)/ \
+    && cmake --build cmake-build-debug --target "${1:-all}"
 }

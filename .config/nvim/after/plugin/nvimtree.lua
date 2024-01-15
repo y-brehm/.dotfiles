@@ -42,7 +42,6 @@ local renderer = {
 
 local view = {
     cursorline = false,
-    hide_root_folder = false,
     signcolumn = 'no',
     width = {
         max = 40,

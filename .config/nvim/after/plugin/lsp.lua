@@ -35,6 +35,7 @@ end)
 
 -- Set up nvim-cmp.
 local cmp = require'cmp'
+local luasnip = require 'luasnip'
 
 cmp.setup({
     window = {
@@ -45,9 +46,17 @@ cmp.setup({
         ['<C-Space>'] = cmp.mapping.complete(),
         ['<C-e>'] = cmp.mapping.abort(),
         ['<CR>'] = cmp.mapping.confirm({ select = true }),
+        ['<C-j>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
+        ['<C-k>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
     }),
+    snippet = {
+        expand = function(args)
+            luasnip.lsp_expand(args.body) -- Function to expand snippets
+        end,
+    },
     sources = cmp.config.sources({
         { name = 'nvim_lsp' },
+        { name = 'luasnip'}
     },
     {
         { name = 'buffer' },
