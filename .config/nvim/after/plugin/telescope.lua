@@ -1,4 +1,5 @@
 local ts = require 'telescope'
+local actions = require 'telescope.actions'
 local u = {}
 
 function u.length(table)
@@ -26,6 +27,12 @@ ts.setup({
         },
         border = true,
         multi_icon = '',
+        mappings = {
+            i = {
+                ["<C-j>"] = actions.move_selection_next,
+                ["<C-k>"] = actions.move_selection_previous,
+            },
+        },
         entry_prefix = '   ',
         prompt_prefix = '  🔎 ',
         selection_caret = ' ▶ ',
