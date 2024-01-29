@@ -115,18 +115,32 @@ dap.configurations.cpp = {
                 {
                     text = '-enable-pretty-printing',
                     description = 'enable pretty printing',
-                    ignoreFailures = false
+                    ignoreFailures = false,
                 }
-            }
+            },
+        runInTerminal = true,
         },
       {
         name = 'Attach to process',
         type = 'codelldb',
         request = 'attach',
-        pid = require('dap.utils').pick_process, -- This will prompt to select a process
+        cwd = '${workspaceFolder}',
+        pid = require('dap.utils').pick_process,
+        stopAtEntry = true,
+        setupCommands = {
+                {
+                    text = '-enable-pretty-printing',
+                    description = 'enable pretty printing',
+                    ignoreFailures = false,
+                }
+            },
+        runInTerminal = true,
+        sourcePaths = { '/Users/y_brehm/dev/Pd-Externals/source/' },
         args = {},
       },
 }
+
+dap.configurations.c = dap.configurations.cpp
 
 require("cmake-tools").setup {
   cmake_command = "cmake", -- this is used to specify cmake command path
