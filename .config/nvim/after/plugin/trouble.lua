@@ -17,7 +17,4 @@ require 'trouble'.setup {
     auto_preview = false
 }
 
--- Make trouble update to the current buffer.
-vim.cmd [[ autocmd BufEnter * TroubleRefresh ]]
-
 vim.keymap.set('n', '<leader>tb', '<cmd>TroubleToggle<cr>', { desc = '[T]oggle Trou[B]le' })

@@ -14,8 +14,8 @@ vim.g.mapleader = " "
 require("lazy").setup(
 {
     'nvim-treesitter/nvim-treesitter',
-    'folke/trouble.nvim',
     'nvim-telescope/telescope.nvim',
+    'folke/trouble.nvim',
     'jvgrootveld/telescope-zoxide',
     'nvim-lua/plenary.nvim',
     'nvim-pack/nvim-spectre',
@@ -53,9 +53,12 @@ require("lazy").setup(
     "jay-babu/mason-nvim-dap.nvim",
     'antoinemadec/FixCursorHold.nvim',
     --  testing
+    'nvim-neotest/nvim-nio',
     'nvim-neotest/neotest',
     'nvim-neotest/neotest-python',
     'alfaix/neotest-gtest',
+    -- terminal
+    'akinsho/toggleterm.nvim',
     -- colourschemes
     { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
 })
