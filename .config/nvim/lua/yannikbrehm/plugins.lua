@@ -61,6 +61,14 @@ require("lazy").setup(
     'akinsho/toggleterm.nvim',
     -- colourschemes
     { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
+    {
+      "folke/which-key.nvim", event = "VeryLazy",
+      init = function()
+        vim.o.timeout = true
+        vim.o.timeoutlen = 300
+      end,
+      opts = {}
+    },
 })
 
 require('gitsigns').setup()
