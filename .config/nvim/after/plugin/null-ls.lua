@@ -7,8 +7,6 @@ null_ls.setup({
     },
 })
 
-vim.keymap.set("n", "<leader>lf", vim.lsp.buf.format, { remap = false })
-
 function format_save_quit()
   vim.lsp.buf.format()
   vim.cmd('write')

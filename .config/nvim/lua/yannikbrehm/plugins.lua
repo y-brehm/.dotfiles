@@ -71,6 +71,8 @@ require("lazy").setup(
 })
 
 require('gitsigns').setup()
+require('twilight').setup()
+require('todo-comments').setup()
 require('mason').setup()
 require('nvim-autopairs').setup()
 require("mason-nvim-dap").setup({

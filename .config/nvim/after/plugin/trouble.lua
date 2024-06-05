@@ -16,5 +16,3 @@ require 'trouble'.setup {
     signs = u.diagnostic_signs,
     auto_preview = false
 }
-
-vim.keymap.set('n', '<leader>tb', '<cmd>TroubleToggle<cr>', { desc = '[T]oggle Trou[B]le' })
