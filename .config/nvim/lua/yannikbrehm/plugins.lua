@@ -40,7 +40,6 @@ require("lazy").setup(
     'github/copilot.vim',
     'windwp/nvim-autopairs',
     'rmagatti/goto-preview',
-    'RRethy/vim-illuminate',
     'L3MON4D3/LuaSnip',
     'rafamadriz/friendly-snippets',
     -- building
