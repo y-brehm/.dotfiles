@@ -17,9 +17,10 @@ wk.register({
         ["lf"] = {"<cmd>lua vim.lsp.buf.formatting()<CR>", "[l]sp [f]ormat" },
         ["tt"] = {"<cmd>NvimTreeToggle<CR>", "[t]ree [t]oggle" }, --check this 
         ["tr"] = {"<cmd>NvimTreeRefresh<CR>", "[t]ree [r]efresh" },
-        ["tff"] = {"<cmd>NvimTreeFindFile<CR>", "[t]ree [f]ind [f]ile" },
+        ["tw"] = {"<cmd>Twilight<CR>", "[t]oggle t[w]ighlight" },
+        ["td"] = {"<cmd>ToggleTerm direction=horizontal name=defaultTerminal<CR>", "[t]erminal [d]efault" },
+        ["tf"] = {"<cmd>ToggleTerm direction=float name=floatingTerminal<CR>", "[t]oggle [F]loating terminal" },
         ["sp"] = {"<cmd>TroubleToggle<cr>","[s]how [p]roblems"},
-        ["tw"] = {"<cmd>Twilight<CR>", "[T]oggle T[w]ighlight" },
         ["ff"] = {"<cmd>lua require('telescope.builtin').find_files()<CR>", "[f]ind [f]iles" },
         ["fh"] = {"<cmd>lua require('telescope.builtin').help_tags()<CR>", "[f]ind [h]elp" },
         ["fg"] = {"<cmd>lua require('telescope.builtin').live_grep()<CR>", "[f]ind by [g]rep" },
@@ -27,4 +28,5 @@ wk.register({
         ["fz"] = {"<cmd>lua require('telescope').extensions.zoxide.list()<CR>", "[f]ind [z]oxide" },
         ["fk"] = {"<cmd>lua require('telescope.builtin').keymaps()<CR>", "[f]ind [k]eymaps" },
         ["ft"] = {"<cmd>TodoTelescope<CR>", "[f]ind [t]o do" },
+        ["ze"] = {"<cmd>lua require('zen-mode').toggle()<CR>", "[Z]en [E]ditor mode" },
         }})

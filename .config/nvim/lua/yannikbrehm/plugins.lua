@@ -13,23 +13,21 @@ vim.g.mapleader = " "
 
 require("lazy").setup(
 {
-    'nvim-treesitter/nvim-treesitter',
-    'nvim-telescope/telescope.nvim',
-    'folke/trouble.nvim',
-    'jvgrootveld/telescope-zoxide',
     'nvim-lua/plenary.nvim',
-    'nvim-pack/nvim-spectre',
+    -- lsp
     'VonHeikemen/lsp-zero.nvim',
     'neovim/nvim-lspconfig',
     'williamboman/mason.nvim',
     'williamboman/mason-lspconfig.nvim',
     'jose-elias-alvarez/null-ls.nvim',
-    'nvim-tree/nvim-tree.lua',
+    --appearance
+    { 
+        "catppuccin/nvim", 
+        name = "catppuccin", 
+        priority = 1000 
+    },
     'nvim-tree/nvim-web-devicons',
-    'folke/todo-comments.nvim',
-    'folke/twilight.nvim',
     'lewis6991/gitsigns.nvim',
-    'rhysd/vim-clang-format',
     -- autocompletion
     'hrsh7th/nvim-cmp',
     'hrsh7th/cmp-buffer',
@@ -59,7 +57,17 @@ require("lazy").setup(
     -- terminal
     'akinsho/toggleterm.nvim',
     -- colourschemes
-    { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
+    --tools
+    'nvim-tree/nvim-tree.lua',
+    'rhysd/vim-clang-format',
+    'folke/todo-comments.nvim',
+    'folke/zen-mode.nvim',
+    'nvim-pack/nvim-spectre',
+    'folke/trouble.nvim',
+    'nvim-telescope/telescope.nvim',
+    'jvgrootveld/telescope-zoxide',
+    'nvim-treesitter/nvim-treesitter',
+    'folke/twilight.nvim',
     {
       "goolord/alpha-nvim",
       config = function ()
@@ -74,7 +82,6 @@ require("lazy").setup(
       end,
       opts = {}
     },
-
 })
 
 require('gitsigns').setup()
