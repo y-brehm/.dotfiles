@@ -49,7 +49,7 @@ require("lazy").setup(
     'rcarriga/nvim-dap-ui',
     'theHamsta/nvim-dap-virtual-text',
     'mfussenegger/nvim-dap-python',
-    "jay-babu/mason-nvim-dap.nvim",
+    'jay-babu/mason-nvim-dap.nvim',
     'antoinemadec/FixCursorHold.nvim',
     --  testing
     'nvim-neotest/nvim-nio',
@@ -61,6 +61,12 @@ require("lazy").setup(
     -- colourschemes
     { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
     {
+      "goolord/alpha-nvim",
+      config = function ()
+      require'alpha'.setup(require'alpha.themes.startify'.config)
+      end
+    },
+    {
       "folke/which-key.nvim", event = "VeryLazy",
       init = function()
         vim.o.timeout = true
@@ -68,6 +74,7 @@ require("lazy").setup(
       end,
       opts = {}
     },
+
 })
 
 require('gitsigns').setup()
