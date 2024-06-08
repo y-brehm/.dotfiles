@@ -14,13 +14,12 @@ wk.register({
         ["rt"] = {"<cmd>lua require('neotest').run.run()<CR>", "[r]un [t]est" },
         ["drt"] = {"<cmd>lua require('neotest').run.run({strategy = 'dap'})<CR>", "[d]ebug [r]un [t]est" },
         ["rat"] = {"<cmd>lua require('neotest').run.run(vim.fn.expand('%'))<CR>", "[r]un [a]ll [t]ests" },
-        ["lf"] = {"<cmd>lua vim.lsp.buf.formatting()<CR>", "[l]sp [f]ormat" },
-        ["tt"] = {"<cmd>NvimTreeToggle<CR>", "[t]ree [t]oggle" }, --check this 
+        ["tt"] = {"<cmd>NvimTreeToggle<CR>", "[t]ree [t]oggle" },
         ["tr"] = {"<cmd>NvimTreeRefresh<CR>", "[t]ree [r]efresh" },
         ["tw"] = {"<cmd>Twilight<CR>", "[t]oggle t[w]ighlight" },
         ["td"] = {"<cmd>ToggleTerm direction=horizontal name=defaultTerminal<CR>", "[t]erminal [d]efault" },
         ["tf"] = {"<cmd>ToggleTerm direction=float name=floatingTerminal<CR>", "[t]oggle [F]loating terminal" },
-        ["sp"] = {"<cmd>TroubleToggle<cr>","[s]how [p]roblems"},
+        ["sp"] = {"<cmd>TroubleToggle<cr>","[s]how [p]roblems"}, --check this
         ["ff"] = {"<cmd>lua require('telescope.builtin').find_files()<CR>", "[f]ind [f]iles" },
         ["fh"] = {"<cmd>lua require('telescope.builtin').help_tags()<CR>", "[f]ind [h]elp" },
         ["fg"] = {"<cmd>lua require('telescope.builtin').live_grep()<CR>", "[f]ind by [g]rep" },
