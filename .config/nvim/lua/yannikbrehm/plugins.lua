@@ -68,6 +68,7 @@ require("lazy").setup(
     'jvgrootveld/telescope-zoxide',
     'nvim-treesitter/nvim-treesitter',
     'folke/twilight.nvim',
+    'stevearc/oil.nvim',
     {
       "goolord/alpha-nvim",
       config = function ()
@@ -89,6 +90,7 @@ require('twilight').setup()
 require('todo-comments').setup()
 require('mason').setup()
 require('nvim-autopairs').setup()
+require("oil").setup()
 require("mason-nvim-dap").setup({
     ensure_installed = { "python", "codelldb" },
     handlers = {},
