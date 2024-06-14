@@ -28,4 +28,5 @@ wk.register({
         ["fk"] = {"<cmd>lua require('telescope.builtin').keymaps()<CR>", "[f]ind [k]eymaps" },
         ["ft"] = {"<cmd>TodoTelescope<CR>", "[f]ind [t]o do" },
         ["ze"] = {"<cmd>lua require('zen-mode').toggle()<CR>", "[Z]en [E]ditor mode" },
+        ["of"] = {"<cmd>:Oil --float " .. vim.fn.expand('%:p:h') .. "<CR>", "[O]il [f]loating" },
         }})
