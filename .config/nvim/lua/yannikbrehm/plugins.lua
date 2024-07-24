@@ -56,8 +56,8 @@ require("lazy").setup(
     'alfaix/neotest-gtest',
     -- terminal
     'akinsho/toggleterm.nvim',
-    -- colourschemes
     --tools
+    'RRethy/vim-illuminate',
     'nvim-tree/nvim-tree.lua',
     'rhysd/vim-clang-format',
     'folke/todo-comments.nvim',
