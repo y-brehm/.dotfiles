@@ -51,12 +51,21 @@ require("lazy").setup(
     'antoinemadec/FixCursorHold.nvim',
     --  testing
     'nvim-neotest/nvim-nio',
-    'nvim-neotest/neotest',
-    'nvim-neotest/neotest-python',
-    'alfaix/neotest-gtest',
+    {
+      "nvim-neotest/neotest",
+      dependencies = {
+        "nvim-neotest/nvim-nio",
+        "nvim-lua/plenary.nvim",
+        "antoinemadec/FixCursorHold.nvim",
+        "nvim-treesitter/nvim-treesitter",
+        "alfaix/neotest-gtest",
+        "nvim-neotest/neotest-python",
+      }
+    },
     -- terminal
     'akinsho/toggleterm.nvim',
     --tools
+    'kdheepak/lazygit.nvim',
     'RRethy/vim-illuminate',
     'nvim-tree/nvim-tree.lua',
     'rhysd/vim-clang-format',
@@ -100,6 +109,22 @@ require("neotest").setup({
   adapters = {
     require("neotest-python")({
         runner = "pytest",
+    }),
+    require("neotest-gtest").setup({
+      is_test_file = function(file)
+        -- by default, returns true if the file stem starts with test_ or ends with _test
+        -- the extension must be cpp/cppm/cc/cxx/c++
+        --
+        local ext = file:match("^.+(%..+)$")
+        -- Get the file stem (file name without extension)
+        local stem = file:match("^.+/(.+)%..+$")
+        -- Check if the file ends with "TestCase" or if it matches the default patterns
+        if ext and (ext == ".cpp" or ext == ".cppm" or ext == ".cc" or ext == ".cxx" or ext == ".c++") then
+          return stem:match("^test_") or stem:match("_test$") or stem:match("TestCase$")
+        end
+
+        return false
+      end,
     }),
   }
 })

@@ -14,6 +14,7 @@ wk.register({
         ["rt"] = {"<cmd>lua require('neotest').run.run()<CR>", "[r]un [t]est" },
         ["drt"] = {"<cmd>lua require('neotest').run.run({strategy = 'dap'})<CR>", "[d]ebug [r]un [t]est" },
         ["rat"] = {"<cmd>lua require('neotest').run.run(vim.fn.expand('%'))<CR>", "[r]un [a]ll [t]ests" },
+        ["nso"] = {"<cmd>lua require('neotest').summary.open()<CR>", "[n]eotest [s]ummary [o]pen" },
         ["tt"] = {"<cmd>NvimTreeToggle<CR>", "[t]ree [t]oggle" },
         ["tr"] = {"<cmd>NvimTreeRefresh<CR>", "[t]ree [r]efresh" },
         ["tw"] = {"<cmd>Twilight<CR>", "[t]oggle t[w]ighlight" },
@@ -29,4 +30,5 @@ wk.register({
         ["ft"] = {"<cmd>TodoTelescope<CR>", "[f]ind [t]o do" },
         ["ze"] = {"<cmd>lua require('zen-mode').toggle()<CR>", "[Z]en [E]ditor mode" },
         ["of"] = {"<cmd>:Oil --float " .. vim.fn.expand('%:p:h') .. "<CR>", "[O]il [f]loating" },
+        ["lg"] = {"<cmd>LazyGit<cr>", "[L]azy [G]it"}
         }})
