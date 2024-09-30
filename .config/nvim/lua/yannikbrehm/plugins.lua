@@ -109,22 +109,14 @@ require("neotest").setup({
   adapters = {
     require("neotest-python")({
         runner = "pytest",
-    }),
-    require("neotest-gtest").setup({
-      is_test_file = function(file)
-        -- by default, returns true if the file stem starts with test_ or ends with _test
-        -- the extension must be cpp/cppm/cc/cxx/c++
-        --
-        local ext = file:match("^.+(%..+)$")
-        -- Get the file stem (file name without extension)
-        local stem = file:match("^.+/(.+)%..+$")
-        -- Check if the file ends with "TestCase" or if it matches the default patterns
-        if ext and (ext == ".cpp" or ext == ".cppm" or ext == ".cc" or ext == ".cxx" or ext == ".c++") then
-          return stem:match("^test_") or stem:match("_test$") or stem:match("TestCase$")
-        end
-
-        return false
-      end,
+      -- Add a Python test file detection function
+      is_test_file = function(file_path)
+        local file_ext = vim.fn.fnamemodify(file_path, ":e")
+        return file_ext == "py" and (
+          vim.fn.fnamemodify(file_path, ":t"):match("^test_.*%.py$") or
+          vim.fn.fnamemodify(file_path, ":t"):match(".*_test%.py$")
+        )
+        end,
     }),
   }
 })

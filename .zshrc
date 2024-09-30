@@ -33,6 +33,10 @@ export CONAN_REVISIONS_ENABLED=1
 export TERM=xterm-256color
 export PATH="$HOMEBREW_PREFIX/opt/python@3.9/libexec/bin:$PATH"
 
+#llvm clang 13
+export LLVM_ROOT="$(brew --prefix llvm@13)"
+export LDFLAGS="-L${LLVM_ROOT}/lib -L${LLVM_ROOT}/lib/c++ -Wl,-rpath,${LLVM_ROOT}/lib/c++"
+
 # Aliases
 alias vim="nvim"
 alias git_rinse="git clean -xfd
