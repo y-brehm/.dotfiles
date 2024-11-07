@@ -42,6 +42,7 @@ require("lazy").setup(
     'rafamadriz/friendly-snippets',
     -- building
     'Civitasv/cmake-tools.nvim',
+    'lervag/vimtex',
     -- debugging
     'mfussenegger/nvim-dap',
     'rcarriga/nvim-dap-ui',
@@ -255,4 +256,3 @@ require("cmake-tools").setup {
     refresh_rate_ms = 100, -- how often to iterate icons
   },
 }
-
