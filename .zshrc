@@ -23,8 +23,6 @@ autoload -Uz compinit
 compinit
 
 # environment variables
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
 export VISUAL=nvim
 export EDITOR="$VISUAL"
 export LC_ALL=en_US.UTF-8
@@ -75,6 +73,8 @@ case "$(uname -s)" in
     ;;
 
     Linux)
+        /usr/bin/keychain -q --nogui $HOME/.ssh/work_id_ed25519
+        source $HOME/.keychain/$(hostname)-sh
         # PLACE Linux specific commands here
     ;;
 
