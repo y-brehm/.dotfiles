@@ -74,6 +74,7 @@ case "$(uname -s)" in
 
     Linux)
         /usr/bin/keychain -q --nogui $HOME/.ssh/work_id_ed25519
+        /usr/bin/keychain -q --nogui $HOME/.ssh/personal_id_ed25519
         source $HOME/.keychain/$(hostname)-sh
         # PLACE Linux specific commands here
     ;;
