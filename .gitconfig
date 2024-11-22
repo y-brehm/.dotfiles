@@ -14,7 +14,7 @@
     cmd = kitty kitty +kitten diff $LOCAL $REMOTE
 [user]
 	name = y-brehm
-	email = yannikbrehm@web.de
+	email = y_brehm@proton.me
 [mergetool "smerge"]
 	cmd = smerge mergetool \"$BASE\" \"$LOCAL\" \"$REMOTE\" -o \"$MERGED\"
 	trustExitCode = true

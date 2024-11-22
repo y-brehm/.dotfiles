@@ -10,8 +10,6 @@ function u.length(table)
     return count
 end
 
- u.border_chars_outer_telescope = { "▔", "▕", "▁", "▏", "🭽", "🭾", "🭿", "🭼" }
-
 -- Setup.
 ts.setup({
     defaults = {
@@ -19,11 +17,6 @@ ts.setup({
         sorting_strategy = 'ascending',
         layout_config = {
             prompt_position = 'top'
-        },
-        borderchars = {
-            prompt = u.border_chars_outer_telescope,
-            results = u.border_chars_outer_telescope,
-            preview = u.border_chars_outer_telescope
         },
         border = true,
         multi_icon = '',
