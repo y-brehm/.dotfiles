@@ -77,6 +77,7 @@ case "$(uname -s)" in
             /usr/bin/keychain -q --nogui $HOME/.ssh/work_id_ed25519
             /usr/bin/keychain -q --nogui $HOME/.ssh/personal_id_ed25519
             source $HOME/.keychain/$(hostname)-sh
+            alias explorer='explorer.exe .'
         fi
         # PLACE Linux specific commands here
     ;;
@@ -95,3 +96,57 @@ ciab() {
     && ln -sf $(pwd)/cmake-build-debug/compile_commands.json $(pwd)/ \
     && cmake --build cmake-build-debug --target "${1:-all}"
 }
+
+pip_manage_urls() {
+    local PIP_CONF="$HOME/.config/pip/pip.conf"
+    local UV_CONF="$HOME/.config/uv/uv.toml"
+    local action=$1
+    shift
+    local urls=("$@")
+
+    case "$action" in
+        "add")
+            mkdir -p "$(dirname "$PIP_CONF")"
+            [ ! -f "$PIP_CONF" ] && echo "[global]" > "$PIP_CONF"
+            [ ! -f "$UV_CONF" ] && echo 'extra-index-url=[]' > "$UV_CONF"
+            
+            for url in "${urls[@]}"; do
+                if ! grep -q "${url}" "$PIP_CONF" 2>/dev/null; then
+                    if ! grep -q "extra-index-url" "$PIP_CONF"; then
+                        echo "extra-index-url = ${url}" >> "$PIP_CONF"
+                    else
+                        if grep -q "^extra-index-url = *$" "$PIP_CONF"; then
+                            sed -i.bak "s|^extra-index-url = *$|extra-index-url = ${url}|" "$PIP_CONF"
+                        else
+                            sed -i.bak "s|extra-index-url = \(.*\)|extra-index-url = \1 ${url}|" "$PIP_CONF"
+                        fi
+                    fi
+                fi
+                if ! grep -q "${url}" "$UV_CONF" 2>/dev/null; then
+                    if grep -q "extra-index-url=\[\]" "$UV_CONF"; then
+                        sed -i.bak "s|\[\]|[\"${url}\"]|" "$UV_CONF"
+                    else
+                        sed -i.bak "s|\[\(.*\)\]|[\1, \"${url}\"]|" "$UV_CONF"
+                    fi
+                fi
+            done
+            ;;
+        "remove")
+            for url in "${urls[@]}"; do
+                [ -f "$PIP_CONF" ] && sed -i.bak "s| ${url}||g" "$PIP_CONF"
+                if [ -f "$UV_CONF" ]; then
+                    # Handle single URL case
+                    if grep -q "^\s*extra-index-url=\[\s*\"${url}\"\s*\]" "$UV_CONF"; then
+                        echo 'extra-index-url=[]' > "$UV_CONF"
+                    else
+                        sed -i.bak "s|\"${url}\", *||g" "$UV_CONF"  # Remove if first
+                        sed -i.bak "s|, *\"${url}\"||g" "$UV_CONF"  # Remove if not first
+                    fi
+                fi
+            done
+            ;;
+    esac
+}
+
+enable-pip-devpi() { pip_manage_urls add "http://localhost:3141/testuser/dev/+simple/" }
+disable-pip-devpi() { pip_manage_urls remove "http://localhost:3141/testuser/dev/+simple/" }
