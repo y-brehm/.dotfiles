@@ -9,6 +9,7 @@ plug "hlissner/zsh-autopair"
 plug "wintermi/zsh-brew"
 plug "MichaelAquilina/zsh-you-should-use"
 plug "zap-zsh/sudo"
+# plug "jeffreytse/zsh-vi-mode"
 plug "zsh-users/zsh-history-substring-search"
 
 # configure zsh-history-substring-search
