@@ -43,30 +43,29 @@ return {
         callback = function(event)
           local wk = require("which-key")
           
-          -- Register groups first
-          wk.register({
-            ["<leader>c"] = { buffer = event.buf, group = "Code" },
-            ["<leader>g"] = { buffer = event.buf, group = "Go to" },
-            ["<leader>r"] = { buffer = event.buf, group = "Refactor" },
-          })
-          
-          -- Register all keymaps
-          wk.register({
-            ["<leader>D"] = { vim.lsp.buf.hover, "Show Documentation", buffer = event.buf },
-            ["<leader>ca"] = { vim.lsp.buf.code_action, "Code Actions", buffer = event.buf },
-            ["<leader>gd"] = { vim.lsp.buf.definition, "Go to Definition", buffer = event.buf },
-            ["<leader>gh"] = { "<cmd>ClangdSwitchSourceHeader<cr>", "Switch Header/Source", buffer = event.buf },
-            ["<leader>gn"] = { vim.diagnostic.goto_next, "Next Diagnostic", buffer = event.buf },
-            ["<leader>gp"] = { vim.diagnostic.goto_prev, "Previous Diagnostic", buffer = event.buf },
-            ["<leader>gr"] = { vim.lsp.buf.references, "Find References", buffer = event.buf },
-            ["<leader>rn"] = { vim.lsp.buf.rename, "Rename Symbol", buffer = event.buf },
-          })
+          -- Register all keymaps using the new format
+          wk.add({
+            -- Groups
+            { "<leader>c", name = "Code" },
+            { "<leader>g", name = "Goto" },
+            { "<leader>r", name = "Refactor" },
+            
+            -- Individual mappings
+            { "<leader>D", vim.lsp.buf.hover, desc = "Show Documentation" },
+            { "ca", vim.lsp.buf.code_action, desc = "Code Actions" },
+            { "gd", vim.lsp.buf.definition, desc = "Go to Definition" },
+            { "gh", "<cmd>ClangdSwitchSourceHeader<cr>", desc = "Switch Header/Source" },
+            { "gn", vim.diagnostic.goto_next, desc = "Next Diagnostic" },
+            { "gp", vim.diagnostic.goto_prev, desc = "Previous Diagnostic" },
+            { "gr", vim.lsp.buf.references, desc = "Find References" },
+            { "<leader>rn", vim.lsp.buf.rename, desc = "Rename Symbol" }
+          }, { buffer = event.buf })
           
           -- Insert mode signature help (not part of which-key)
           vim.keymap.set("i", "<leader>h", vim.lsp.buf.signature_help, { buffer = event.buf })
         end,
       })
-        end,
+    end,
   },
   {
     "williamboman/mason.nvim",

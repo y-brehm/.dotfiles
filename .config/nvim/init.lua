@@ -25,4 +25,3 @@ require("lazy").setup("plugins", {
 })
 
 vim.cmd.colorscheme "catppuccin"
-require('mini.icons').setup()

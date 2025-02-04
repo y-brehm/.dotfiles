@@ -1,5 +1,5 @@
 return{
-{
+    {
     "nvim-neo-tree/neo-tree.nvim",
     branch = "v3.x",
     dependencies = {
@@ -28,5 +28,14 @@ return{
         end,
       }
      }
-}
+    },
+    {
+        's1n7ax/nvim-window-picker',
+        name = 'window-picker',
+        event = 'VeryLazy',
+        version = '2.*',
+        config = function()
+            require'window-picker'.setup()
+        end,
+    }
 }

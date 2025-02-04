@@ -63,7 +63,6 @@ return {
     opts = {},
   },
   {'lervag/vimtex'},
-  {'github/copilot.vim', event = 'InsertEnter' },
   {
     "nvimtools/none-ls.nvim",  -- note: null-ls was moved to nvimtools/none-ls.nvim
     event = { "BufReadPre", "BufNewFile" },
@@ -83,16 +82,10 @@ return {
       
       local wk = require("which-key")
       
-      wk.register({
-        ["<leader>l"] = { group = "LSP" },
-      })
-      
-      wk.register({
-        ["<leader>lf"] = { 
-          vim.lsp.buf.format, 
-          "Format Buffer",
-        },
-      })
+    wk.add({
+      { "<leader>l", name = "LSP" },
+      { "<leader>lf", vim.lsp.buf.format, desc = "Format Buffer" }
+    })
     end,
   },
 }

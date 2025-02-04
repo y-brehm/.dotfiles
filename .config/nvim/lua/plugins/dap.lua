@@ -21,7 +21,7 @@ return {
       -- UI setup
       ui.setup({
         mappings = {
-          expand = {'<CR>', '<LeftMouse>'},
+        expand = {'<CR>', '<LeftMouse>'},
           open = {'o'},
           remove = {'d', 'x'},
           edit = {'c'},
@@ -63,6 +63,16 @@ return {
 
       -- Virtual text setup
       require("nvim-dap-virtual-text").setup()
+
+    local wk = require("which-key")
+
+    wk.add({
+        { "<leader>db", function() require("dap").toggle_breakpoint() end, desc = '[D]ebug [B]reakpoint' },
+        { "<leader>dc", function() require("dap").continue() end, desc = '[D]ebug [C]ontinue' },
+        { "<leader>dso", function() require("dap").step_over() end, desc = '[D]ebug [S]tep [O]ver' },
+        { "<leader>dsi", function() require("dap").step_in() end, desc = '[D]ebug [S]tep [I]nto' },
+        { "<leader>dt", function() require("dap").test_method() end, desc = '[D]ebug [T]est' },
+    })
     end,
   },
   {

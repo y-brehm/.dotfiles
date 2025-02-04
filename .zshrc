@@ -8,13 +8,24 @@ plug "romkatv/powerlevel10k"
 plug "hlissner/zsh-autopair"
 plug "wintermi/zsh-brew"
 plug "MichaelAquilina/zsh-you-should-use"
-plug "zap-zsh/sudo"
-# plug "jeffreytse/zsh-vi-mode"
+
+plug "jeffreytse/zsh-vi-mode"
 plug "zsh-users/zsh-history-substring-search"
 
+source $(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+
 # configure zsh-history-substring-search
-bindkey '^[[A' history-substring-search-up
-bindkey '^[[B' history-substring-search-down
+# did not work in wsl
+# bindkey '^[[A' history-substring-search-up
+# bindkey '^[[B' history-substring-search-down
+#
+# works in wsl but needs to be checked on macOS
+# bindkey "$terminfo[kcuu1]" history-substring-search-up
+# bindkey "$terminfo[kcud1]" history-substring-search-down
+#
+# for VI mode
+bindkey -M vicmd 'k' history-substring-search-up
+bindkey -M vicmd 'j' history-substring-search-down
 
 # P10k theme
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -151,3 +162,4 @@ pip_manage_urls() {
 
 enable-pip-devpi() { pip_manage_urls add "http://localhost:3141/testuser/dev/+simple/" }
 disable-pip-devpi() { pip_manage_urls remove "http://localhost:3141/testuser/dev/+simple/" }
+
