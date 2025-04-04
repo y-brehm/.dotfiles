@@ -46,18 +46,27 @@ return {
         },
       })
       
-    -- Use the correct Python language server based on platform
-    if vim.fn.has('win32') == 1 or vim.fn.has('win64') == 1 then
-      -- Setup basedpyright on Windows
-      require("lspconfig").basedpyright.setup({
-        capabilities = capabilities,
-      })
-    else
-      -- Setup pyright on non-Windows platforms
-      require("lspconfig").pyright.setup({
-        capabilities = capabilities,
-      })
-    end
+    require("lspconfig").basedpyright.setup({
+      capabilities = capabilities,
+      settings = {
+        basedpyright = {
+          -- Control diagnostic levels - options are "error", "warning", "information", or "none"
+          diagnosticSeverityOverrides = {
+            reportGeneralTypeIssues = "warning",       -- Type checking errors
+            reportPropertyTypeMismatch = "warning",    -- Property type mismatch
+            reportMissingTypeStubs = "information",    -- Missing type stubs
+            reportUnknownMemberType = "information",   -- Unknown member types
+            reportMissingTypeArgument = "warning",     -- Missing type arguments
+            reportUntypedFunctionDecorator = "none",   -- Disable diagnostics for untyped decorators
+            reportMissingParameterType = "none",       -- Disable diagnostics for missing parameter types
+            reportMissingTypeAnnotation = "none",      -- Disable diagnostics for missing type annotations
+          },
+          
+          -- Enable/disable type checking features
+          typeCheckingMode = "basic", -- Options: "off", "basic", "standard", "strict"
+        }
+      }
+    })
 
       vim.api.nvim_create_autocmd('LspAttach', {
         desc = 'LSP actions',
@@ -94,7 +103,7 @@ return {
     opts = {
       ensure_installed = {
         "python-lsp-server",
-        vim.fn.has('win32') == 1 and "basedpyright" or "pyright",
+        "basedpyright",
         "black",
         "flake8",
         "debugpy",

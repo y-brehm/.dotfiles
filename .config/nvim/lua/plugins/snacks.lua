@@ -32,7 +32,8 @@ return{
             enabled = true,
             win = {
                 style = "terminal",
-            }
+            },
+            auto_insert = false,
         },
         zen =  { enabled = True },
         gitbrowse = {

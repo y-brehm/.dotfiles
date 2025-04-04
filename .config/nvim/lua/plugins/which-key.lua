@@ -38,6 +38,15 @@ return {
         { "<leader>z",  function() Snacks.zen() end, desc = "Toggle Zen Mode" },
         { "<leader>go", function() require("snacks.gitbrowse").open() end, desc = "[G]it [O]pen file in browser" },
         { "<leader>gr", function() require("snacks.gitbrowse").open({ what = "repo" }) end, desc = "[G]it open [R]epo" },
+        { "<leader>fG", function()
+            local fixed_args = vim.deepcopy(require('telescope.config').values.vimgrep_arguments)
+            table.insert(fixed_args, '--fixed-strings')
+            require('telescope.builtin').live_grep({
+              vimgrep_arguments = fixed_args
+            })
+          end, 
+          desc = "[f]ind by [G]rep (fixed string)" 
+        },
         })
     end,
     },
