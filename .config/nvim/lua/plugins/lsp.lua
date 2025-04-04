@@ -14,9 +14,21 @@ return {
       -- Reserve space in the gutter
       vim.opt.signcolumn = 'yes'
       
-      -- Python paths
+     -- Detect OS and set appropriate Python paths
+    local is_windows = vim.fn.has('win32') == 1 or vim.fn.has('win64') == 1
+
+    if is_windows then
+      -- Windows paths
+      local home = vim.fn.expand('$USERPROFILE')
+      vim.g.python3_host_prog = home .. '\\.virtualenvs\\neovim\\Scripts\\python.exe'
+      -- Python 2 is likely not needed, but if you want to set it:
+      -- vim.g.python_host_prog = 'C:\\Path\\to\\Python2\\python.exe'
+    else
+      -- Unix paths (keep your original settings)
       vim.g.python_host_prog = '/usr/local/bin/python'
       vim.g.python3_host_prog = '~/.virtualenvs/neovim/bin/python'
+    end
+
 
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
       
@@ -34,9 +46,18 @@ return {
         },
       })
       
+    -- Use the correct Python language server based on platform
+    if vim.fn.has('win32') == 1 or vim.fn.has('win64') == 1 then
+      -- Setup basedpyright on Windows
+      require("lspconfig").basedpyright.setup({
+        capabilities = capabilities,
+      })
+    else
+      -- Setup pyright on non-Windows platforms
       require("lspconfig").pyright.setup({
         capabilities = capabilities,
       })
+    end
 
       vim.api.nvim_create_autocmd('LspAttach', {
         desc = 'LSP actions',
@@ -73,7 +94,7 @@ return {
     opts = {
       ensure_installed = {
         "python-lsp-server",
-        "pyright",
+        vim.fn.has('win32') == 1 and "basedpyright" or "pyright",
         "black",
         "flake8",
         "debugpy",

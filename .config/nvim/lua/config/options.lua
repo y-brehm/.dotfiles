@@ -29,3 +29,14 @@ g.loaded_netrwPlugin = true
 g.vimtex_compiler_latexmk = {
   engine = '-xelatex'
 }
+
+-- In options.lua
+if vim.fn.has('win32') == 1 then
+    -- Use PowerShell as the default shell on Windows
+    opt.shell = "powershell"
+    opt.shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;"
+    opt.shellredir = "2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode"
+    opt.shellpipe = "2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode"
+    opt.shellquote = ""
+    opt.shellxquote = ""
+end
