@@ -10,10 +10,10 @@ return {
       "hrsh7th/cmp-nvim-lsp",
       "hrsh7th/cmp-nvim-lua",
     },
-    config = function()      
+    config = function()
       -- Reserve space in the gutter
       vim.opt.signcolumn = 'yes'
-      
+
      -- Detect OS and set appropriate Python paths
     local is_windows = vim.fn.has('win32') == 1 or vim.fn.has('win64') == 1
 
@@ -31,7 +31,7 @@ return {
 
 
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
-      
+
       -- LSP servers setup
       require("lspconfig").pylsp.setup({
         capabilities = capabilities,
@@ -45,7 +45,7 @@ return {
           }
         },
       })
-      
+
     require("lspconfig").basedpyright.setup({
       capabilities = capabilities,
       settings = {
@@ -61,25 +61,43 @@ return {
             reportMissingParameterType = "none",       -- Disable diagnostics for missing parameter types
             reportMissingTypeAnnotation = "none",      -- Disable diagnostics for missing type annotations
           },
-          
+
           -- Enable/disable type checking features
           typeCheckingMode = "basic", -- Options: "off", "basic", "standard", "strict"
         }
       }
     })
 
+    require("lspconfig").lua_ls.setup({
+      capabilities = capabilities,
+      settings = {
+        Lua = {
+          diagnostics = {
+            globals = { "vim", "require" }, -- Recognize 'vim' as a global to avoid warnings
+          },
+          workspace = {
+            library = vim.api.nvim_get_runtime_file("", true), -- Make the server aware of Neovim runtime files
+            checkThirdParty = false, -- Disable third-party library checking
+          },
+          telemetry = {
+            enable = false, -- Disable telemetry
+          },
+        },
+      },
+    })
+
       vim.api.nvim_create_autocmd('LspAttach', {
         desc = 'LSP actions',
         callback = function(event)
           local wk = require("which-key")
-          
+
           -- Register all keymaps using the new format
           wk.add({
             -- Groups
             { "<leader>c", name = "Code" },
             { "<leader>g", name = "Goto" },
             { "<leader>r", name = "Refactor" },
-            
+
             -- Individual mappings
             { "<leader>D", vim.lsp.buf.hover, desc = "Show Documentation" },
             { "ca", vim.lsp.buf.code_action, desc = "Code Actions" },
@@ -90,7 +108,7 @@ return {
             { "gr", vim.lsp.buf.references, desc = "Find References" },
             { "<leader>rn", vim.lsp.buf.rename, desc = "Rename Symbol" }
           }, { buffer = event.buf })
-          
+
           -- Insert mode signature help (not part of which-key)
           vim.keymap.set("i", "<leader>h", vim.lsp.buf.signature_help, { buffer = event.buf })
         end,
@@ -107,6 +125,7 @@ return {
         "black",
         "flake8",
         "debugpy",
+        "lua-language-server"
       },
     },
     config = function(_, opts)

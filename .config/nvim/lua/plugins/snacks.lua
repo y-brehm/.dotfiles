@@ -28,7 +28,7 @@ return{
                 },
             }
         },
-        terminal = { 
+        terminal = {
             enabled = true,
             win = {
                 style = "terminal",

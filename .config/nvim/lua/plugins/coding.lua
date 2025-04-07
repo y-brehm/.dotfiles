@@ -16,10 +16,9 @@ return {
     config = function()
       local cmp = require("cmp")
       local luasnip = require("luasnip")
-      local lspkind = require('lspkind')
 
       local lspkind = require('lspkind')
-      
+
       cmp.setup({
         snippet = {
           expand = function(args)
@@ -71,7 +70,7 @@ return {
     },
     config = function()
       local null_ls = require("null-ls")
-      
+
       null_ls.setup({
         sources = {
           null_ls.builtins.formatting.black.with({
@@ -79,9 +78,9 @@ return {
           }),
         },
       })
-      
+
       local wk = require("which-key")
-      
+
     wk.add({
       { "<leader>l", name = "LSP" },
       { "<leader>lf", vim.lsp.buf.format, desc = "Format Buffer" }

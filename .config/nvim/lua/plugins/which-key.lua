@@ -9,7 +9,7 @@ return {
     opts = {},
     config = function()
     local wk = require("which-key")
-      
+
     wk.add({
         { "<leader>S", "<cmd>lua require('spectre').toggle()<CR>", desc = "[S]pectre" },
         { "<leader>Sf", "<cmd>lua require('spectre').open_file_search({search_text=vim.fn.expand('<cword>')})<CR>", desc = "[S]earch in [F]ile" },
@@ -44,8 +44,8 @@ return {
             require('telescope.builtin').live_grep({
               vimgrep_arguments = fixed_args
             })
-          end, 
-          desc = "[f]ind by [G]rep (fixed string)" 
+          end,
+          desc = "[f]ind by [G]rep (fixed string)"
         },
         })
     end,
