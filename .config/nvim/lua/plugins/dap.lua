@@ -75,11 +75,67 @@ return {
     })
     end,
   },
-  {
-    "jay-babu/mason-nvim-dap.nvim",
-    opts = {
-      ensure_installed = { "python" },
-      handlers = {},
+{
+  "jay-babu/mason-nvim-dap.nvim",
+  opts = {
+    ensure_installed = { "python" },
+    handlers = {
+      python = function()
+        local dap = require("dap")
+        -- Get the proper Python path based on OS
+        local python_path
+        if vim.fn.has('win32') == 1 or vim.fn.has('win64') == 1 then
+          python_path = vim.fn.stdpath("data") .. "\\mason\\packages\\debugpy\\venv\\Scripts\\python.exe"
+        else
+          python_path = vim.fn.stdpath("data") .. "/mason/packages/debugpy/venv/bin/python"
+        end
+        -- Configure the adapter
+        dap.adapters.python = {
+          type = "executable",
+          command = python_path,
+          args = { "-m", "debugpy.adapter" },
+        }
+        -- Configure Python launch configurations
+        dap.configurations.python = {
+          {
+            type = "python",
+            request = "launch",
+            name = "Launch file",
+            program = "${file}",
+            pythonPath = function()
+              -- Try to detect the environment python
+              if vim.fn.filereadable('.venv/bin/python') == 1 or vim.fn.filereadable('.venv/Scripts/python.exe') == 1 then
+                if vim.fn.has('win32') == 1 then
+                  return vim.fn.getcwd() .. '\\.venv\\Scripts\\python.exe'
+                else
+                  return vim.fn.getcwd() .. '/.venv/bin/python'
+                end
+              else
+                return python_path
+              end
+            end,
+          },
+          {
+            type = "python",
+            request = "launch",
+            name = "Launch test file",
+            module = "pytest",
+            args = { "${file}" },
+            pythonPath = function()
+              if vim.fn.filereadable('.venv/bin/python') == 1 or vim.fn.filereadable('.venv/Scripts/python.exe') == 1 then
+                if vim.fn.has('win32') == 1 then
+                  return vim.fn.getcwd() .. '\\.venv\\Scripts\\python.exe'
+                else
+                  return vim.fn.getcwd() .. '/.venv/bin/python'
+                end
+              else
+                return python_path
+              end
+            end,
+          }
+        }
+      end,
     },
-  }
+  },
+}
 }
