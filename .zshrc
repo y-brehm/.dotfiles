@@ -62,8 +62,11 @@ alias build_pd="conan install . -s build_type=Debug --install-folder=cmake-build
                 cmake --build cmake-build-debug"
                 # rm ~/Documents/Pd/externals/*pd_darwin 
                 # cp externals/Mac/*pd_darwin ~/Documents/Pd/externals"
-alias create_venv="python3 -m venv .venv
+alias create_classic_venv="python3 -m venv .venv
                    source .venv/bin/activate"
+
+alias venv="source .venv/bin/activate"
+
 alias install_req="pip install -r requirements.txt
                    pip install -r dev_requirements.txt"
 
@@ -163,3 +166,6 @@ pip_manage_urls() {
 enable-pip-devpi() { pip_manage_urls add "http://localhost:3141/testuser/dev/+simple/" }
 disable-pip-devpi() { pip_manage_urls remove "http://localhost:3141/testuser/dev/+simple/" }
 
+if [[ -f ~/.zshrc.local ]]; then
+    source ~/.zshrc.local
+fi
