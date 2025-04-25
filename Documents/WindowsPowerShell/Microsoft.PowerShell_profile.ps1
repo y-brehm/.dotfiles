@@ -6,3 +6,5 @@ function config {
 }
 
 function venv { & .\.venv\Scripts\activate.ps1 }
+
+Import-Module posh-git

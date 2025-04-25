@@ -52,7 +52,12 @@ return {
                         crust = "#0b0d0b",
                     },
                 },
-        custom_highlights = {},
+        custom_highlights = {
+            DiffAdd = { bg = "#2a3e2a" },      -- Darker green background
+            DiffDelete = { bg = "#5f3034" },   -- Pastel red without purple undertones
+            DiffChange = { bg = "#3a3a20" },   -- Dark yellow/amber background
+            DiffText = { bg = "#5c5c30" },     -- Brighter yellow for changed text
+        },
         integrations = {
             cmp = true,
             gitsigns = true,
