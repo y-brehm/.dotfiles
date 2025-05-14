@@ -12,7 +12,7 @@ plug "MichaelAquilina/zsh-you-should-use"
 plug "jeffreytse/zsh-vi-mode"
 plug "zsh-users/zsh-history-substring-search"
 
-source $(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+# source $(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring-search.zsh
 
 # configure zsh-history-substring-search
 # did not work in wsl
@@ -47,6 +47,12 @@ export PATH="$HOMEBREW_PREFIX/opt/python@3.9/libexec/bin:$PATH"
 export LLVM_ROOT="$(brew --prefix llvm@13)"
 export LDFLAGS="-L${LLVM_ROOT}/lib -L${LLVM_ROOT}/lib/c++ -Wl,-rpath,${LLVM_ROOT}/lib/c++"
 
+# carapace
+export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense' # optional
+zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
+source <(carapace _carapace)
+zstyle ':completion:*:git:*' group-order 'main commands' 'alias commands' 'external commands'
+
 # Aliases
 alias vim="nvim"
 alias git_rinse="git clean -xfd
@@ -59,10 +65,11 @@ alias kitdiff="git difftool --no-symlinks --dir-diff"
 alias ll='ls -lG'
 alias build_pd="conan install . -s build_type=Debug --install-folder=cmake-build-debug
                 cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -B cmake-build-debug .
-                cmake --build cmake-build-debug"
-                # rm ~/Documents/Pd/externals/*pd_darwin 
-                # cp externals/Mac/*pd_darwin ~/Documents/Pd/externals"
-alias create_classic_venv="python3 -m venv .venv
+                cmake --build cmake-build-debug
+                rm ~/Documents/Pd/externals/*pd_darwin 
+                cp externals/Mac/*pd_darwin ~/Documents/Pd/externals"
+
+alias create_venv="python3 -m venv .venv
                    source .venv/bin/activate"
 
 alias venv="source .venv/bin/activate"
