@@ -28,14 +28,7 @@ return{
                 },
             }
         },
-        terminal = {
-            enabled = true,
-            win = {
-                style = "terminal",
-            },
-            auto_insert = false,
-        },
-        zen =  { enabled = True },
+        zen =  { enabled = true },
         gitbrowse = {
             enabled = true,
             notify = true,

@@ -200,7 +200,7 @@ return {
         },
         on_attach = function(bufnr)
           local gs = require('gitsigns')
-          
+
           local function map(mode, l, r, opts)
             opts = opts or {}
             opts.buffer = bufnr
@@ -234,12 +234,12 @@ return {
           map('n', '<leader>hD', function() gs.diffthis('~') end, {desc = 'Diff this ~'})
           map('n', '<leader>hQ', function() gitsigns.setqflist('all') end)
           map('n', '<leader>hq', gs.setqflist)
-          
+
           -- Toggles
           map('n', '<leader>htb', gs.toggle_current_line_blame, {desc = 'Toggle current line blame'})
           map('n', '<leader>htd', gs.toggle_deleted, {desc = 'Toggle deleted'})
           map('n', '<leader>htw', gs.toggle_word_diff, {desc = 'Toggle word diff'})
-          
+
           -- Text object for hunks (still using ih as it's a standard)
           map({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
         end,
@@ -255,8 +255,8 @@ return {
         -- refer to the configuration section below
       }
     },
-    { 
-      'echasnovski/mini.nvim', 
+    {
+      'echasnovski/mini.nvim',
       version = '*',
       config = function()
         require('mini.icons').setup()

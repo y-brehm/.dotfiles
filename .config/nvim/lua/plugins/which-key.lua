@@ -31,7 +31,6 @@ return {
         { "<leader>rat", "<cmd>lua require('neotest').run.run(vim.fn.expand('%'))<CR>", desc = "[r]un [a]ll [t]ests" },
         { "<leader>rt", "<cmd>lua require('neotest').run.run()<CR>", desc = "[r]un [t]est" },
         { "<leader>sp", "<cmd>TroubleToggle<cr>", desc = "[s]how [p]roblems" },
-        { "<leader>td", function() require("snacks.terminal").toggle(nil, { win = { position = "bottom" } }) end, desc = "[t]erminal [d]efault" },
         { "<leader>tt", "<cmd>Neotree toggle<CR>", desc = "[t]ree [t]oggle" },
         { "<leader>tw", "<cmd>Twilight<CR>", desc = "[t]oggle t[w]ighlight" },
         { "<leader>lg", function() require("snacks.lazygit").open(opts) end, desc = "[L]azy [G]it" },
