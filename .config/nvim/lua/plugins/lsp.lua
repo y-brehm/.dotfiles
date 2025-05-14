@@ -12,8 +12,7 @@ return {
     },
     config = function()
       -- Reserve space in the gutter
-      vim.opt.signcolumn = 'yes'
-
+    vim.opt.signcolumn = 'yes'
      -- Detect OS and set appropriate Python paths
     local is_windows = vim.fn.has('win32') == 1 or vim.fn.has('win64') == 1
 
@@ -30,21 +29,23 @@ return {
     end
 
 
-      local capabilities = require("cmp_nvim_lsp").default_capabilities()
+    local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-      -- LSP servers setup
-      require("lspconfig").pylsp.setup({
-        capabilities = capabilities,
-        settings = {
-          pylsp = {
-            plugins = {
-              pycodestyle = {
-                maxLineLength = 100
-              }
+
+    -- ### LSP servers setup ###
+
+    require("lspconfig").pylsp.setup({
+      capabilities = capabilities,
+      settings = {
+        pylsp = {
+          plugins = {
+            pycodestyle = {
+              maxLineLength = 100
             }
           }
-        },
-      })
+        }
+      },
+    })
 
     require("lspconfig").basedpyright.setup({
       capabilities = capabilities,
@@ -86,34 +87,59 @@ return {
       },
     })
 
-      vim.api.nvim_create_autocmd('LspAttach', {
-        desc = 'LSP actions',
-        callback = function(event)
-          local wk = require("which-key")
+    -- C++ (clangd) setup
+    require("lspconfig").clangd.setup({
+      capabilities = capabilities,
+      cmd = {
+        "clangd",
+        "--background-index",
+        "--clang-tidy",
+        "--header-insertion=iwyu",
+        "--completion-style=detailed",
+        "--function-arg-placeholders",
+        "--fallback-style=llvm",
+      },
+      init_options = {
+        -- Use compile_commands.json from build directory if available
+        compilationDatabaseDirectory = "build",
+        index = {
+          threads = 0, -- Use all available threads
+        },
+        clangTidy = {
+          useBuildPath = true,
+        },
+      },
+    })
 
-          -- Register all keymaps using the new format
-          wk.add({
-            -- Groups
-            { "<leader>c", name = "Code" },
-            { "<leader>g", name = "Goto" },
-            { "<leader>r", name = "Refactor" },
 
-            -- Individual mappings
-            { "<leader>D", vim.lsp.buf.hover, desc = "Show Documentation" },
-            { "ca", vim.lsp.buf.code_action, desc = "Code Actions" },
-            { "gd", vim.lsp.buf.definition, desc = "Go to Definition" },
-            { "gh", "<cmd>ClangdSwitchSourceHeader<cr>", desc = "Switch Header/Source" },
-            { "gn", vim.diagnostic.goto_next, desc = "Next Diagnostic" },
-            { "gp", vim.diagnostic.goto_prev, desc = "Previous Diagnostic" },
-            { "gr", vim.lsp.buf.references, desc = "Find References" },
-            { "<leader>rn", vim.lsp.buf.rename, desc = "Rename Symbol" }
-          }, { buffer = event.buf })
+    vim.api.nvim_create_autocmd('LspAttach', {
+      desc = 'LSP actions',
+      callback = function(event)
+        local wk = require("which-key")
 
-          -- Insert mode signature help (not part of which-key)
-          vim.keymap.set("i", "<leader>h", vim.lsp.buf.signature_help, { buffer = event.buf })
-        end,
-      })
-    end,
+        -- Register all keymaps using the new format
+        wk.add({
+          -- Groups
+          { "<leader>c", name = "Code" },
+          { "<leader>g", name = "Goto" },
+          { "<leader>r", name = "Refactor" },
+
+          -- Individual mappings
+          { "<leader>D", vim.lsp.buf.hover, desc = "Show Documentation" },
+          { "ca", vim.lsp.buf.code_action, desc = "Code Actions" },
+          { "gd", vim.lsp.buf.definition, desc = "Go to Definition" },
+          { "gh", "<cmd>ClangdSwitchSourceHeader<cr>", desc = "Switch Header/Source" },
+          { "gn", vim.diagnostic.goto_next, desc = "Next Diagnostic" },
+          { "gp", vim.diagnostic.goto_prev, desc = "Previous Diagnostic" },
+          { "gr", vim.lsp.buf.references, desc = "Find References" },
+          { "<leader>rn", vim.lsp.buf.rename, desc = "Rename Symbol" }
+        }, { buffer = event.buf })
+
+        -- Insert mode signature help (not part of which-key)
+        vim.keymap.set("i", "<leader>h", vim.lsp.buf.signature_help, { buffer = event.buf })
+      end,
+    })
+  end,
   },
   {
     "williamboman/mason.nvim",
@@ -125,7 +151,10 @@ return {
         "black",
         "flake8",
         "debugpy",
-        "lua-language-server"
+        "lua-language-server",
+        "clangd",
+        "clang-format",
+        "cmake-language-server",
       },
     },
     config = function(_, opts)
