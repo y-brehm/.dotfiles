@@ -10,7 +10,7 @@ return {
       size = 10,
       open_mapping = nil, -- Crucial for custom mapping
       hide_numbers = true,
-      shade_terminals = true,
+      shade_terminals = false,
       shade_filetypes = {},
       persist_size = false,
       direction = "horizontal", -- This will be used by the default toggle action

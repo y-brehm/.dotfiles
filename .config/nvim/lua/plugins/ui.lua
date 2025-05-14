@@ -22,7 +22,7 @@ return {
         },
         transparent_background = false, -- disables setting the background color.
         show_end_of_buffer = false, -- shows the '~' characters after the end of buffers
-        term_colors = false, -- sets terminal colors (e.g. `g:terminal_color_0`)
+        term_colors = true, -- sets terminal colors (e.g. `g:terminal_color_0`)
         dim_inactive = {
             enabled = true, -- dims the background color of inactive window
             shade = "dark",
@@ -50,18 +50,35 @@ return {
                         base = "#111411",
                         mantle = "#1d211d",
                         crust = "#0b0d0b",
+                        text = "#cdd6f4",     -- Default text color from Catppuccin Mocha
+                        surface0 = "#313244", -- Another option for sidebar backgrounds
                     },
                 },
-        custom_highlights = {
-            DiffAdd = { bg = "#2a3e2a" },      -- Darker green background
-            DiffDelete = { bg = "#5f3034" },   -- Pastel red without purple undertones
-            DiffChange = { bg = "#3a3a20" },   -- Dark yellow/amber background
-            DiffText = { bg = "#5c5c30" },     -- Brighter yellow for changed text
-        },
+        custom_highlights = function(colors) -- colors is the palette for the current flavour
+          return {
+            -- Your existing custom highlights:
+            DiffAdd = { bg = "#2a3e2a" },
+            DiffDelete = { bg = "#5f3034" },
+            DiffChange = { bg = "#3a3a20" },
+            DiffText = { bg = "#5c5c30" },
+
+            -- Define EdgyNormal to use Catppuccin's 'base' color for background
+            -- and 'text' color for foreground.
+            -- EdgyNormal = { bg = colors.base, fg = colors.text },
+            EdgyToggleTermActive = { bg = colors.base, fg = colors.text }, -- Deep black bg
+
+            -- Optional: If you notice EdgyWinBar or EdgyWinBarNC also look off,
+            -- you can style them here too using the 'colors' palette.
+            -- Example:
+            -- EdgyWinBar = { bg = colors.mantle, fg = colors.subtext1 },
+            -- EdgyWinBarNC = { bg = colors.crust, fg = colors.surface2 },
+            EdgyNeoTreeActive = { bg = colors.mantle, fg = colors.text },
+          }
+        end,
         integrations = {
             cmp = true,
             gitsigns = true,
-            nvimtree = true,
+            neotree = true,
             neotest = true,
             treesitter = true,
             mason = true,
