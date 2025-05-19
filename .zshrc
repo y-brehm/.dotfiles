@@ -42,6 +42,7 @@ export LANG=en_US.UTF-8
 export CONAN_REVISIONS_ENABLED=1
 export TERM=xterm-256color
 export PATH="$HOMEBREW_PREFIX/opt/python@3.9/libexec/bin:$PATH"
+export PATH="$HOME/bin:$PATH"
 
 #llvm clang 13
 export LLVM_ROOT="$(brew --prefix llvm@13)"
