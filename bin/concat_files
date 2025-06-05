@@ -1,0 +1,70 @@
+#!/bin/bash
+
+# Check if the correct number of arguments is provided
+# We need at least: <root_directory> <output_file> <extension1>
+if [ "$#" -lt 3 ]; then
+    echo "Usage: $0 <root_directory> <output_file> <extension1> [extension2 ...]"
+    exit 1
+fi
+
+ROOT_DIR="$1"
+OUTPUT_FILE="$2"
+
+# Ensure the root directory exists
+if [ ! -d "$ROOT_DIR" ]; then
+    echo "Error: Root directory '$ROOT_DIR' not found."
+    exit 1
+fi
+
+# Shift the first two arguments (ROOT_DIR and OUTPUT_FILE)
+# so that $@ contains only the file extensions.
+shift 2
+FILE_EXTENSIONS=("$@")
+
+# This check is technically redundant if the "$#" -lt 3 check is correct,
+# as it ensures at least one extension is passed.
+# However, it's a good explicit safeguard.
+if [ "${#FILE_EXTENSIONS[@]}" -eq 0 ]; then
+    echo "Error: At least one file extension must be provided."
+    echo "Usage: $0 <root_directory> <output_file> <extension1> [extension2 ...]"
+    exit 1
+fi
+
+# Remove the output file if it already exists to start fresh
+if [ -f "$OUTPUT_FILE" ]; then
+    rm "$OUTPUT_FILE"
+fi
+
+# Construct the find command's name patterns
+# We build an array of arguments for find. Example: ( -name "*.txt" -o -name "*.log" )
+find_name_conditions=()
+first_extension=true
+for ext in "${FILE_EXTENSIONS[@]}"; do
+    if [ "$first_extension" = true ]; then
+        find_name_conditions+=(-name "*.$ext")
+        first_extension=false
+    else
+        # For subsequent extensions, use the OR operator '-o'
+        find_name_conditions+=(-o -name "*.$ext")
+    fi
+done
+
+echo "Searching in '$ROOT_DIR' for files with extensions: ${FILE_EXTENSIONS[*]}"
+echo "Output will be saved to '$OUTPUT_FILE'"
+
+# Find files and process them
+# The '-print0' and 'while IFS= read -r -d $'\0'' construct is a safe way
+# to handle filenames that might contain spaces or newlines.
+# The find command needs to group the -name conditions with parentheses if there are multiple.
+find "$ROOT_DIR" -type f \( "${find_name_conditions[@]}" \) -print0 | while IFS= read -r -d $'\0' file; do
+    # Append the filename to the output file
+    echo "File: $file" >> "$OUTPUT_FILE"
+    # Append an empty line
+    echo "" >> "$OUTPUT_FILE"
+    # Append the content of the file
+    cat "$file" >> "$OUTPUT_FILE"
+    # Append an extra newline for separation after the content, if desired
+    echo "" >> "$OUTPUT_FILE"
+done
+
+echo "Concatenation complete. Output saved to '$OUTPUT_FILE'"
