@@ -1,5 +1,4 @@
 local map = vim.keymap.set
-
 -- Basic mappings
 map("n", "<leader>tn", ":tabnew<CR>")
 map("n", "<leader>pv", vim.cmd.Ex)
@@ -31,3 +30,7 @@ vim.keymap.set('t', '<C-l>', [[<Cmd>wincmd l<CR>]], { noremap = true, silent = t
 
 -- Terminal normal mode
 vim.keymap.set('t', '<Esc><Esc>', [[<C-\><C-N>]], { noremap = true, silent = true, desc = 'Terminal: Enter Normal Mode (Dbl Esc)' })
+
+-- Launch Host Application
+local custom_actions = require("config.custom_actions")
+map("n", "<leader>ola", custom_actions.launch_host_application, { desc = "Overseer: Launch Generic Host Application" })

@@ -34,6 +34,7 @@ return {
       "builtin", -- Loads all built-in Overseer templates
       "user.conan_debug",   -- Refers to lua/overseer/template/user/conan_debug.lua
       "user.conan_release", -- Refers to lua/overseer/template/user/conan_release.lua
+      "user.launch_reaper", -- Refers to Lua/overseer/template/user/launch_reaper.lua
     },
   },
   config = function(_, opts)
@@ -48,6 +49,7 @@ return {
       { "<leader>oo", "<cmd>OverseerOpen<CR>", desc = "[O]pen Task List" },
       { "<leader>ocd", function() require("overseer").run_template({ name = "Conan Install (Debug) (User)" }) end, desc = "[C]onan Install [D]ebug" },
       { "<leader>ocr", function() require("overseer").run_template({ name = "Conan Install (Release) (User)" }) end, desc = "[C]onan Install [R]elease" },
+      { "<leader>oR", function() require("overseer").run_template({ name = "Launch Reaper (VST3 Host)" }) end, desc = "Launch [R]eaper Host" },
     }, { prefix = "<leader>" })
   end,
 }

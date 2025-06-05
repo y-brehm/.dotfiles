@@ -27,7 +27,7 @@ return {
                   "toggleterm",
                   direction = "horizontal",
                   auto_scroll = true,
-                  quit_on_exit = "success"
+                  quit_on_exit = "never"
               }
           }, -- options to pass into the `overseer.new_task` command
           on_new_task = function(task)

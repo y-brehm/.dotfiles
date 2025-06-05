@@ -37,12 +37,25 @@ return {
         filter = function(buf)
           return vim.b[buf].neo_tree_source ~= nil
         end,
-        size = { width = 35 }, -- e.g., 35 columns wide
+        size = { width = 50 }, -- e.g., 35 columns wide
         wo = {
           winhighlight = "Normal:EdgyNeoTreeActive,NormalNC:NormalNC",
         },
       },
       -- You could add other left panels here, like a symbols outline
+    },
+    -- Configure a right edge for Overseer Task List
+    right = {
+      {
+        title = "Overseer Tasks", -- A display title for this edgy view
+        ft = "OverseerList",     -- Overseer uses this filetype for its task list
+        size = { width = 70 },    -- Fixed width of 70 columns, similar to your DAP UI [cite: 133]
+                                  -- You could also use a ratio, e.g., { width = 0.25 } for 25% screen width
+        wo = {
+          -- Style for consistent theming, we'll define EdgyOverseerActive in catppuccin
+          winhighlight = "Normal:EdgyOverseerActive,NormalNC:NormalNC",
+        },
+      },
     },
 
     -- You can also configure 'right' and 'top' edges
