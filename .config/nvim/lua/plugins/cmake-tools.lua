@@ -55,6 +55,15 @@ return {
         },
       },
     },
+    cmake_debugger = {
+      name = "dap",
+      opts = {
+        setup_dap_config = function(dap_config)
+          dap_config.type = "codelldb"
+          return dap_config
+        end,
+      },
+    },
     cmake_notifications = {
       runner = { enabled = true },
       executor = { enabled = true },
