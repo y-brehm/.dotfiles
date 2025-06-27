@@ -22,8 +22,6 @@ opt.clipboard = 'unnamedplus'
 opt.signcolumn = 'yes'
 
 g.noswapfile = true
-g.loaded_netrw = true
-g.loaded_netrwPlugin = true
 
 -- Latex compiler
 g.vimtex_compiler_latexmk = {

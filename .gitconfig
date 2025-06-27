@@ -7,20 +7,24 @@
 	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
     d = difftool
     m = mergetool
+
+[core]
+    editor = nvim
+
 [diff]
-    tool = nvim
-[difftool "nvim"]
-    cmd = nvim -d \"$LOCAL\" \"$REMOTE\" -c \"wincmd l\"
+    tool = nvimdiff
 [difftool]
     prompt = false
 [merge]
-    tool = nvim
-[mergetool "nvim"]
-    cmd = nvim -d \"$LOCAL\" \"$MERGED\" \"$REMOTE\" -c \"wincmd l\"
+    tool = nvimdiff
 [mergetool]
     keepBackup = false
-[core]
-	editor = nvim
+
+[difftool "nvimdiff"]
+    cmd = nvim -c "DiffviewOpen $LOCAL...$REMOTE"
+[mergetool "nvimdiff"]
+    cmd = nvim -c "DiffviewOpen"
+
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f

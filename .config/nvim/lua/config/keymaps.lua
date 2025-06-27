@@ -34,3 +34,28 @@ vim.keymap.set('t', '<Esc><Esc>', [[<C-\><C-N>]], { noremap = true, silent = tru
 -- Launch Host Application
 local custom_actions = require("config.custom_actions")
 map("n", "<leader>ola", custom_actions.launch_host_application, { desc = "Overseer: Launch Generic Host Application" })
+
+local function prompt_and_diff_dirs()
+  vim.ui.input({ prompt = "Diff Directory 1:", completion = "dir" }, function(dir1)
+    if not dir1 or dir1 == "" then
+      vim.notify("Diff cancelled.", vim.log.levels.WARN)
+      return
+    end
+
+    vim.ui.input({ prompt = "Diff Directory 2:", completion = "dir" }, function(dir2)
+      if not dir2 or dir2 == "" then
+        vim.notify("Diff cancelled.", vim.log.levels.WARN)
+        return
+      end
+
+      -- THIS IS THE CORRECTED PART:
+      -- Defer the command execution to escape the protected UI context
+      vim.schedule(function()
+        local cmd = "DiffTool " .. vim.fn.fnameescape(dir1) .. " " .. vim.fn.fnameescape(dir2)
+        vim.cmd(cmd)
+      end)
+    end)
+  end)
+end
+
+map("n", "<leader>dD", prompt_and_diff_dirs, { silent = true, desc = "[D]iff [D]irectories" })
