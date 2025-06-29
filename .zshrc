@@ -45,8 +45,8 @@ export PATH="$HOMEBREW_PREFIX/opt/python@3.9/libexec/bin:$PATH"
 export PATH="$HOME/bin:$PATH"
 
 #llvm clang 13
-export LLVM_ROOT="$(brew --prefix llvm@13)"
-export LDFLAGS="-L${LLVM_ROOT}/lib -L${LLVM_ROOT}/lib/c++ -Wl,-rpath,${LLVM_ROOT}/lib/c++"
+# export LLVM_ROOT="$(brew --prefix llvm@13)"
+# export LDFLAGS="-L${LLVM_ROOT}/lib -L${LLVM_ROOT}/lib/c++ -Wl,-rpath,${LLVM_ROOT}/lib/c++"
 
 # carapace
 export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense' # optional
@@ -55,6 +55,8 @@ source <(carapace _carapace)
 zstyle ':completion:*:git:*' group-order 'main commands' 'alias commands' 'external commands'
 
 # Aliases
+
+alias ls="lsd"
 alias vim="nvim"
 alias git_rinse="git clean -xfd
                  git submodule foreach --recursive git clean -xfd
@@ -177,3 +179,6 @@ disable-pip-devpi() { pip_manage_urls remove "http://localhost:3141/testuser/dev
 if [[ -f ~/.zshrc.local ]]; then
     source ~/.zshrc.local
 fi
+
+# Generated for envman. Do not edit.
+[ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
