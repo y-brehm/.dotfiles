@@ -15,8 +15,8 @@ return {
       return "build/${variant:buildType}"
     end,
     cmake_generate_compile_commands = true,
-    cmake_configure_on_edit = true,
-    cmake_configure_on_variant_change = true,
+    cmake_configure_on_edit = false,
+    cmake_configure_on_variant_change = false,
     cmake_executor = { -- executor to use
       name = "overseer", -- name of the executor
       opts = {}, -- the options the executor will get, possible values depend on the executor type. See `default_opts` for possible values.
