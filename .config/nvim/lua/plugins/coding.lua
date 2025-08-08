@@ -76,6 +76,23 @@ return {
           null_ls.builtins.formatting.black.with({
             extra_args = {"--line-length", "100"}
           }),
+          null_ls.builtins.formatting.clang_format.with({
+            extra_args = function()
+              local cwd = vim.fn.getcwd()
+              local project_clang_format = cwd .. "/.clang-format"
+              local nvim_clang_format = vim.fn.stdpath("config") .. "/clang-format/.clang-format"
+              if vim.fn.filereadable(project_clang_format) == 1 then
+                vim.notify("Using project .clang-format: " .. project_clang_format, vim.log.levels.INFO)
+                return { "--style=file:" .. project_clang_format }
+              elseif vim.fn.filereadable(nvim_clang_format) == 1 then
+                vim.notify("Using nvim config .clang-format: " .. nvim_clang_format, vim.log.levels.INFO)
+                return { "--style=file:" .. nvim_clang_format }
+              else
+                vim.notify("No .clang-format found, using Google style fallback", vim.log.levels.WARN)
+                return { "--style=Google" }
+              end
+            end,
+          }),
         },
       })
 
