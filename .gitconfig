@@ -21,9 +21,10 @@
     keepBackup = false
 
 [difftool "nvimdiff"]
-    cmd = nvim -c "DiffviewOpen $LOCAL...$REMOTE"
+    cmd = nvim -d "$LOCAL" "$REMOTE"
+
 [mergetool "nvimdiff"]
-    cmd = nvim -c "DiffviewOpen"
+    cmd = nvim -d "$LOCAL" "$MERGED" "$REMOTE"
 
 [filter "lfs"]
 	clean = git-lfs clean -- %f

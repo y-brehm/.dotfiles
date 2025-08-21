@@ -59,3 +59,9 @@ local function prompt_and_diff_dirs()
 end
 
 map("n", "<leader>dD", prompt_and_diff_dirs, { silent = true, desc = "[D]iff [D]irectories" })
+
+-- Merge conflict resolution mappings
+map("n", "<leader>mo", ":diffget LOCAL<CR>", { desc = "[M]erge get [O]urs (LOCAL)" })
+map("n", "<leader>mt", ":diffget REMOTE<CR>", { desc = "[M]erge get [T]heirs (REMOTE)" })
+map("n", "<leader>mO", ":%diffget LOCAL<CR>", { desc = "[M]erge get ALL [O]urs (LOCAL)" })
+map("n", "<leader>mT", ":%diffget REMOTE<CR>", { desc = "[M]erge get ALL [T]heirs (REMOTE)" })
