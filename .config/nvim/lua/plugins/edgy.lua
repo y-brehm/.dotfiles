@@ -35,7 +35,7 @@ return {
       {
         title = "Overseer Tasks",
         ft = "OverseerList",
-        size = { width = 70 },
+        size = { width = 50 },
         wo = {
           winhighlight = "Normal:EdgyOverseerActive,NormalNC:NormalNC",
         },
@@ -54,19 +54,27 @@ return {
 
     local edgy_group = vim.api.nvim_create_augroup("MyEdgyKeymaps", { clear = true })
 
-    vim.api.nvim_create_autocmd("WinEnter", {
-      group = edgy_group,
-      pattern = "*",
-      desc = "Set buffer-local keymaps for edgy windows",
-      callback = function()
-          local win = edgy.get_win()
-          local map = vim.keymap.set
-          map('n', '<leader>s>', function() win:resize("width", 5) end, { desc = "Edgy: Increase Width", buffer = true })
-          map('n', '<leader>s<', function() win:resize("width", -5) end, { desc = "Edgy: Decrease Width", buffer = true })
-          map('n', '<leader>s+', function() win:resize("height", 5) end, { desc = "Edgy: Increase Height", buffer = true })
-          map('n', '<leader>s-', function() win:resize("height", -5) end, { desc = "Edgy: Decrease Height", buffer = true })
-          map('n', '<leader>s=', function() win.view.edgebar:equalize() end, { desc = "Edgy: Equalize Sizes", buffer = true })
-      end,
-    })
+    -- Set global keymaps that work from any window
+    local map = vim.keymap.set
+    map('n', '<leader>s>', function() 
+      local win = edgy.get_win()
+      if win then win:resize("width", 15) end
+    end, { desc = "Edgy: Increase Width" })
+    map('n', '<leader>s<', function() 
+      local win = edgy.get_win()
+      if win then win:resize("width", -15) end
+    end, { desc = "Edgy: Decrease Width" })
+    map('n', '<leader>s+', function() 
+      local win = edgy.get_win()
+      if win then win:resize("height", 15) end
+    end, { desc = "Edgy: Increase Height" })
+    map('n', '<leader>s-', function() 
+      local win = edgy.get_win()
+      if win then win:resize("height", -15) end
+    end, { desc = "Edgy: Decrease Height" })
+    map('n', '<leader>s=', function() 
+      local win = edgy.get_win()
+      if win then win.view.edgebar:equalize() end
+    end, { desc = "Edgy: Equalize Sizes" })
   end,
 }
