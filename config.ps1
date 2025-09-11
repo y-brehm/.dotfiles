@@ -27,6 +27,8 @@ if (-not (Test-Path $sparseCheckoutDir)) {
 !install_fonts.sh
 !.zshrc
 !.p10k.zsh
+!install_prerequisites.sh
+!full_install.sh
 !.config/kitty/
 "@ | Out-File -FilePath $sparseCheckoutPath -Encoding utf8
 

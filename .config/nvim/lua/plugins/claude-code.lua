@@ -5,9 +5,9 @@ return {
 
   keys = {
     {
-      "<leader>ac",
+      "<leader>cc",
       "<cmd>ClaudeCode<CR>",
-      desc = "[A]I [C]laude Toggle",
+      desc = "[C]laude [C]ode Toggle",
     },
     {
       "<C-,>",

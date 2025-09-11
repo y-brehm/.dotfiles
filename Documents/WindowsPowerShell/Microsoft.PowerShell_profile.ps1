@@ -7,4 +7,16 @@ function config {
 
 function venv { & .\.venv\Scripts\activate.ps1 }
 
+Remove-Item Alias:ls -Force -ErrorAction SilentlyContinue
+New-Alias -Name ls -Value lsd -Force
+New-Alias -Name ll -Value lsd -Force
+function lsal {
+    lsd --long --all
+}
+Set-Alias -Name "ls-al" -Value lsal
+
+Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
+Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
+Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
+
 Import-Module posh-git
