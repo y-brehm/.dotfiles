@@ -28,6 +28,39 @@ g.vimtex_compiler_latexmk = {
   engine = '-xelatex'
 }
 
+-- Terminal cleanup settings
+-- Restore cursor shape on exit and ensure terminal state is properly reset
+opt.guicursor = "n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50"
+
+-- Clear terminal on exit to prevent UI artifacts
+vim.api.nvim_create_autocmd("VimLeave", {
+    pattern = "*",
+    callback = function()
+        -- Reset terminal state with escape sequences
+        -- Clear screen and reset cursor position
+        io.write("\027[2J")  -- Clear entire screen
+        io.write("\027[H")   -- Move cursor to home position
+        io.write("\027[?25h") -- Show cursor
+        io.write("\027[0m")  -- Reset all attributes
+        io.flush()
+
+        -- Give terminal a moment to process escape sequences
+        vim.loop.sleep(10)
+    end,
+})
+
+-- Additional cleanup for terminal buffers specifically
+vim.api.nvim_create_autocmd("TermClose", {
+    pattern = "*",
+    callback = function()
+        -- Ensure terminal is properly cleaned up when closed
+        vim.schedule(function()
+            io.write("\027[2J\027[H\027[?25h")
+            io.flush()
+        end)
+    end,
+})
+
 -- In options.lua
 if vim.fn.has('win32') == 1 then
     -- Use PowerShell as the default shell on Windows
