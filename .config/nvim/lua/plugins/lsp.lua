@@ -31,40 +31,141 @@ return {
 
     local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
+    -- Add folding range capability for ufo
+    capabilities.textDocument.foldingRange = {
+      dynamicRegistration = false,
+      lineFoldingOnly = true
+    }
+
 
     -- ### LSP servers setup ###
 
-    require("lspconfig").pylsp.setup({
-      capabilities = capabilities,
-      settings = {
-        pylsp = {
-          plugins = {
-            pycodestyle = {
-              maxLineLength = 100
-            }
-          }
-        }
-      },
-    })
-
+    -- Removed pylsp as Basedpyright + Ruff provide all needed functionality
     require("lspconfig").basedpyright.setup({
       capabilities = capabilities,
       settings = {
         basedpyright = {
-          -- Control diagnostic levels - options are "error", "warning", "information", or "none"
+          -- Use basic type checking to reduce third-party library warnings
+          typeCheckingMode = "basic", -- Use basic mode to reduce noise from libraries
+          
+          -- Fine-tune diagnostic levels for practical development
           diagnosticSeverityOverrides = {
-            reportGeneralTypeIssues = "warning",       -- Type checking errors
-            reportPropertyTypeMismatch = "warning",    -- Property type mismatch
-            reportMissingTypeStubs = "information",    -- Missing type stubs
-            reportUnknownMemberType = "information",   -- Unknown member types
-            reportMissingTypeArgument = "warning",     -- Missing type arguments
-            reportUntypedFunctionDecorator = "none",   -- Disable diagnostics for untyped decorators
-            reportMissingParameterType = "none",       -- Disable diagnostics for missing parameter types
-            reportMissingTypeAnnotation = "none",      -- Disable diagnostics for missing type annotations
+            reportGeneralTypeIssues = "warning",           -- Type checking errors
+            reportPropertyTypeMismatch = "warning",        -- Property type mismatch
+            reportFunctionMemberAccess = "warning",        -- Incorrect function member access
+            reportMissingImports = "error",                -- Missing imports
+            reportUndefinedVariable = "error",             -- Undefined variables
+            reportAssignmentType = "warning",              -- Assignment type issues
+            reportArgumentType = "warning",                -- Argument type mismatches
+            reportReturnType = "warning",                  -- Return type issues
+            reportMissingTypeStubs = "none",               -- Missing type stubs (disabled for 3rd party libs)
+            reportUnknownMemberType = "none",              -- Unknown types in libraries (disabled)
+            reportUnknownArgumentType = "none",            -- Unknown argument types (disabled)
+            reportUnknownLambdaType = "none",              -- Unknown lambda types (disabled)
+            reportUnknownVariableType = "none",            -- Unknown variable types (disabled)
+            reportUnknownParameterType = "none",           -- Unknown parameter types (disabled)
+            reportMissingTypeArgument = "warning",         -- Missing generics
+            reportUnnecessaryIsInstance = "none",          -- Disable - handled by Ruff
+            reportUnnecessaryCast = "none",                -- Disable - handled by Ruff
+            reportUnnecessaryComparison = "warning",       -- Keep - not well covered by Ruff
+            reportConstantRedefinition = "error",          -- Redefining constants
+            reportIncompatibleMethodOverride = "error",    -- Incorrect method overrides
+            reportIncompatibleVariableOverride = "error",  -- Incorrect variable overrides
+            reportOverlappingOverload = "warning",         -- Overlapping overloads
+            reportUninitializedInstanceVariable = "warning", -- Uninitialized instance vars
+            reportCallInDefaultInitializer = "warning",    -- Calls in default initializers
+            reportUnnecessaryTypeIgnoreComment = "warning", -- Unnecessary # type: ignore
+            reportMatchNotExhaustive = "warning",          -- Non-exhaustive match statements
+            reportShadowedImports = "warning",             -- Shadowed imports
+            reportPrivateUsage = "warning",                -- Using private members
+            -- Relaxed settings for convenience
+            reportMissingParameterType = "none",           -- Allow untyped parameters in simple functions
+            reportMissingTypeAnnotation = "none",          -- Allow missing annotations in simple cases
+            reportUnusedImport = "none",                   -- Disable - handled by Ruff
+            reportUnusedClass = "none",                    -- Disable - handled by Ruff
+            reportUnusedFunction = "none",                 -- Disable - handled by Ruff
+            reportUnusedVariable = "none",                 -- Disable - handled by Ruff
+            reportUnusedParameter = "none",                -- Disable - handled by Ruff ARG002
+            reportDuplicateImport = "none",                -- Disable - handled by Ruff
           },
 
-          -- Enable/disable type checking features
-          typeCheckingMode = "basic", -- Options: "off", "basic", "standard", "strict"
+          -- Enable additional analysis features
+          analysis = {
+            autoSearchPaths = true,
+            autoImportCompletions = true,
+            useLibraryCodeForTypes = true,
+            diagnosticMode = "workspace",  -- Check entire workspace
+          },
+        },
+        python = {
+          analysis = {
+            typeCheckingMode = "basic",
+          }
+        }
+      }
+    })
+
+    -- Ruff LSP setup for formatting and linting (using built-in LSP server)
+    -- NOTE: Ruff automatically detects and uses project-specific configuration from:
+    -- 1. ruff.toml in project root
+    -- 2. .ruff.toml in project root  
+    -- 3. pyproject.toml with [tool.ruff] section
+    -- The settings below serve as fallbacks when no project config exists
+    require("lspconfig").ruff.setup({
+      capabilities = capabilities,
+      cmd = { "ruff", "server", "--preview" },  -- Use the built-in LSP server with preview features
+      init_options = {
+        settings = {
+          -- These settings are used as FALLBACKS when no project config exists
+          -- Project-specific ruff.toml or pyproject.toml takes precedence
+          -- Configuration search behavior
+          configuration = nil,  -- Let Ruff auto-detect config files
+          configurationPreference = "filesystemFirst", -- Prefer project config over LSP settings
+          -- Workspace settings (only applied if no project config found)
+          lineLength = 120,  -- Fallback line length
+          -- Linting fallbacks - comprehensive rules for projects without config
+          lint = {
+            enable = true,
+            -- Default rule selection for projects without ruff.toml
+            select = {
+              "F",     -- Pyflakes (errors and warnings)
+              "E",     -- pycodestyle errors
+              "W",     -- pycodestyle warnings
+              -- "I",  -- isort (import sorting) - removed as requested
+              "N",     -- pep8-naming
+              "UP",    -- pyupgrade (Python version upgrade suggestions)
+              "B",     -- flake8-bugbear
+              "A",     -- flake8-builtins
+              "C4",    -- flake8-comprehensions
+              "T10",   -- flake8-debugger
+              "ISC",   -- flake8-implicit-str-concat
+              "ICN",   -- flake8-import-conventions
+              "PIE",   -- flake8-pie
+              "PT",    -- flake8-pytest-style
+              "RET",   -- flake8-return
+              "SIM",   -- flake8-simplify
+              "ARG",   -- flake8-unused-arguments
+              "PTH",   -- flake8-use-pathlib
+              -- "PL", -- Pylint (basic checks) - removed as it includes too many methods/variables rules
+              "PERF",  -- Performance linting
+              "RUF",   -- Ruff-specific rules
+            },
+            -- Default ignores for projects without config
+            ignore = {
+              "E501",   -- Line too long (handled by formatter)
+              "PLR0913", -- Too many arguments
+              "PLR2004", -- Magic value comparison
+            },
+          },
+          -- Format fallbacks
+          format = {
+            -- Only used if project has no format config
+            quoteStyle = "double",
+            indentStyle = "space",
+          },
+          -- Allow Ruff to auto-fix issues
+          fixable = { "ALL" },
+          organizeImports = true,
         }
       }
     })
@@ -137,6 +238,40 @@ return {
 
         -- Insert mode signature help (not part of which-key)
         vim.keymap.set("i", "<leader>h", vim.lsp.buf.signature_help, { buffer = event.buf })
+        
+        -- Custom format function that calls Ruff directly for Python files
+        local function format_buffer()
+          local filetype = vim.bo.filetype
+          
+          if filetype == "python" then
+            -- Save current cursor position
+            local cursor_pos = vim.api.nvim_win_get_cursor(0)
+            
+            -- Run ruff format with import sorting on the current file
+            local filepath = vim.fn.expand("%:p")
+            vim.cmd("silent! write")  -- Save file first
+            
+            -- Run ruff check --fix to organize imports and fix issues
+            vim.fn.system({"ruff", "check", "--fix", "--select", "I", filepath})
+            
+            -- Run ruff format to format the code
+            vim.fn.system({"ruff", "format", filepath})
+            
+            -- Reload the buffer to show changes
+            vim.cmd("edit!")
+            
+            -- Restore cursor position
+            vim.api.nvim_win_set_cursor(0, cursor_pos)
+            
+            vim.notify("Formatted with Ruff", vim.log.levels.INFO)
+          else
+            -- For non-Python files, use standard LSP formatting
+            vim.lsp.buf.format({ async = false })
+          end
+        end
+        
+        -- Override the format keybinding for this buffer
+        vim.keymap.set("n", "<leader>lfb", format_buffer, { buffer = event.buf, desc = "[l]sp [f]ormat [b]uffer" })
       end,
     })
   end,
@@ -144,29 +279,48 @@ return {
   {
     "williamboman/mason.nvim",
     cmd = "Mason",
+    build = ":MasonUpdate", -- Update Mason registry
     opts = {
       ensure_installed = {
-        "python-lsp-server",
         "basedpyright",
-        "black",
-        "flake8",
+        "ruff",
         "debugpy",
         "lua-language-server",
         "clangd",
         "clang-format",
         "cmake-language-server",
         "codelldb",
+        "ty",
       },
+      -- Configure Python path for Mason on Windows
+      PATH = "prepend",
     },
     config = function(_, opts)
-      require("mason").setup(opts)
-      local mr = require("mason-registry")
-      for _, tool in ipairs(opts.ensure_installed) do
-        local p = mr.get_package(tool)
-        if p and not p:is_installed() then
-          p:install()
+      -- Set up Python for Mason on Windows
+      local is_windows = vim.fn.has('win32') == 1 or vim.fn.has('win64') == 1
+      if is_windows then
+        local home = vim.fn.expand('$USERPROFILE')
+        local venv_python = home .. '\\.virtualenvs\\neovim\\Scripts\\python.exe'
+        
+        -- Check if virtualenv Python exists, otherwise use system Python
+        if vim.fn.filereadable(venv_python) == 1 then
+          vim.env.VIRTUAL_ENV = home .. '\\.virtualenvs\\neovim'
+          vim.env.PATH = home .. '\\.virtualenvs\\neovim\\Scripts;' .. vim.env.PATH
         end
       end
+      
+      require("mason").setup(opts)
+      local mr = require("mason-registry")
+      
+      -- Refresh registry before installing
+      mr.refresh(function()
+        for _, tool in ipairs(opts.ensure_installed) do
+          local p = mr.get_package(tool)
+          if p and not p:is_installed() then
+            p:install()
+          end
+        end
+      end)
     end,
   },
   {

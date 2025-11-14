@@ -73,9 +73,7 @@ return {
 
       null_ls.setup({
         sources = {
-          null_ls.builtins.formatting.black.with({
-            extra_args = {"--line-length", "100"}
-          }),
+          -- Ruff is handled by its LSP server instead
           null_ls.builtins.formatting.clang_format.with({
             extra_args = function()
               local cwd = vim.fn.getcwd()
@@ -96,12 +94,7 @@ return {
         },
       })
 
-      local wk = require("which-key")
-
-    wk.add({
-      { "<leader>l", name = "LSP" },
-      { "<leader>lf", vim.lsp.buf.format, desc = "Format Buffer" }
-    })
+      -- Format keybinding moved to lsp.lua to handle Ruff import sorting
     end,
   },
 }
