@@ -17,6 +17,16 @@ return {
       close_on_exit = true,
       shell = vim.o.shell,
       open_in_new_tab = false,
+      -- Auto-close terminal when process exits
+      auto_scroll = true,
+      -- Ensure terminal is cleaned up on close
+      on_close = function(term)
+        -- Send clear screen sequence when terminal closes
+        vim.schedule(function()
+          io.write("\027[2J\027[H")
+          io.flush()
+        end)
+      end,
     })
 
     vim.api.nvim_create_user_command('ToggleTermDefault', function()
