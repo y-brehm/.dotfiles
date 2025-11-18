@@ -1,20 +1,17 @@
 return {
   "stevearc/overseer.nvim",
   event = "VeryLazy",
-  opts = { -- All options for overseer.setup() go in here
-    strategy = {
-      "toggleterm",
-      opts = {      -- Options specifically for the toggleterm strategy
-        direction = "horizontal", -- Crucial: tells toggleterm to open as a horizontal split (non-floating)
-        close_on_exit = false,
-        auto_scroll = true,
-        hidden = false,          -- If true, terminal starts hidden until TaskAction
-        open_on_start = true,    -- If true, automatically opens the terminal when a task starts
-        shading_factor = nil,    -- Let Catppuccin/Edgy handle shading via highlights
+  opts = {
+    component_aliases = {
+      default = {
+        "on_exit_set_status",
+        "on_complete_notify",
+        { "on_complete_dispose", require_view = { "SUCCESS", "FAILURE" } },
+        { "open_output", on_start = "always" },
       },
     },
     task_list = {
-      direction = "bottom",
+      direction = "right",  -- Task list on right side with Edgy
       min_height = 25,
       max_height = 25,
       default_detail = 1, -- 1 = output, 2 = detail
@@ -38,7 +35,30 @@ return {
     },
   },
   config = function(_, opts)
-    require("overseer").setup(opts) -- 'opts' now correctly includes your strategy
+    require("overseer").setup(opts)
+
+    -- Set filetype for Overseer terminal buffers so Edgy can catch them
+    -- Add task name patterns here when adding new Overseer templates
+    local overseer_patterns = { "conan", "reaper" }
+
+    vim.api.nvim_create_autocmd("TermOpen", {
+      pattern = "term://*",
+      callback = function()
+        local bufname = vim.api.nvim_buf_get_name(0)
+        -- Check if this terminal matches any Overseer task pattern
+        for _, pattern in ipairs(overseer_patterns) do
+          if bufname:match(pattern) then
+            vim.bo.filetype = "terminal"
+            -- Prevent entering terminal-insert mode (which causes weird closing behavior)
+            vim.keymap.set('n', 'i', '<nop>', { buffer = true, silent = true })
+            vim.keymap.set('n', 'a', '<nop>', { buffer = true, silent = true })
+            vim.keymap.set('n', 'I', '<nop>', { buffer = true, silent = true })
+            vim.keymap.set('n', 'A', '<nop>', { buffer = true, silent = true })
+            break
+          end
+        end
+      end,
+    })
 
     local wk = require("which-key")
     wk.add({

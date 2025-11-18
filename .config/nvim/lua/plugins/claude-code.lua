@@ -69,9 +69,10 @@ return {
     -- Diff Integration
     diff_opts = {
       auto_close_on_accept = true,
+      auto_close_on_deny = true,
       vertical_split = true,
-      open_in_current_tab = true,
-      keep_terminal_focus = false,
+      open_in_current_tab = false, -- Open in new tab to avoid buffer stacking
+      keep_terminal_focus = false, -- Auto-switch focus to diff view
     },
   },
 

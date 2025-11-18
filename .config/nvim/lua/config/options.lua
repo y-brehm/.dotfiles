@@ -49,17 +49,8 @@ vim.api.nvim_create_autocmd("VimLeave", {
     end,
 })
 
--- Additional cleanup for terminal buffers specifically
-vim.api.nvim_create_autocmd("TermClose", {
-    pattern = "*",
-    callback = function()
-        -- Ensure terminal is properly cleaned up when closed
-        vim.schedule(function()
-            io.write("\027[2J\027[H\027[?25h")
-            io.flush()
-        end)
-    end,
-})
+-- Note: TermClose cleanup removed as it interferes with plugin terminal buffers
+-- (Overseer, ToggleTerm, etc.). VimLeave cleanup above is sufficient.
 
 -- In options.lua
 if vim.fn.has('win32') == 1 then

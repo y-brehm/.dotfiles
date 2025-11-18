@@ -37,11 +37,10 @@ return {
       lineFoldingOnly = true
     }
 
-
-    -- ### LSP servers setup ###
+    -- ### LSP servers setup using new vim.lsp.config() API (Neovim 0.11+) ###
 
     -- Removed pylsp as Basedpyright + Ruff provide all needed functionality
-    require("lspconfig").basedpyright.setup({
+    vim.lsp.config('basedpyright', {
       capabilities = capabilities,
       settings = {
         basedpyright = {
@@ -104,14 +103,15 @@ return {
         }
       }
     })
+    vim.lsp.enable('basedpyright')
 
     -- Ruff LSP setup for formatting and linting (using built-in LSP server)
     -- NOTE: Ruff automatically detects and uses project-specific configuration from:
     -- 1. ruff.toml in project root
-    -- 2. .ruff.toml in project root  
+    -- 2. .ruff.toml in project root
     -- 3. pyproject.toml with [tool.ruff] section
     -- The settings below serve as fallbacks when no project config exists
-    require("lspconfig").ruff.setup({
+    vim.lsp.config('ruff', {
       capabilities = capabilities,
       cmd = { "ruff", "server", "--preview" },  -- Use the built-in LSP server with preview features
       init_options = {
@@ -169,8 +169,9 @@ return {
         }
       }
     })
+    vim.lsp.enable('ruff')
 
-    require("lspconfig").lua_ls.setup({
+    vim.lsp.config('lua_ls', {
       capabilities = capabilities,
       settings = {
         Lua = {
@@ -187,9 +188,10 @@ return {
         },
       },
     })
+    vim.lsp.enable('lua_ls')
 
     -- C++ (clangd) setup
-    require("lspconfig").clangd.setup({
+    vim.lsp.config('clangd', {
       capabilities = capabilities,
       cmd = {
         "clangd",
@@ -211,7 +213,7 @@ return {
         },
       },
     })
-
+    vim.lsp.enable('clangd')
 
     vim.api.nvim_create_autocmd('LspAttach', {
       desc = 'LSP actions',

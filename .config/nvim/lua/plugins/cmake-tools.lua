@@ -4,7 +4,6 @@ return {
   dependencies = {
     "nvim-lua/plenary.nvim",
     "stevearc/overseer.nvim",
-    "akinsho/toggleterm.nvim",
   },
   opts = {
     cmake_build_directory = "build",
@@ -13,41 +12,17 @@ return {
     cmake_configure_on_edit = false,
     cmake_configure_on_variant_change = false,
     cmake_executor = { -- executor to use
-      name = "overseer", -- name of the executor
-      opts = {}, -- the options the executor will get, possible values depend on the executor type. See `default_opts` for possible values.
-      default_opts = { -- a list of default and possible values for executors
-        overseer = {
-          new_task_opts = {
-              strategy = {
-                  "toggleterm",
-                  direction = "horizontal",
-                  auto_scroll = true,
-                  quit_on_exit = "never"
-              }
-          }, -- options to pass into the `overseer.new_task` command
-          on_new_task = function(task)
-              require("overseer").open(
-                  { enter = false, direction = "right" }
-              )
-          end,   -- a function that gets overseer.Task when it is created, before calling `task:start`
-        },
+      name = "terminal", -- Use built-in terminal executor
+      opts = {
+        direction = "horizontal",
+        focus = false,
       },
     },
     cmake_runner = { -- runner to use
-      name = "overseer", -- name of the runner
-      default_opts = { -- a list of default and possible values for runners
-        overseer = {
-          new_task_opts = {
-              strategy = {
-                  "toggleterm",
-                  direction = "horizontal",
-                  autos_croll = true,
-                  quit_on_exit = "success"
-              }
-          }, -- options to pass into the `overseer.new_task` command
-          on_new_task = function(task)
-          end,   -- a function that gets overseer.Task when it is created, before calling `task:start`
-        },
+      name = "terminal", -- Use built-in terminal executor
+      opts = {
+        direction = "horizontal",
+        focus = false,
       },
     },
     cmake_debugger = {

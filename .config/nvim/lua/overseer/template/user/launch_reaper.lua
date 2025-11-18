@@ -61,7 +61,7 @@ return {
       cmd = { reaper_cmd_path },
       args = {}, -- Add arguments if Reaper needs them for your workflow (e.g., loading a specific project)
       cwd = vim.fn.getcwd(), -- Or specific directory if needed
-      -- This will use your default Overseer strategy, which is 'toggleterm'.
+      -- This will use your default Overseer strategy, which is 'terminal' (native).
       -- The 'default' component handles standard output processing.
       components = { "default" },
       metadata = {

@@ -17,6 +17,13 @@ return {
           winhighlight = "Normal:EdgyToggleTermActive,NormalNC:NormalNC",
         },
       },
+      {
+        ft = "cmake_tools_terminal",
+        size = { height = 0.3 },
+        wo = {
+          winhighlight = "Normal:EdgyToggleTermActive,NormalNC:NormalNC",
+        },
+      },
     },
     left = {
       {
@@ -36,6 +43,18 @@ return {
         title = "Overseer Tasks",
         ft = "OverseerList",
         size = { width = 50 },
+        wo = {
+          winhighlight = "Normal:EdgyOverseerActive,NormalNC:NormalNC",
+        },
+      },
+      {
+        title = "Overseer Output",
+        ft = "terminal",
+        size = { width = 50 },
+        filter = function(buf, win)
+          -- Only accept terminal buffers that are NOT toggleterm
+          return vim.bo[buf].buftype == "terminal" and vim.bo[buf].filetype ~= "toggleterm"
+        end,
         wo = {
           winhighlight = "Normal:EdgyOverseerActive,NormalNC:NormalNC",
         },
