@@ -273,13 +273,6 @@ return {
       }
     },
     {
-      'echasnovski/mini.nvim',
-      version = '*',
-      config = function()
-        require('mini.icons').setup()
-      end
-    },
-    {
       'lewis6991/gitsigns.nvim',
       opts = {
         signs = {

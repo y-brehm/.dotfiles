@@ -56,21 +56,14 @@ return {
     vim.keymap.set("n", "zr", require("ufo").openFoldsExceptKinds, { desc = "Open folds except kinds" })
     vim.keymap.set("n", "zm", require("ufo").closeFoldsWith, { desc = "Close folds with level" })
 
-    -- German keyboard-friendly fold keybindings
-    vim.keymap.set("n", "<leader>fo", "zo", { desc = "Open fold under cursor" })
-    vim.keymap.set("n", "<leader>fc", "zc", { desc = "Close fold under cursor" })
-    vim.keymap.set("n", "<leader>ft", "za", { desc = "Toggle fold under cursor" })
-    vim.keymap.set("n", "<leader>fO", require("ufo").openAllFolds, { desc = "Open all folds" })
-    vim.keymap.set("n", "<leader>fC", require("ufo").closeAllFolds, { desc = "Close all folds" })
-
-    -- Navigation with easier keys
-    vim.keymap.set("n", "<leader>fn", "zj", { desc = "Next fold" })
-    vim.keymap.set("n", "<leader>fp", "zk", { desc = "Previous fold" })
+    -- UFO-specific advanced features
+    vim.keymap.set("n", "<leader>uO", require("ufo").openAllFolds, { desc = "Open all folds" })
+    vim.keymap.set("n", "<leader>uC", require("ufo").closeAllFolds, { desc = "Close all folds" })
 
     -- Fold levels (easier than zr/zm)
-    vim.keymap.set("n", "<leader>f1", function() require("ufo").closeFoldsWith(1) end, { desc = "Fold level 1" })
-    vim.keymap.set("n", "<leader>f2", function() require("ufo").closeFoldsWith(2) end, { desc = "Fold level 2" })
-    vim.keymap.set("n", "<leader>f3", function() require("ufo").closeFoldsWith(3) end, { desc = "Fold level 3" })
+    vim.keymap.set("n", "<leader>u1", function() require("ufo").closeFoldsWith(1) end, { desc = "Fold level 1" })
+    vim.keymap.set("n", "<leader>u2", function() require("ufo").closeFoldsWith(2) end, { desc = "Fold level 2" })
+    vim.keymap.set("n", "<leader>u3", function() require("ufo").closeFoldsWith(3) end, { desc = "Fold level 3" })
 
     -- Enhanced K keymap for hover and fold preview
     vim.keymap.set("n", "K", function()
@@ -81,7 +74,7 @@ return {
     end, { desc = "Hover or peek fold" })
 
     -- Fold preview with leader key alternative
-    vim.keymap.set("n", "<leader>fk", function()
+    vim.keymap.set("n", "<leader>up", function()
       require("ufo").peekFoldedLinesUnderCursor()
     end, { desc = "Peek fold under cursor" })
   end,
