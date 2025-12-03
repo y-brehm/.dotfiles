@@ -6,6 +6,8 @@ return {
   cmd = "ToggleTermDefault",
   config = function()
     local toggleterm_main_module = require("toggleterm") -- Require the main module
+    local venv_utils = require("config.venv_utils")
+
     toggleterm_main_module.setup({
       size = 10,
       open_mapping = nil, -- Crucial for custom mapping
@@ -20,6 +22,15 @@ return {
       -- Auto-close terminal when process exits
       auto_scroll = true,
       -- on_close removed - was interfering with terminal display
+      -- Auto-activate project venv when terminal opens
+      on_open = function(term)
+        local activate_cmd = venv_utils.find_project_venv_activation()
+        if activate_cmd then
+          vim.defer_fn(function()
+            vim.api.nvim_chan_send(term.job_id, activate_cmd .. "\r")
+          end, 100)
+        end
+      end,
     })
 
     vim.api.nvim_create_user_command('ToggleTermDefault', function()

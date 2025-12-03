@@ -1,5 +1,9 @@
+-- Disable on Windows, C++ tooling doesn't work well there
+local is_windows = vim.fn.has('win32') == 1 or vim.fn.has('win64') == 1
+
 return {
   "Civitasv/cmake-tools.nvim",
+  enabled = not is_windows, -- Disable on Windows
   event = "VeryLazy",
   dependencies = {
     "nvim-lua/plenary.nvim",
@@ -8,18 +12,18 @@ return {
   opts = {
     cmake_build_directory = "build",
     cmake_generate_compile_commands = true,
-    cmake_use_preset = "auto",
+    cmake_use_preset = "true",
     cmake_configure_on_edit = false,
     cmake_configure_on_variant_change = false,
-    cmake_executor = { -- executor to use
-      name = "terminal", -- Use built-in terminal executor
+    cmake_executor = {
+      name = "terminal",
       opts = {
         direction = "horizontal",
         focus = false,
       },
     },
-    cmake_runner = { -- runner to use
-      name = "terminal", -- Use built-in terminal executor
+    cmake_runner = {
+      name = "terminal",
       opts = {
         direction = "horizontal",
         focus = false,
@@ -37,17 +41,14 @@ return {
     cmake_notifications = {
       runner = { enabled = true },
       executor = { enabled = true },
-      spinner = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }, -- icons used for progress display
-      refresh_rate_ms = 100, -- how often to iterate icons
+      spinner = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" },
+      refresh_rate_ms = 100,
     },
-    cmake_virtual_text_support = true, -- Show the target related to current file using virtual text (at right corner)
+    cmake_virtual_text_support = true,
   },
 
   config = function(_, opts)
     require("cmake-tools").setup(opts)
-
-    -- Workaround for Windows path issues with cmake presets
-    local is_windows = vim.fn.has('win32') == 1 or vim.fn.has('win64') == 1
 
     -- Clean build directory completely
     local function clean_build_dir()
@@ -55,11 +56,7 @@ return {
       local build_dir = cmt.get_build_directory()
       if build_dir then
         local dir_str = tostring(build_dir)
-        if is_windows then
-          os.execute('rmdir /S /Q "' .. dir_str:gsub('/', '\\') .. '" 2>nul')
-        else
-          os.execute('rm -rf "' .. dir_str .. '"')
-        end
+        os.execute('rm -rf "' .. dir_str .. '"')
         vim.notify("Cleaned build directory: " .. dir_str, vim.log.levels.INFO)
       end
     end
@@ -70,11 +67,7 @@ return {
       local build_dir = cmt.get_build_directory()
       if build_dir then
         local dir_str = tostring(build_dir)
-        if is_windows then
-          os.execute('mkdir "' .. dir_str:gsub('/', '\\') .. '" 2>nul')
-        else
-          os.execute('mkdir -p "' .. dir_str .. '"')
-        end
+        os.execute('mkdir -p "' .. dir_str .. '"')
       end
     end
 

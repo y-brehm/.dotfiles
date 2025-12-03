@@ -115,7 +115,25 @@ return {
           max_width = nil,
         },
       })
-        -- CPP configurations
+
+      -- Automatically open/close UI
+      dap.listeners.after['event_initialized']['dapui_config'] = function()
+        ui.open({})
+      end
+      dap.listeners.before['event_terminated']['dapui_config'] = function()
+        ui.close({})
+      end
+      dap.listeners.before['event_exited']['dapui_config'] = function()
+        ui.close({})
+      end
+
+      -- Virtual text setup
+      require("nvim-dap-virtual-text").setup()
+
+    -- Conditionally set up C++ debugging (disabled on Windows)
+    local is_windows = vim.fn.has('win32') == 1 or vim.fn.has('win64') == 1
+    if not is_windows then
+      -- CPP configurations
       dap.adapters.codelldb = {
         type = "executable",
         command = vim.fn.stdpath("data") .. "/mason/bin/codelldb",
@@ -141,20 +159,7 @@ return {
         },
       }
       dap.configurations.c = dap.configurations.cpp
-
-      -- Automatically open/close UI
-      dap.listeners.after['event_initialized']['dapui_config'] = function()
-        ui.open({})
-      end
-      dap.listeners.before['event_terminated']['dapui_config'] = function()
-        ui.close({})
-      end
-      dap.listeners.before['event_exited']['dapui_config'] = function()
-        ui.close({})
-      end
-
-      -- Virtual text setup
-      require("nvim-dap-virtual-text").setup()
+    end
 
     local wk = require("which-key")
     vim.api.nvim_create_user_command('DapPythonPickFile', select_python_file, {})

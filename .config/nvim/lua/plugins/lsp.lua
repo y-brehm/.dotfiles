@@ -39,14 +39,79 @@ return {
 
     -- ### LSP servers setup using new vim.lsp.config() API (Neovim 0.11+) ###
 
+    -- Helper function to detect Python virtual environment for LSP
+    -- Note: This is different from Neovim's host Python (python3_host_prog)
+    -- LSP servers need to use the PROJECT's venv, not Neovim's host venv
+    local venv_utils = require("config.venv_utils")
+
+    local function get_python_path()
+      local cwd = vim.fn.getcwd()
+
+      -- 1. FIRST check for project-local venv (highest priority)
+      local python_path = venv_utils.find_project_venv_python(cwd)
+      if python_path then
+        vim.notify("LSP using project venv: " .. python_path, vim.log.levels.INFO)
+        return python_path
+      end
+
+      -- 2. Check for activated venv via VIRTUAL_ENV (but skip Neovim's host venv)
+      local venv = os.getenv("VIRTUAL_ENV")
+      if venv then
+        -- Skip if this is the Neovim host venv
+        local neovim_venv = vim.fn.expand("$USERPROFILE") .. "\\.virtualenvs\\neovim"
+        if not venv:match(neovim_venv:gsub("\\", "\\\\")) then
+          local python_exe = is_windows and (venv .. "\\Scripts\\python.exe") or (venv .. "/bin/python")
+          vim.notify("LSP using activated venv: " .. python_exe, vim.log.levels.INFO)
+          return python_exe
+        end
+      end
+
+      -- 3. Fallback to system Python
+      vim.notify("LSP using system Python (no project venv found)", vim.log.levels.WARN)
+      return "python"
+    end
+
+    -- Get Python path once at config time
+    local python_path = get_python_path()
+
+    -- Extract venv information from python_path for basedpyright
+    -- For path like "C:\...\project\.venv\Scripts\python.exe"
+    -- We need venvPath="C:\...\project" and venv=".venv"
+    local venv_path = nil
+    local venv_name = nil
+
+    if python_path ~= "python" then
+      -- Get the .venv directory (go up 2 levels from python.exe: Scripts -> .venv)
+      local venv_dir = vim.fn.fnamemodify(python_path, ":h:h")
+      -- Get the project directory (parent of .venv)
+      venv_path = vim.fn.fnamemodify(venv_dir, ":h")
+      -- Get just the venv folder name
+      venv_name = vim.fn.fnamemodify(venv_dir, ":t")
+    end
+
     -- Removed pylsp as Basedpyright + Ruff provide all needed functionality
     vim.lsp.config('basedpyright', {
       capabilities = capabilities,
+      offset_encoding = "utf-8",
+      cmd = { "basedpyright-langserver", "--stdio" },
+      root_markers = {
+        "pyproject.toml",
+        "setup.py",
+        "setup.cfg",
+        "requirements.txt",
+        "Pipfile",
+        "pyrightconfig.json",
+        ".git",
+      },
       settings = {
+        python = {
+          pythonPath = python_path,
+          venvPath = venv_path,
+          venv = venv_name,
+        },
         basedpyright = {
           -- Use basic type checking to reduce third-party library warnings
           typeCheckingMode = "basic", -- Use basic mode to reduce noise from libraries
-          
           -- Fine-tune diagnostic levels for practical development
           diagnosticSeverityOverrides = {
             reportGeneralTypeIssues = "warning",           -- Type checking errors
@@ -96,11 +161,6 @@ return {
             diagnosticMode = "workspace",  -- Check entire workspace
           },
         },
-        python = {
-          analysis = {
-            typeCheckingMode = "basic",
-          }
-        }
       }
     })
     vim.lsp.enable('basedpyright')
@@ -114,20 +174,18 @@ return {
     vim.lsp.config('ruff', {
       capabilities = capabilities,
       cmd = { "ruff", "server", "--preview" },  -- Use the built-in LSP server with preview features
-      init_options = {
-        settings = {
-          -- These settings are used as FALLBACKS when no project config exists
-          -- Project-specific ruff.toml or pyproject.toml takes precedence
-          -- Configuration search behavior
-          configuration = nil,  -- Let Ruff auto-detect config files
-          configurationPreference = "filesystemFirst", -- Prefer project config over LSP settings
-          -- Workspace settings (only applied if no project config found)
-          lineLength = 120,  -- Fallback line length
-          -- Linting fallbacks - comprehensive rules for projects without config
-          lint = {
-            enable = true,
-            -- Default rule selection for projects without ruff.toml
-            select = {
+      settings = {
+        -- Use the detected Python interpreter
+        interpreter = { get_python_path() },
+        -- Configuration file preferences
+        configuration = nil,  -- Let Ruff auto-detect config files
+        configurationPreference = "filesystemFirst", -- Prefer project config over LSP settings
+
+        -- Fallback settings when no project config exists
+        lineLength = 120,
+        lint = {
+          enable = true,
+          select = {
               "F",     -- Pyflakes (errors and warnings)
               "E",     -- pycodestyle errors
               "W",     -- pycodestyle warnings
@@ -157,16 +215,15 @@ return {
               "PLR2004", -- Magic value comparison
             },
           },
-          -- Format fallbacks
-          format = {
-            -- Only used if project has no format config
-            quoteStyle = "double",
-            indentStyle = "space",
-          },
-          -- Allow Ruff to auto-fix issues
-          fixable = { "ALL" },
-          organizeImports = true,
-        }
+        -- Format fallbacks
+        format = {
+          -- Only used if project has no format config
+          quoteStyle = "double",
+          indentStyle = "space",
+        },
+        -- Allow Ruff to auto-fix issues
+        fixable = { "ALL" },
+        organizeImports = true,
       }
     })
     vim.lsp.enable('ruff')
@@ -190,30 +247,32 @@ return {
     })
     vim.lsp.enable('lua_ls')
 
-    -- C++ (clangd) setup
-    vim.lsp.config('clangd', {
-      capabilities = capabilities,
-      cmd = {
-        "clangd",
-        "--background-index",
-        "--clang-tidy",
-        "--header-insertion=iwyu",
-        "--completion-style=detailed",
-        "--function-arg-placeholders",
-        "--fallback-style=llvm",
-      },
-      init_options = {
-        -- Use compile_commands.json from build directory if available
-        compilationDatabaseDirectory = "build",
-        index = {
-          threads = 0, -- Use all available threads
+    -- C++ (clangd) setup - disabled on Windows
+    if not is_windows then
+      vim.lsp.config('clangd', {
+        capabilities = capabilities,
+        cmd = {
+          "clangd",
+          "--background-index",
+          "--clang-tidy",
+          "--header-insertion=iwyu",
+          "--completion-style=detailed",
+          "--function-arg-placeholders",
+          "--fallback-style=llvm",
         },
-        clangTidy = {
-          useBuildPath = true,
+        init_options = {
+          -- Use compile_commands.json from build directory if available
+          compilationDatabaseDirectory = "build",
+          index = {
+            threads = 0, -- Use all available threads
+          },
+          clangTidy = {
+            useBuildPath = true,
+          },
         },
-      },
-    })
-    vim.lsp.enable('clangd')
+      })
+      vim.lsp.enable('clangd')
+    end
 
     vim.api.nvim_create_autocmd('LspAttach', {
       desc = 'LSP actions',
@@ -221,7 +280,7 @@ return {
         local wk = require("which-key")
 
         -- Register all keymaps using the new format
-        wk.add({
+        local keymaps = {
           -- Groups
           { "<leader>c", name = "Code" },
           { "<leader>g", name = "Goto" },
@@ -231,49 +290,55 @@ return {
           { "<leader>D", vim.lsp.buf.hover, desc = "Show Documentation" },
           { "ca", vim.lsp.buf.code_action, desc = "Code Actions" },
           { "gd", vim.lsp.buf.definition, desc = "Go to Definition" },
-          { "gh", "<cmd>ClangdSwitchSourceHeader<cr>", desc = "Switch Header/Source" },
           { "gn", vim.diagnostic.goto_next, desc = "Next Diagnostic" },
           { "gp", vim.diagnostic.goto_prev, desc = "Previous Diagnostic" },
           { "gr", vim.lsp.buf.references, desc = "Find References" },
           { "<leader>rn", vim.lsp.buf.rename, desc = "Rename Symbol" }
-        }, { buffer = event.buf })
+        }
+
+        -- Add clangd-specific keybinding only on non-Windows platforms
+        if not is_windows then
+          table.insert(keymaps, { "gh", "<cmd>ClangdSwitchSourceHeader<cr>", desc = "Switch Header/Source" })
+        end
+
+        wk.add(keymaps, { buffer = event.buf })
 
         -- Insert mode signature help (not part of which-key)
         vim.keymap.set("i", "<leader>h", vim.lsp.buf.signature_help, { buffer = event.buf })
-        
+
         -- Custom format function that calls Ruff directly for Python files
         local function format_buffer()
           local filetype = vim.bo.filetype
-          
+
           if filetype == "python" then
             -- Save current cursor position
             local cursor_pos = vim.api.nvim_win_get_cursor(0)
-            
+
             -- Run ruff format with import sorting on the current file
             local filepath = vim.fn.expand("%:p")
             vim.cmd("silent! write")  -- Save file first
-            
+
             -- Run ruff check --fix to organize imports and fix issues
             vim.fn.system({"ruff", "check", "--fix", "--select", "I", filepath})
-            
+
             -- Run ruff format to format the code
             vim.fn.system({"ruff", "format", filepath})
-            
+
             -- Reload the buffer to show changes
             vim.cmd("edit!")
-            
+
             -- Restore cursor position
             vim.api.nvim_win_set_cursor(0, cursor_pos)
-            
+
             vim.notify("Formatted with Ruff", vim.log.levels.INFO)
           else
             -- For non-Python files, use standard LSP formatting
             vim.lsp.buf.format({ async = false })
           end
         end
-        
+
         -- Override the format keybinding for this buffer
-        vim.keymap.set("n", "<leader>lfb", format_buffer, { buffer = event.buf, desc = "[l]sp [f]ormat [b]uffer" })
+        vim.keymap.set("n", "<leader>fb", format_buffer, { buffer = event.buf, desc = "[f]ormat [b]uffer" })
       end,
     })
   end,
@@ -282,38 +347,49 @@ return {
     "williamboman/mason.nvim",
     cmd = "Mason",
     build = ":MasonUpdate", -- Update Mason registry
-    opts = {
-      ensure_installed = {
+    opts = function()
+      local is_windows = vim.fn.has('win32') == 1 or vim.fn.has('win64') == 1
+
+      local ensure_installed = {
         "basedpyright",
         "ruff",
         "debugpy",
         "lua-language-server",
-        "clangd",
-        "clang-format",
-        "cmake-language-server",
-        "codelldb",
-        "ty",
-      },
-      -- Configure Python path for Mason on Windows
-      PATH = "prepend",
-    },
+      }
+
+      -- Only add C++ tools on non-Windows platforms
+      if not is_windows then
+        vim.list_extend(ensure_installed, {
+          "clangd",
+          "clang-format",
+          "cmake-language-server",
+          "codelldb",
+        })
+      end
+
+      return {
+        ensure_installed = ensure_installed,
+        -- Configure Python path for Mason on Windows
+        PATH = "prepend",
+      }
+    end,
     config = function(_, opts)
       -- Set up Python for Mason on Windows
       local is_windows = vim.fn.has('win32') == 1 or vim.fn.has('win64') == 1
       if is_windows then
         local home = vim.fn.expand('$USERPROFILE')
         local venv_python = home .. '\\.virtualenvs\\neovim\\Scripts\\python.exe'
-        
+
         -- Check if virtualenv Python exists, otherwise use system Python
         if vim.fn.filereadable(venv_python) == 1 then
           vim.env.VIRTUAL_ENV = home .. '\\.virtualenvs\\neovim'
           vim.env.PATH = home .. '\\.virtualenvs\\neovim\\Scripts;' .. vim.env.PATH
         end
       end
-      
+
       require("mason").setup(opts)
       local mr = require("mason-registry")
-      
+
       -- Refresh registry before installing
       mr.refresh(function()
         for _, tool in ipairs(opts.ensure_installed) do

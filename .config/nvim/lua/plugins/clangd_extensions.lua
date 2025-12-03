@@ -1,6 +1,10 @@
 -- lua/plugins/clangd_extensions.lua
+-- Disable on Windows, C++ tooling doesn't work well there
+local is_windows = vim.fn.has('win32') == 1 or vim.fn.has('win64') == 1
+
 return {
   "p00f/clangd_extensions.nvim",
+  enabled = not is_windows, -- Disable on Windows
   ft = {"c", "cpp"}, -- Load when opening C/C++ files
   dependencies = {
     "neovim/nvim-lspconfig", -- Ensure it loads after lspconfig
