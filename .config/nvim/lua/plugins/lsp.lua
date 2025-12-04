@@ -12,267 +12,253 @@ return {
     },
     config = function()
       -- Reserve space in the gutter
-    vim.opt.signcolumn = 'yes'
-     -- Detect OS and set appropriate Python paths
-    local is_windows = vim.fn.has('win32') == 1 or vim.fn.has('win64') == 1
+      vim.opt.signcolumn = 'yes'
 
-    if is_windows then
-      -- Windows paths
-      local home = vim.fn.expand('$USERPROFILE')
-      vim.g.python3_host_prog = home .. '\\.virtualenvs\\neovim\\Scripts\\python.exe'
-      -- Python 2 is likely not needed, but if you want to set it:
-      -- vim.g.python_host_prog = 'C:\\Path\\to\\Python2\\python.exe'
-    else
-      -- Unix paths (keep your original settings)
-      vim.g.python_host_prog = '/usr/local/bin/python'
-      vim.g.python3_host_prog = '~/.virtualenvs/neovim/bin/python'
-    end
+      -- Detect OS and set appropriate Python paths
+      local is_windows = vim.fn.has('win32') == 1 or vim.fn.has('win64') == 1
 
-
-    local capabilities = require("cmp_nvim_lsp").default_capabilities()
-
-    -- Add folding range capability for ufo
-    capabilities.textDocument.foldingRange = {
-      dynamicRegistration = false,
-      lineFoldingOnly = true
-    }
-
-    -- ### LSP servers setup using new vim.lsp.config() API (Neovim 0.11+) ###
-
-    -- Helper function to detect Python virtual environment for LSP
-    -- Note: This is different from Neovim's host Python (python3_host_prog)
-    -- LSP servers need to use the PROJECT's venv, not Neovim's host venv
-    local venv_utils = require("config.venv_utils")
-
-    local function get_python_path()
-      local cwd = vim.fn.getcwd()
-
-      -- 1. FIRST check for project-local venv (highest priority)
-      local python_path = venv_utils.find_project_venv_python(cwd)
-      if python_path then
-        vim.notify("LSP using project venv: " .. python_path, vim.log.levels.INFO)
-        return python_path
+      if is_windows then
+        -- Windows paths
+        local home = vim.fn.expand('$USERPROFILE')
+        vim.g.python3_host_prog = home .. '\\.virtualenvs\\neovim\\Scripts\\python.exe'
+      else
+        -- Unix paths
+        vim.g.python_host_prog = '/usr/local/bin/python'
+        vim.g.python3_host_prog = '~/.virtualenvs/neovim/bin/python'
       end
 
-      -- 2. Check for activated venv via VIRTUAL_ENV (but skip Neovim's host venv)
-      local venv = os.getenv("VIRTUAL_ENV")
-      if venv then
-        -- Skip if this is the Neovim host venv
-        local neovim_venv = vim.fn.expand("$USERPROFILE") .. "\\.virtualenvs\\neovim"
-        if not venv:match(neovim_venv:gsub("\\", "\\\\")) then
-          local python_exe = is_windows and (venv .. "\\Scripts\\python.exe") or (venv .. "/bin/python")
-          vim.notify("LSP using activated venv: " .. python_exe, vim.log.levels.INFO)
-          return python_exe
-        end
-      end
-
-      -- 3. Fallback to system Python
-      vim.notify("LSP using system Python (no project venv found)", vim.log.levels.WARN)
-      return "python"
-    end
-
-    -- Get Python path once at config time
-    local python_path = get_python_path()
-
-    -- Extract venv information from python_path for basedpyright
-    -- For path like "C:\...\project\.venv\Scripts\python.exe"
-    -- We need venvPath="C:\...\project" and venv=".venv"
-    local venv_path = nil
-    local venv_name = nil
-
-    if python_path ~= "python" then
-      -- Get the .venv directory (go up 2 levels from python.exe: Scripts -> .venv)
-      local venv_dir = vim.fn.fnamemodify(python_path, ":h:h")
-      -- Get the project directory (parent of .venv)
-      venv_path = vim.fn.fnamemodify(venv_dir, ":h")
-      -- Get just the venv folder name
-      venv_name = vim.fn.fnamemodify(venv_dir, ":t")
-    end
-
-    -- Removed pylsp as Basedpyright + Ruff provide all needed functionality
-    vim.lsp.config('basedpyright', {
-      capabilities = capabilities,
-      offset_encoding = "utf-8",
-      cmd = { "basedpyright-langserver", "--stdio" },
-      root_markers = {
-        "pyproject.toml",
-        "setup.py",
-        "setup.cfg",
-        "requirements.txt",
-        "Pipfile",
-        "pyrightconfig.json",
-        ".git",
-      },
-      settings = {
-        python = {
-          pythonPath = python_path,
-          venvPath = venv_path,
-          venv = venv_name,
-        },
-        basedpyright = {
-          -- Use basic type checking to reduce third-party library warnings
-          typeCheckingMode = "basic", -- Use basic mode to reduce noise from libraries
-          -- Fine-tune diagnostic levels for practical development
-          diagnosticSeverityOverrides = {
-            reportGeneralTypeIssues = "warning",           -- Type checking errors
-            reportPropertyTypeMismatch = "warning",        -- Property type mismatch
-            reportFunctionMemberAccess = "warning",        -- Incorrect function member access
-            reportMissingImports = "error",                -- Missing imports
-            reportUndefinedVariable = "error",             -- Undefined variables
-            reportAssignmentType = "warning",              -- Assignment type issues
-            reportArgumentType = "warning",                -- Argument type mismatches
-            reportReturnType = "warning",                  -- Return type issues
-            reportMissingTypeStubs = "none",               -- Missing type stubs (disabled for 3rd party libs)
-            reportUnknownMemberType = "none",              -- Unknown types in libraries (disabled)
-            reportUnknownArgumentType = "none",            -- Unknown argument types (disabled)
-            reportUnknownLambdaType = "none",              -- Unknown lambda types (disabled)
-            reportUnknownVariableType = "none",            -- Unknown variable types (disabled)
-            reportUnknownParameterType = "none",           -- Unknown parameter types (disabled)
-            reportMissingTypeArgument = "warning",         -- Missing generics
-            reportUnnecessaryIsInstance = "none",          -- Disable - handled by Ruff
-            reportUnnecessaryCast = "none",                -- Disable - handled by Ruff
-            reportUnnecessaryComparison = "warning",       -- Keep - not well covered by Ruff
-            reportConstantRedefinition = "error",          -- Redefining constants
-            reportIncompatibleMethodOverride = "error",    -- Incorrect method overrides
-            reportIncompatibleVariableOverride = "error",  -- Incorrect variable overrides
-            reportOverlappingOverload = "warning",         -- Overlapping overloads
-            reportUninitializedInstanceVariable = "warning", -- Uninitialized instance vars
-            reportCallInDefaultInitializer = "warning",    -- Calls in default initializers
-            reportUnnecessaryTypeIgnoreComment = "warning", -- Unnecessary # type: ignore
-            reportMatchNotExhaustive = "warning",          -- Non-exhaustive match statements
-            reportShadowedImports = "warning",             -- Shadowed imports
-            reportPrivateUsage = "warning",                -- Using private members
-            -- Relaxed settings for convenience
-            reportMissingParameterType = "none",           -- Allow untyped parameters in simple functions
-            reportMissingTypeAnnotation = "none",          -- Allow missing annotations in simple cases
-            reportUnusedImport = "none",                   -- Disable - handled by Ruff
-            reportUnusedClass = "none",                    -- Disable - handled by Ruff
-            reportUnusedFunction = "none",                 -- Disable - handled by Ruff
-            reportUnusedVariable = "none",                 -- Disable - handled by Ruff
-            reportUnusedParameter = "none",                -- Disable - handled by Ruff ARG002
-            reportDuplicateImport = "none",                -- Disable - handled by Ruff
-          },
-
-          -- Enable additional analysis features
-          analysis = {
-            autoSearchPaths = true,
-            autoImportCompletions = true,
-            useLibraryCodeForTypes = true,
-            diagnosticMode = "workspace",  -- Check entire workspace
-          },
-        },
+      -- Common LSP capabilities setup
+      local capabilities = require("cmp_nvim_lsp").default_capabilities()
+      capabilities.textDocument.foldingRange = {
+        dynamicRegistration = false,
+        lineFoldingOnly = true
       }
-    })
-    vim.lsp.enable('basedpyright')
 
-    -- Ruff LSP setup for formatting and linting (using built-in LSP server)
-    -- NOTE: Ruff automatically detects and uses project-specific configuration from:
-    -- 1. ruff.toml in project root
-    -- 2. .ruff.toml in project root
-    -- 3. pyproject.toml with [tool.ruff] section
-    -- The settings below serve as fallbacks when no project config exists
-    vim.lsp.config('ruff', {
-      capabilities = capabilities,
-      cmd = { "ruff", "server", "--preview" },  -- Use the built-in LSP server with preview features
-      settings = {
-        -- Use the detected Python interpreter
-        interpreter = { get_python_path() },
-        -- Configuration file preferences
-        configuration = nil,  -- Let Ruff auto-detect config files
-        configurationPreference = "filesystemFirst", -- Prefer project config over LSP settings
+      -- ### Language-specific LSP setup (deferred until file type is opened) ###
 
-        -- Fallback settings when no project config exists
-        lineLength = 120,
-        lint = {
-          enable = true,
-          select = {
-              "F",     -- Pyflakes (errors and warnings)
-              "E",     -- pycodestyle errors
-              "W",     -- pycodestyle warnings
-              -- "I",  -- isort (import sorting) - removed as requested
-              "N",     -- pep8-naming
-              "UP",    -- pyupgrade (Python version upgrade suggestions)
-              "B",     -- flake8-bugbear
-              "A",     -- flake8-builtins
-              "C4",    -- flake8-comprehensions
-              "T10",   -- flake8-debugger
-              "ISC",   -- flake8-implicit-str-concat
-              "ICN",   -- flake8-import-conventions
-              "PIE",   -- flake8-pie
-              "PT",    -- flake8-pytest-style
-              "RET",   -- flake8-return
-              "SIM",   -- flake8-simplify
-              "ARG",   -- flake8-unused-arguments
-              "PTH",   -- flake8-use-pathlib
-              -- "PL", -- Pylint (basic checks) - removed as it includes too many methods/variables rules
-              "PERF",  -- Performance linting
-              "RUF",   -- Ruff-specific rules
+      -- Python LSP setup (basedpyright + ruff)
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "python",
+        once = true,
+        callback = function()
+          local venv_utils = require("config.venv_utils")
+
+          -- Helper function to detect Python virtual environment for LSP
+          local function get_python_path()
+            local cwd = vim.fn.getcwd()
+
+            -- 1. Check for project-local venv (highest priority)
+            local python_path = venv_utils.find_project_venv_python(cwd)
+            if python_path then
+              vim.notify("LSP using project venv: " .. python_path, vim.log.levels.INFO)
+              return python_path
+            end
+
+            -- 2. Check for activated venv via VIRTUAL_ENV (but skip Neovim's host venv)
+            local venv = os.getenv("VIRTUAL_ENV")
+            if venv then
+              local neovim_venv = vim.fn.expand("$USERPROFILE") .. "\\.virtualenvs\\neovim"
+              if not venv:match(neovim_venv:gsub("\\", "\\\\")) then
+                local python_exe = is_windows and (venv .. "\\Scripts\\python.exe") or (venv .. "/bin/python")
+                vim.notify("LSP using activated venv: " .. python_exe, vim.log.levels.INFO)
+                return python_exe
+              end
+            end
+
+            -- 3. Fallback to system Python
+            vim.notify("LSP using system Python (no project venv found)", vim.log.levels.WARN)
+            return "python"
+          end
+
+          local python_path = get_python_path()
+
+          -- Extract venv information from python_path for basedpyright
+          local venv_path = nil
+          local venv_name = nil
+
+          if python_path ~= "python" then
+            local venv_dir = vim.fn.fnamemodify(python_path, ":h:h")
+            venv_path = vim.fn.fnamemodify(venv_dir, ":h")
+            venv_name = vim.fn.fnamemodify(venv_dir, ":t")
+          end
+
+          -- Basedpyright setup
+          vim.lsp.config('basedpyright', {
+            capabilities = capabilities,
+            filetypes = { "python" },
+            position_encoding = "utf-16",
+            cmd = { "basedpyright-langserver", "--stdio" },
+            root_markers = {
+              "pyproject.toml",
+              "setup.py",
+              "setup.cfg",
+              "requirements.txt",
+              "Pipfile",
+              "pyrightconfig.json",
+              ".git",
             },
-            -- Default ignores for projects without config
-            ignore = {
-              "E501",   -- Line too long (handled by formatter)
-              "PLR0913", -- Too many arguments
-              "PLR2004", -- Magic value comparison
+            settings = {
+              python = {
+                pythonPath = python_path,
+                venvPath = venv_path,
+                venv = venv_name,
+              },
+              basedpyright = {
+                typeCheckingMode = "basic",
+                diagnosticSeverityOverrides = {
+                  reportGeneralTypeIssues = "warning",
+                  reportPropertyTypeMismatch = "warning",
+                  reportFunctionMemberAccess = "warning",
+                  reportMissingImports = "error",
+                  reportUndefinedVariable = "error",
+                  reportAssignmentType = "warning",
+                  reportArgumentType = "warning",
+                  reportReturnType = "warning",
+                  reportMissingTypeStubs = "none",
+                  reportUnknownMemberType = "none",
+                  reportUnknownArgumentType = "none",
+                  reportUnknownLambdaType = "none",
+                  reportUnknownVariableType = "none",
+                  reportUnknownParameterType = "none",
+                  reportMissingTypeArgument = "warning",
+                  reportUnnecessaryIsInstance = "none",
+                  reportUnnecessaryCast = "none",
+                  reportUnnecessaryComparison = "warning",
+                  reportConstantRedefinition = "error",
+                  reportIncompatibleMethodOverride = "error",
+                  reportIncompatibleVariableOverride = "error",
+                  reportOverlappingOverload = "warning",
+                  reportUninitializedInstanceVariable = "warning",
+                  reportCallInDefaultInitializer = "warning",
+                  reportUnnecessaryTypeIgnoreComment = "warning",
+                  reportMatchNotExhaustive = "warning",
+                  reportShadowedImports = "warning",
+                  reportPrivateUsage = "warning",
+                  reportMissingParameterType = "none",
+                  reportMissingTypeAnnotation = "none",
+                  reportUnusedImport = "none",
+                  reportUnusedClass = "none",
+                  reportUnusedFunction = "none",
+                  reportUnusedVariable = "none",
+                  reportUnusedParameter = "none",
+                  reportDuplicateImport = "none",
+                },
+                analysis = {
+                  autoSearchPaths = true,
+                  autoImportCompletions = true,
+                  useLibraryCodeForTypes = true,
+                  diagnosticMode = "workspace",
+                },
+              },
+            }
+          })
+          vim.lsp.enable('basedpyright')
+
+          -- Ruff LSP setup
+          vim.lsp.config('ruff', {
+            capabilities = capabilities,
+            filetypes = { "python" },
+            position_encoding = "utf-16",
+            cmd = { "ruff", "server", "--preview" },
+            root_markers = {
+              "pyproject.toml",
+              "setup.py",
+              "setup.cfg",
+              "requirements.txt",
+              "Pipfile",
+              "ruff.toml",
+              ".ruff.toml",
+              ".git",
             },
-          },
-        -- Format fallbacks
-        format = {
-          -- Only used if project has no format config
-          quoteStyle = "double",
-          indentStyle = "space",
-        },
-        -- Allow Ruff to auto-fix issues
-        fixable = { "ALL" },
-        organizeImports = true,
-      }
-    })
-    vim.lsp.enable('ruff')
-
-    vim.lsp.config('lua_ls', {
-      capabilities = capabilities,
-      settings = {
-        Lua = {
-          diagnostics = {
-            globals = { "vim", "require" }, -- Recognize 'vim' as a global to avoid warnings
-          },
-          workspace = {
-            library = vim.api.nvim_get_runtime_file("", true), -- Make the server aware of Neovim runtime files
-            checkThirdParty = false, -- Disable third-party library checking
-          },
-          telemetry = {
-            enable = false, -- Disable telemetry
-          },
-        },
-      },
-    })
-    vim.lsp.enable('lua_ls')
-
-    -- C++ (clangd) setup - disabled on Windows
-    if not is_windows then
-      vim.lsp.config('clangd', {
-        capabilities = capabilities,
-        cmd = {
-          "clangd",
-          "--background-index",
-          "--clang-tidy",
-          "--header-insertion=iwyu",
-          "--completion-style=detailed",
-          "--function-arg-placeholders",
-          "--fallback-style=llvm",
-        },
-        init_options = {
-          -- Use compile_commands.json from build directory if available
-          compilationDatabaseDirectory = "build",
-          index = {
-            threads = 0, -- Use all available threads
-          },
-          clangTidy = {
-            useBuildPath = true,
-          },
-        },
+            settings = {
+              interpreter = { python_path },
+              configuration = nil,
+              configurationPreference = "filesystemFirst",
+              lineLength = 120,
+              lint = {
+                enable = true,
+                select = {
+                  "F", "E", "W", "N", "UP", "B", "A", "C4", "T10",
+                  "ISC", "ICN", "PIE", "PT", "RET", "SIM", "ARG",
+                  "PTH", "PERF", "RUF",
+                },
+                ignore = {
+                  "E501", "PLR0913", "PLR2004",
+                },
+              },
+              format = {
+                quoteStyle = "double",
+                indentStyle = "space",
+              },
+              fixable = { "ALL" },
+              organizeImports = true,
+            }
+          })
+          vim.lsp.enable('ruff')
+        end,
       })
-      vim.lsp.enable('clangd')
-    end
+
+      -- Lua LSP setup
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "lua",
+        once = true,
+        callback = function()
+          vim.lsp.config('lua_ls', {
+            capabilities = capabilities,
+            filetypes = { "lua" },
+            position_encoding = "utf-16",
+            settings = {
+              Lua = {
+                diagnostics = {
+                  globals = { "vim", "require" },
+                },
+                workspace = {
+                  library = vim.api.nvim_get_runtime_file("", true),
+                  checkThirdParty = false,
+                },
+                telemetry = {
+                  enable = false,
+                },
+              },
+            },
+          })
+          vim.lsp.enable('lua_ls')
+        end,
+      })
+
+      -- C/C++ LSP setup (clangd) - disabled on Windows
+      if not is_windows then
+        vim.api.nvim_create_autocmd("FileType", {
+          pattern = { "c", "cpp" },
+          once = true,
+          callback = function()
+            vim.lsp.config('clangd', {
+              capabilities = capabilities,
+              filetypes = { "c", "cpp" },
+              position_encoding = "utf-16",
+              cmd = {
+                "clangd",
+                "--background-index",
+                "--clang-tidy",
+                "--header-insertion=iwyu",
+                "--completion-style=detailed",
+                "--function-arg-placeholders",
+                "--fallback-style=llvm",
+              },
+              init_options = {
+                compilationDatabaseDirectory = "build",
+                index = {
+                  threads = 0,
+                },
+                clangTidy = {
+                  useBuildPath = true,
+                },
+              },
+            })
+            vim.lsp.enable('clangd')
+          end,
+        })
+      end
 
     vim.api.nvim_create_autocmd('LspAttach', {
       desc = 'LSP actions',
