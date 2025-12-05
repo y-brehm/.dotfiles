@@ -10,23 +10,31 @@ return {
     "stevearc/overseer.nvim",
   },
   opts = {
-    cmake_build_directory = "build",
+    cmake_build_directory = "build/${variant:buildType}",
     cmake_generate_compile_commands = true,
     cmake_use_preset = "true",
     cmake_configure_on_edit = false,
     cmake_configure_on_variant_change = false,
     cmake_executor = {
-      name = "terminal",
+      name = "overseer",
       opts = {
-        direction = "horizontal",
-        focus = false,
+        new_task_opts = {
+          strategy = "jobstart",
+        },
+        on_new_task = function(task)
+          require("overseer").open({ enter = false, direction = "right" })
+        end,
       },
     },
     cmake_runner = {
-      name = "terminal",
+      name = "overseer",
       opts = {
-        direction = "horizontal",
-        focus = false,
+        new_task_opts = {
+          strategy = "jobstart",
+        },
+        on_new_task = function(task)
+          require("overseer").open({ enter = false, direction = "right" })
+        end,
       },
     },
     cmake_debugger = {
