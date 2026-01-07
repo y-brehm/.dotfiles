@@ -4,7 +4,7 @@ return {
     local project_root = vim.fn.getcwd()
     return {
       cmd = { "conan" },
-      args = { "install", ".", "-s", "build_type=Debug", "--output-folder=build/Debug", "--build=missing" },
+      args = { "install", ".", "-s", "build_type=Debug", "--build=missing" },
       cwd = project_root,
       components = { { "on_output_quickfix", open = false }, "default" },
       metadata = {

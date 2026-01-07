@@ -12,7 +12,7 @@ return {
   opts = {
     cmake_build_directory = "build/${variant:buildType}",
     cmake_generate_compile_commands = true,
-    cmake_use_preset = "true",
+    cmake_use_preset = "auto",
     cmake_configure_on_edit = false,
     cmake_configure_on_variant_change = false,
     cmake_executor = {

@@ -67,9 +67,9 @@ return {
       { "<leader>ot", "<cmd>OverseerToggle<CR>", desc = "[T]oggle UI" },
       { "<leader>oa", "<cmd>OverseerRun<CR>", desc = "[A]vailable Tasks (Run)" },
       { "<leader>oo", "<cmd>OverseerOpen<CR>", desc = "[O]pen Task List" },
-      { "<leader>ocd", function() require("overseer").run_template({ name = "Conan Install (Debug) (User)" }) end, desc = "[C]onan Install [D]ebug" },
-      { "<leader>ocr", function() require("overseer").run_template({ name = "Conan Install (Release) (User)" }) end, desc = "[C]onan Install [R]elease" },
-      { "<leader>oR", function() require("overseer").run_template({ name = "Launch Reaper (VST3 Host)" }) end, desc = "Launch [R]eaper Host" },
+      { "<leader>ocd", function() require("overseer").run_task({ name = "Conan Install (Debug) (User)" }) end, desc = "[C]onan Install [D]ebug" },
+      { "<leader>ocr", function() require("overseer").run_task({ name = "Conan Install (Release) (User)" }) end, desc = "[C]onan Install [R]elease" },
+      { "<leader>oR", function() require("overseer").run_task({ name = "Launch Reaper (VST3 Host)" }) end, desc = "Launch [R]eaper Host" },
     }, { prefix = "<leader>" })
   end,
 }
