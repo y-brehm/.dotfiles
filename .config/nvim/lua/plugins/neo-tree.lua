@@ -13,7 +13,7 @@ return{
         enable_normal_mode_for_keymaps = true,
         window = {
             mappings = {
-                ["<Space>"] = false,
+                ["<space>"] = "none",
                 ["P"] = { "toggle_preview", config = { use_float = false, use_image_nvim = false } },
                 ["J"] = function(state)
                   local tree = state.tree

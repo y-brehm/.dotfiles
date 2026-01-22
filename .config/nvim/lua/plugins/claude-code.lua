@@ -34,45 +34,27 @@ return {
   },
 
   opts = {
-    -- Server Configuration
-    log_level = "info",
-    focus_after_send = false,
-
-    -- Terminal Configuration matching your floating window preferences
     terminal = {
-      provider = "auto", -- Uses snacks.nvim for better terminal support
-      auto_close = true,
+      provider = "snacks",
 
-      -- Floating window configuration (matching your 90% width/height, centered, single border)
-      ---@module "snacks"
-      ---@type snacks.win.Config|{}
-      snacks_win_opts = {
-        position = "float",
-        width = 0.9,
-        height = 0.9,
-        border = "single",
-        backdrop = 80, -- Adds a subtle backdrop dimming
-        keys = {
-          -- Enable Ctrl+, to hide from terminal mode as well
-          claude_hide = {
-            toggle_key,
-            function(self)
-              self:hide()
-            end,
-            mode = "t",
-            desc = "Hide Claude",
-          },
-        },
-      },
-    },
-
-    -- Diff Integration
-    diff_opts = {
-      auto_close_on_accept = true,
-      auto_close_on_deny = true,
-      vertical_split = true,
-      open_in_current_tab = false, -- Open in new tab to avoid buffer stacking
-      keep_terminal_focus = false, -- Auto-switch focus to diff view
+      -- Previous customization (commented out - caused issues with backdrop and diff views)
+      -- snacks_win_opts = {
+      --   position = "float",
+      --   width = 0.9,
+      --   height = 0.9,
+      --   border = "single",
+      --   backdrop = false, -- Must be false or omitted - causes rendering glitches if enabled
+      --   keys = {
+      --     claude_hide = {
+      --       toggle_key,
+      --       function(self)
+      --         self:hide()
+      --       end,
+      --       mode = "t",
+      --       desc = "Hide Claude",
+      --     },
+      --   },
+      -- },
     },
   },
 
