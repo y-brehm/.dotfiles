@@ -8,9 +8,9 @@ return {
     -- Your preferred toggle key (in addition to defaults)
     {
       toggle_key,
-      "<cmd>ClaudeCodeFocus<cr>",
+      "<cmd>ClaudeCode<cr>",
       desc = "Claude Toggle",
-      mode = { "n", "x" },
+      mode = { "n", "x", "t" },
     },
 
     -- Default plugin keybindings (all under <leader>a for AI/Claude)
@@ -37,24 +37,30 @@ return {
     terminal = {
       provider = "snacks",
 
-      -- Previous customization (commented out - caused issues with backdrop and diff views)
-      -- snacks_win_opts = {
-      --   position = "float",
-      --   width = 0.9,
-      --   height = 0.9,
-      --   border = "single",
-      --   backdrop = false, -- Must be false or omitted - causes rendering glitches if enabled
-      --   keys = {
-      --     claude_hide = {
-      --       toggle_key,
-      --       function(self)
-      --         self:hide()
-      --       end,
-      --       mode = "t",
-      --       desc = "Hide Claude",
-      --     },
-      --   },
-      -- },
+      snacks_win_opts = {
+        position = "float",
+        width = 0.9,
+        height = 0.9,
+        border = "single",
+        backdrop = false, -- Must be false or omitted - causes rendering glitches if enabled
+        keys = {
+          claude_hide = {
+            toggle_key,
+            function(self)
+              self:hide()
+            end,
+            mode = "t",
+            desc = "Hide Claude",
+          },
+        },
+      },
+    },
+
+    diff_opts = {
+      auto_close_on_accept = true,
+      vertical_split = true,
+      open_in_current_tab = false,
+      keep_terminal_focus = false, -- Allow diff view to take focus instead of staying behind Claude window
     },
   },
 
