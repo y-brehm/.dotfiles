@@ -29,9 +29,11 @@ return {
     },
     templates = {
       "builtin", -- Loads all built-in Overseer templates
-      "user.conan_debug",   -- Refers to lua/overseer/template/user/conan_debug.lua
-      "user.conan_release", -- Refers to lua/overseer/template/user/conan_release.lua
-      "user.launch_reaper", -- Refers to Lua/overseer/template/user/launch_reaper.lua
+      "user.conan_debug",        -- Refers to lua/overseer/template/user/conan_debug.lua
+      "user.conan_release",      -- Refers to lua/overseer/template/user/conan_release.lua
+      "user.conan_cmake_debug",  -- Refers to lua/overseer/template/user/conan_cmake_debug.lua
+      "user.conan_cmake_release",-- Refers to lua/overseer/template/user/conan_cmake_release.lua
+      "user.launch_reaper",      -- Refers to Lua/overseer/template/user/launch_reaper.lua
     },
   },
   config = function(_, opts)
@@ -39,7 +41,7 @@ return {
 
     -- Set filetype for Overseer terminal buffers so Edgy can catch them
     -- Add task name patterns here when adding new Overseer templates
-    local overseer_patterns = { "conan", "reaper" }
+    local overseer_patterns = { "conan", "cmake", "reaper" }
 
     vim.api.nvim_create_autocmd("TermOpen", {
       pattern = "term://*",
@@ -69,6 +71,8 @@ return {
       { "<leader>oo", "<cmd>OverseerOpen<CR>", desc = "[O]pen Task List" },
       { "<leader>ocd", function() require("overseer").run_task({ name = "Conan Install (Debug) (User)" }) end, desc = "[C]onan Install [D]ebug" },
       { "<leader>ocr", function() require("overseer").run_task({ name = "Conan Install (Release) (User)" }) end, desc = "[C]onan Install [R]elease" },
+      { "<leader>obd", function() require("overseer").run_task({ name = "Conan + CMake Full Build (Debug) (User)" }) end, desc = "Full [B]uild [D]ebug (Conan+CMake)" },
+      { "<leader>obr", function() require("overseer").run_task({ name = "Conan + CMake Full Build (Release) (User)" }) end, desc = "Full [B]uild [R]elease (Conan+CMake)" },
       { "<leader>oR", function() require("overseer").run_task({ name = "Launch Reaper (VST3 Host)" }) end, desc = "Launch [R]eaper Host" },
     }, { prefix = "<leader>" })
   end,

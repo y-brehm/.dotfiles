@@ -59,7 +59,7 @@ alias vim="nvim"
 
 alias git_rinse="git clean -xfd && git submodule foreach --recursive git clean -xfd && git reset --hard && git submodule foreach --recursive git reset --hard && git submodule update --init --recursive"
 alias config="git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
-alias kitdiff="git difftool --no-symlinks --dir-diff"
+# alias kitdiff="git difftool --no-symlinks --dir-diff"
 alias ll='ls -lG'
 
 # --- Functions ---

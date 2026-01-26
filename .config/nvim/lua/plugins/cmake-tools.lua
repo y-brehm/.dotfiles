@@ -120,8 +120,9 @@ return {
       -- Selecting Targets, Types, Kits
       { "<leader>cmt", "<cmd>CMakeSelectBuildTarget<CR>", desc = "Select Build [T]arget" },
       { "<leader>cml", "<cmd>CMakeSelectLaunchTarget<CR>", desc = "Select [L]aunch Target" },
-      { "<leader>cmv", "<cmd>CMakeSelectBuildType<CR>", desc = "Select Build [V]ariant/Type" },
+      { "<leader>cmv", "<cmd>CMakeSelectBuildType<CR>", desc = "Select Build [V]ariant/Type (non-preset only)" },
       { "<leader>cmk", "<cmd>CMakeSelectKit<CR>", desc = "Select [K]it" },
+      { "<leader>cmp", "<cmd>CMakeSelectConfigurePreset<CR>", desc = "Select Configure [P]reset" },
 
     }, { prefix = "<leader>" }) -- which-key prefix
   end,
