@@ -72,13 +72,24 @@ return {
             -- Example:
             -- EdgyWinBar = { bg = colors.mantle, fg = colors.subtext1 },
             -- EdgyWinBarNC = { bg = colors.crust, fg = colors.surface2 },
-            EdgyNeoTreeActive = { bg = colors.mantle, fg = colors.text },
+
+            -- Dashboard highlights - make everything white/neutral
+            SnacksDashboardNormal = { fg = colors.text },
+            SnacksDashboardDesc = { fg = colors.text },
+            SnacksDashboardFile = { fg = colors.text },
+            SnacksDashboardDir = { fg = colors.text },
+            SnacksDashboardFooter = { fg = colors.text },
+            SnacksDashboardHeader = { fg = colors.text },
+            SnacksDashboardIcon = { fg = colors.text },
+            SnacksDashboardKey = { fg = colors.text },
+            SnacksDashboardTerminal = { fg = colors.text },
+            SnacksDashboardSpecial = { fg = colors.text },
+            SnacksDashboardTitle = { fg = colors.text },
           }
         end,
         integrations = {
             cmp = true,
             gitsigns = true,
-            neotree = true,
             neotest = true,
             treesitter = true,
             mason = true,

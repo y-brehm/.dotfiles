@@ -11,9 +11,6 @@ return {
 
       -- Disable folding for file explorers and similar
       local exclude_filetypes = {
-        "neo-tree",
-        "neo-tree-popup",
-        "neo-tree-preview",
         "NvimTree",
         "oil",
         "fugitive",

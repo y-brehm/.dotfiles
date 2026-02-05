@@ -5,6 +5,10 @@ map("n", "<leader>pv", vim.cmd.Ex)
 map("v", "J", ":m '>+1<CR>gv=gv")
 map("v", "K", ":m '<-2<CR>gv=gv")
 
+-- Insert blank lines without entering insert mode
+map("n", "oo", "o<Esc>k", { noremap = true, silent = true, desc = "Insert line below" })
+map("n", "OO", "O<Esc>j", { noremap = true, silent = true, desc = "Insert line above" })
+
 -- Copy/Paste
 map('x', 'p', 'pgvy', { noremap = true, silent = true })
 map('v', '<leader>y', '"+y', {noremap = true})

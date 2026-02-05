@@ -9,7 +9,19 @@ return{
         -- refer to the configuration section below
         bigfile = { enabled = true },
         animate = { enabled = true},
-        dashboard = { enabled = true },
+        dashboard = {
+          enabled = true,
+          width = 60,
+          row = nil, -- center
+          col = nil, -- center
+          sections = {
+            { section = "header" },
+            {
+              section = "startup",
+              padding = 1,
+            },
+          },
+        },
         indent = { enabled = true },
         input = { enabled = true },
         lazygit = { enabled = true },

@@ -2,7 +2,6 @@
 return {
   "folke/edgy.nvim",
   event = "VeryLazy",
-  dependencies = { "nvim-neo-tree/neo-tree.nvim" },
   opts = {
     -- (Your view configurations are unchanged)
     bottom = {
@@ -25,19 +24,7 @@ return {
         },
       },
     },
-    left = {
-      {
-        title = "Neo-Tree",
-        ft = "neo-tree",
-        filter = function(buf)
-          return vim.b[buf].neo_tree_source ~= nil
-        end,
-        size = { width = 50 },
-        wo = {
-          winhighlight = "Normal:EdgyNeoTreeActive,NormalNC:NormalNC",
-        },
-      },
-    },
+    left = {},
     right = {
       {
         title = "Overseer Tasks",
