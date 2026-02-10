@@ -6,10 +6,10 @@ return {
       cmd = { "sh" },
       args = {
         "-c",
-        "conan install . -s build_type=Release --build=missing && " ..
-        "cmake --preset conan-release -DCMAKE_EXPORT_COMPILE_COMMANDS=1 && " ..
-        "ln -sf build/Release/compile_commands.json compile_commands.json && " ..
-        "cmake --build --preset conan-release"
+        "conan install . -of=build/release -s build_type=Release --build=missing && " ..
+        "cmake --preset release && " ..
+        "ln -sf build/release/compile_commands.json compile_commands.json && " ..
+        "cmake --build --preset release"
       },
       cwd = project_root,
       components = { { "on_output_quickfix", open = false }, "default" },

@@ -6,10 +6,10 @@ return {
       cmd = { "sh" },
       args = {
         "-c",
-        "conan install . -s build_type=Debug --build=missing && " ..
-        "cmake --preset conan-debug -DCMAKE_EXPORT_COMPILE_COMMANDS=1 && " ..
-        "ln -sf build/Debug/compile_commands.json compile_commands.json && " ..
-        "cmake --build --preset conan-debug"
+        "conan install . -of=build/debug -s build_type=Debug --build=missing && " ..
+        "cmake --preset debug && " ..
+        "ln -sf build/debug/compile_commands.json compile_commands.json && " ..
+        "cmake --build --preset debug"
       },
       cwd = project_root,
       components = { { "on_output_quickfix", open = false }, "default" },
