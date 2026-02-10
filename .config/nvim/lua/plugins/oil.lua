@@ -39,6 +39,33 @@ return {
       max_height = 30,
       border = "rounded",
     },
+    keymaps = {
+      ["<leader>cd"] = {
+        callback = function()
+          local oil = require("oil")
+          local dir = oil.get_current_dir()
+          if dir then
+            -- Change Neovim's working directory
+            vim.cmd("cd " .. dir)
+
+            -- Update all existing ToggleTerm terminals
+            local toggleterm_ok, terms = pcall(require, "toggleterm.terminal")
+            if toggleterm_ok then
+              local all_terms = terms.get_all()
+              for _, term in pairs(all_terms) do
+                if term:is_open() then
+                  -- Send cd command to the terminal
+                  vim.api.nvim_chan_send(term.job_id, "cd " .. vim.fn.shellescape(dir) .. "\r")
+                end
+              end
+            end
+
+            vim.notify("Changed directory to: " .. dir, vim.log.levels.INFO)
+          end
+        end,
+        desc = "Change working directory to current",
+      },
+    },
   },
   dependencies = { "nvim-tree/nvim-web-devicons" },
   -- No config block is needed. lazy.nvim handles the setup call and keymaps.
