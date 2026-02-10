@@ -11,9 +11,67 @@ u.diagnostic_signs = {
 
 return {
   {
+    "folke/tokyonight.nvim",
+    lazy = false,
+    priority = 1000,
+    opts = {
+      style = "night", -- night, storm, day, moon
+      transparent = false,
+      terminal_colors = true,
+      dim_inactive = false,
+      styles = {
+        comments = { italic = true },
+        keywords = { italic = true },
+        sidebars = "dark",
+        floats = "normal",
+      },
+      on_colors = function(colors)
+        colors.bg = "#151815"
+        colors.bg_dark = "#1a1d1a"
+        colors.bg_float = "#1a1d1a"
+        colors.bg_sidebar = "#1a1d1a"
+        colors.bg_statusline = "#1a1d1a"
+      end,
+      on_highlights = function(hl, colors)
+        -- Inactive windows: slightly lighter bg + dimmed text
+        hl.NormalNC = { bg = "#1a1d1a", fg = "#8a8ea0" }
+
+        -- Consistent backgrounds (match inactive bg to avoid dark bands)
+        hl.WinSeparator = { fg = "#3a3d3a", bg = "#1a1d1a" }
+        hl.NormalFloat = { bg = "#1a1d1a" }
+        hl.FloatBorder = { fg = "#3a3d3a", bg = "#1a1d1a" }
+        hl.FloatTitle = { fg = colors.fg, bg = "#1a1d1a" }
+        hl.MsgArea = { bg = "#1a1d1a" }
+        hl.StatusLine = { bg = "#1a1d1a" }
+        hl.StatusLineNC = { bg = "#1a1d1a" }
+        hl.WhichKeyFloat = { bg = "#111411" }
+        hl.WhichKeyNormal = { bg = "#111411" }
+
+        -- Diff highlights
+        hl.DiffAdd = { bg = "#2a3e2a" }
+        hl.DiffDelete = { bg = "#5f3034" }
+        hl.DiffChange = { bg = "#3a3a20" }
+        hl.DiffText = { bg = "#5c5c30" }
+
+        -- Dashboard highlights - neutral/white text
+        hl.SnacksDashboardNormal = { fg = colors.fg }
+        hl.SnacksDashboardDesc = { fg = colors.fg }
+        hl.SnacksDashboardFile = { fg = colors.fg }
+        hl.SnacksDashboardDir = { fg = colors.fg }
+        hl.SnacksDashboardFooter = { fg = colors.fg }
+        hl.SnacksDashboardHeader = { fg = colors.fg }
+        hl.SnacksDashboardIcon = { fg = colors.fg }
+        hl.SnacksDashboardKey = { fg = colors.fg }
+        hl.SnacksDashboardTerminal = { fg = colors.fg }
+        hl.SnacksDashboardSpecial = { fg = colors.fg }
+        hl.SnacksDashboardTitle = { fg = colors.fg }
+      end,
+    },
+  },
+  {
     "catppuccin/nvim",
     name = "catppuccin",
-    priority = 1000,
+    lazy = true,
     opts = {
         flavour = "mocha", -- latte, frappe, macchiato, mocha
         background = { -- :h background
@@ -24,9 +82,7 @@ return {
         show_end_of_buffer = false, -- shows the '~' characters after the end of buffers
         term_colors = true, -- sets terminal colors (e.g. `g:terminal_color_0`)
         dim_inactive = {
-            enabled = true, -- dims the background color of inactive window
-            shade = "dark",
-            percentage = 0.65, -- percentage of the shade to apply to the inactive window
+            enabled = false,
         },
         no_italic = false, -- Force no italic
         no_bold = false, -- Force no bold
@@ -47,31 +103,25 @@ return {
         },
         color_overrides = {
             mocha = {
-                        base = "#111411",
-                        mantle = "#1d211d",
-                        crust = "#0b0d0b",
+                        base = "#151815",
+                        mantle = "#1a1d1a",
+                        crust = "#111411",
                         text = "#cdd6f4",     -- Default text color from Catppuccin Mocha
                         surface0 = "#313244", -- Another option for sidebar backgrounds
                     },
                 },
         custom_highlights = function(colors) -- colors is the palette for the current flavour
           return {
-            -- Your existing custom highlights:
             DiffAdd = { bg = "#2a3e2a" },
             DiffDelete = { bg = "#5f3034" },
             DiffChange = { bg = "#3a3a20" },
             DiffText = { bg = "#5c5c30" },
 
-            -- Define EdgyNormal to use Catppuccin's 'base' color for background
-            -- and 'text' color for foreground.
-            -- EdgyNormal = { bg = colors.base, fg = colors.text },
-            EdgyToggleTermActive = { bg = colors.base, fg = colors.text }, -- Deep black bg
+            -- Inactive windows: slightly lighter bg + dimmed text
+            NormalNC = { bg = colors.mantle, fg = colors.overlay0 },
 
-            -- Optional: If you notice EdgyWinBar or EdgyWinBarNC also look off,
-            -- you can style them here too using the 'colors' palette.
-            -- Example:
-            -- EdgyWinBar = { bg = colors.mantle, fg = colors.subtext1 },
-            -- EdgyWinBarNC = { bg = colors.crust, fg = colors.surface2 },
+            -- Visible window borders
+            WinSeparator = { fg = colors.surface0 },
 
             -- Dashboard highlights - make everything white/neutral
             SnacksDashboardNormal = { fg = colors.text },

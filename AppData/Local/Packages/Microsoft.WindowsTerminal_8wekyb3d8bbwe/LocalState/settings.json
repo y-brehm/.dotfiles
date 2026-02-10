@@ -16,6 +16,15 @@
             "id": "User.paste"
         },
         {
+            "command": 
+            {
+                "action": "splitPane",
+                "split": "auto",
+                "splitMode": "duplicate"
+            },
+            "id": "User.splitPane.A6751878"
+        },
+        {
             "command": "find",
             "id": "User.find"
         },
@@ -26,15 +35,6 @@
                 "direction": "down"
             },
             "id": "User.moveFocus.F747588A"
-        },
-        {
-            "command": 
-            {
-                "action": "splitPane",
-                "split": "auto",
-                "splitMode": "duplicate"
-            },
-            "id": "User.splitPane.A6751878"
         },
         {
             "command": 
@@ -93,28 +93,28 @@
             "keys": "ctrl+shift+c"
         },
         {
-            "id": "User.sendInput.ctrlComma",
-            "keys": "ctrl+comma"
-        },
-        {
             "id": "User.find",
             "keys": "ctrl+shift+f"
+        },
+        {
+            "id": "User.sendInput.ctrlComma",
+            "keys": "ctrl+comma"
         },
         {
             "id": "User.paste",
             "keys": "ctrl+shift+v"
         },
         {
-            "id": "User.moveFocus.F747588A",
-            "keys": "ctrl+shift+j"
+            "id": "User.prevTab.0",
+            "keys": "ctrl+shift+left"
         },
         {
             "id": "User.nextTab.0",
             "keys": "ctrl+shift+right"
         },
         {
-            "id": "User.prevTab.0",
-            "keys": "ctrl+shift+left"
+            "id": "User.moveFocus.F747588A",
+            "keys": "ctrl+shift+j"
         },
         {
             "id": "User.splitPane.A6751878",
@@ -165,11 +165,14 @@
             {
                 "altGrAliasing": true,
                 "antialiasingMode": "grayscale",
+                "backgroundImageOpacity": 0.01,
+                "backgroundImageStretchMode": "none",
                 "closeOnExit": "automatic",
-                "colorScheme": "Campbell",
+                "colorScheme": "Tokyo Night YB edit",
                 "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
                 "cursorShape": "bar",
                 "elevate": true,
+                "experimental.retroTerminalEffect": false,
                 "font": 
                 {
                     "face": "CodeNewRoman Nerd Font Mono",
@@ -179,11 +182,13 @@
                 "hidden": false,
                 "historySize": 9001,
                 "icon": "ms-appx:///ProfileIcons/{61c54bbd-c2c6-5271-96e7-009a87ff44bf}.png",
+                "intenseTextStyle": "bright",
                 "name": "PowerShellAdmin",
+                "opacity": 100,
                 "padding": "8, 8, 8, 8",
                 "snapOnInput": true,
                 "startingDirectory": "%USERPROFILE%",
-                "useAcrylic": true
+                "useAcrylic": false
             },
             {
                 "guid": "{2ece5bfe-50ed-5f3a-ab87-5cd4baafed2b}",
@@ -228,29 +233,6 @@
                 "source": "Windows.Terminal.VisualStudio"
             },
             {
-                "altGrAliasing": true,
-                "antialiasingMode": "grayscale",
-                "closeOnExit": "automatic",
-                "colorScheme": "Campbell",
-                "commandline": "ssh -A DSPC@192.168.111.219",
-                "cursorShape": "bar",
-                "elevate": false,
-                "font": 
-                {
-                    "face": "CodeNewRoman Nerd Font Mono",
-                    "size": 12
-                },
-                "guid": "{ac80d6f9-81b0-4394-9282-4218ff953251}",
-                "hidden": false,
-                "historySize": 9001,
-                "icon": "ms-appx:///ProfileIcons/{61c54bbd-c2c6-5271-96e7-009a87ff44bf}.png",
-                "name": "SSH BuildLaptop AweTune",
-                "padding": "8, 8, 8, 8",
-                "snapOnInput": true,
-                "startingDirectory": "%USERPROFILE%",
-                "useAcrylic": true
-            },
-            {
                 "commandline": "\"C:/Program Files/Git/bin/bash.exe\" -i -l",
                 "guid": "{cd340c33-2812-4813-a76c-4899d779ed33}",
                 "hidden": false,
@@ -260,6 +242,77 @@
             }
         ]
     },
-    "schemes": [],
+    "schemes": 
+    [
+        {
+            "background": "#1E1E2E",
+            "black": "#45475A",
+            "blue": "#89B4FA",
+            "brightBlack": "#585B70",
+            "brightBlue": "#89B4FA",
+            "brightCyan": "#94E2D5",
+            "brightGreen": "#A6E3A1",
+            "brightPurple": "#F5C2E7",
+            "brightRed": "#F38BA8",
+            "brightWhite": "#A6ADC8",
+            "brightYellow": "#F9E2AF",
+            "cursorColor": "#F5E0DC",
+            "cyan": "#94E2D5",
+            "foreground": "#CDD6F4",
+            "green": "#A6E3A1",
+            "name": "Catppuccin Mocha",
+            "purple": "#F5C2E7",
+            "red": "#F38BA8",
+            "selectionBackground": "#585B70",
+            "white": "#BAC2DE",
+            "yellow": "#F9E2AF"
+        },
+        {
+            "background": "#1A1B2C",
+            "black": "#414868",
+            "blue": "#7AA2F7",
+            "brightBlack": "#414868",
+            "brightBlue": "#7AA2F7",
+            "brightCyan": "#7DCFFF",
+            "brightGreen": "#73DACA",
+            "brightPurple": "#BB9AF7",
+            "brightRed": "#F7768E",
+            "brightWhite": "#C0CAF5",
+            "brightYellow": "#E0AF68",
+            "cursorColor": "#C0CAF5",
+            "cyan": "#7DCFFF",
+            "foreground": "#A9B1DC",
+            "green": "#73DACA",
+            "name": "Tokyo Night",
+            "purple": "#BB9AF7",
+            "red": "#F7768E",
+            "selectionBackground": "#28344A",
+            "white": "#C0CAF5",
+            "yellow": "#E0AF68"
+        },
+        {
+            "background": "#131613",
+            "black": "#15161E",
+            "blue": "#7AA2F7",
+            "brightBlack": "#414868",
+            "brightBlue": "#7AA2F7",
+            "brightCyan": "#7DCFFF",
+            "brightGreen": "#9ECE6A",
+            "brightPurple": "#BB9AF7",
+            "brightRed": "#F7768E",
+            "brightWhite": "#C0CAF5",
+            "brightYellow": "#E0AF68",
+            "cursorColor": "#C0CAF5",
+            "cyan": "#7DCFFF",
+            "foreground": "#C0CAF5",
+            "green": "#9ECE6A",
+            "name": "Tokyo Night YB edit",
+            "purple": "#BB9AF7",
+            "red": "#F7768E",
+            "selectionBackground": "#283457",
+            "white": "#A9B1D6",
+            "yellow": "#E0AF68"
+        }
+    ],
     "themes": []
 }

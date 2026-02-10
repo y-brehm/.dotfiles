@@ -11,7 +11,7 @@ return {
       },
     },
     task_list = {
-      direction = "right",  -- Task list on right side with Edgy
+      direction = "right",
       min_height = 25,
       max_height = 25,
       default_detail = 1, -- 1 = output, 2 = detail
@@ -39,7 +39,7 @@ return {
   config = function(_, opts)
     require("overseer").setup(opts)
 
-    -- Set filetype for Overseer terminal buffers so Edgy can catch them
+    -- Set filetype for Overseer terminal buffers
     -- Add task name patterns here when adding new Overseer templates
     local overseer_patterns = { "conan", "cmake", "reaper" }
 

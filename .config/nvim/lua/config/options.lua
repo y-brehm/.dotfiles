@@ -20,6 +20,7 @@ opt.scrolloff = 8
 opt.swapfile = false
 opt.clipboard = 'unnamedplus'
 opt.signcolumn = 'yes'
+opt.laststatus = 3
 
 g.noswapfile = true
 

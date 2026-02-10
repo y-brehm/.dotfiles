@@ -8,6 +8,22 @@ function config {
     git --git-dir=$HOME\.dotfiles --work-tree=$HOME $args
 }
 
+Import-Module PSFzf
+
+# Set fzf to use fd for file searching (much faster)
+$env:FZF_DEFAULT_COMMAND = 'fd --type f --hidden --follow --exclude .git'
+$env:FZF_CTRL_T_COMMAND = "$env:FZF_DEFAULT_COMMAND"
+
+function y {
+	$tmp = (New-TemporaryFile).FullName
+	yazi.exe $args --cwd-file="$tmp"
+	$cwd = Get-Content -Path $tmp -Encoding UTF8
+	if ($cwd -ne $PWD.Path -and (Test-Path -LiteralPath $cwd -PathType Container)) {
+		Set-Location -LiteralPath (Resolve-Path -LiteralPath $cwd).Path
+	}
+	Remove-Item -Path $tmp
+}
+
 function venv { & .\.venv\Scripts\activate.ps1 }
 
 Remove-Item Alias:ls -Force -ErrorAction SilentlyContinue

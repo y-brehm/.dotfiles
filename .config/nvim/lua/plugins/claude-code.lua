@@ -43,6 +43,9 @@ return {
         height = 0.9,
         border = "single",
         backdrop = false, -- Must be false or omitted - causes rendering glitches if enabled
+        wo = {
+          winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder",
+        },
         keys = {
           claude_hide = {
             toggle_key,
