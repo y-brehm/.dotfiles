@@ -303,6 +303,7 @@ return {
         "ruff",
         "debugpy",
         "lua-language-server",
+        "rust-analyzer",
       }
 
       -- Only add C++ tools on non-Windows platforms

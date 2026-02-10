@@ -4,7 +4,7 @@ return {
     build = ":TSUpdate",
     event = { "BufReadPost", "BufNewFile" },
     opts = {
-      ensure_installed = { "python", "cpp" },
+      ensure_installed = { "python", "cpp", "rust" },
       highlight = {
         enable = true,
         additional_vim_regex_highlighting = false,
