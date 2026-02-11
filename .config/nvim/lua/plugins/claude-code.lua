@@ -60,10 +60,9 @@ return {
     },
 
     diff_opts = {
-      auto_close_on_accept = true,
-      vertical_split = true,
-      open_in_current_tab = false,
-      keep_terminal_focus = false, -- Allow diff view to take focus instead of staying behind Claude window
+      layout = "vertical",
+      open_in_new_tab = true,
+      keep_terminal_focus = true, -- Focus the split terminal in the diff tab after opening
     },
   },
 

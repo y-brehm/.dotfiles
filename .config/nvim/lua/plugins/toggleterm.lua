@@ -9,7 +9,7 @@ return {
     local venv_utils = require("config.venv_utils")
 
     toggleterm_main_module.setup({
-      size = 10,
+      size = 20,
       open_mapping = nil, -- Crucial for custom mapping
       hide_numbers = true,
       shade_terminals = false,

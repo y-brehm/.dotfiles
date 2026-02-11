@@ -47,6 +47,17 @@ return {
         hl.WhichKeyFloat = { bg = "#111411" }
         hl.WhichKeyNormal = { bg = "#111411" }
 
+        -- Snacks input (rename dialog) title/border backgrounds
+        hl.SnacksInputTitle = { fg = colors.info, bg = "#1a1d1a" }
+        hl.SnacksInputBorder = { fg = colors.info, bg = "#1a1d1a" }
+
+        -- Snacks notification title backgrounds
+        hl.SnacksNotifierTitleInfo = { fg = colors.info, bg = "#1a1d1a" }
+        hl.SnacksNotifierTitleWarn = { fg = colors.warning, bg = "#1a1d1a" }
+        hl.SnacksNotifierTitleError = { fg = colors.error, bg = "#1a1d1a" }
+        hl.SnacksNotifierTitleDebug = { fg = colors.dark5, bg = "#1a1d1a" }
+        hl.SnacksNotifierTitleTrace = { fg = colors.purple, bg = "#1a1d1a" }
+
         -- Diff highlights
         hl.DiffAdd = { bg = "#2a3e2a" }
         hl.DiffDelete = { bg = "#5f3034" }
@@ -219,7 +230,9 @@ return {
       debug = false; -- Print debug information
       opacity = nil; -- 0-100 opacity level of the floating window where 100 is fully transparent.
       resizing_mappings = false; -- Binds arrow keys to resizing the floating window.
-      post_open_hook = nil; -- A function taking two arguments, a buffer and a window to be ran as a hook.
+      post_open_hook = function(buf, win)
+        vim.wo[win].winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder"
+      end;
       post_close_hook = nil; -- A function taking two arguments, a buffer and a window to be ran as a hook.
       references = { -- Configure the telescope UI for slowing the references cycling window.
         telescope = require("telescope.themes").get_dropdown({ hide_preview = false })
@@ -286,13 +299,13 @@ return {
           end
 
           -- Navigation (avoiding [ and ] for German keyboard)
-          map('n', '<leader>gj', function()
+          map('n', '<leader>hj', function()
             if vim.wo.diff then return ']c' end
             vim.schedule(function() gs.next_hunk() end)
             return '<Ignore>'
           end, {expr=true, desc = 'Next hunk'})
 
-          map('n', '<leader>gk', function()
+          map('n', '<leader>hk', function()
             if vim.wo.diff then return '[c' end
             vim.schedule(function() gs.prev_hunk() end)
             return '<Ignore>'

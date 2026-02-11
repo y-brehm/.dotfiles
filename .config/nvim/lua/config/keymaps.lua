@@ -34,6 +34,7 @@ vim.keymap.set('t', '<C-l>', [[<Cmd>wincmd l<CR>]], { noremap = true, silent = t
 
 -- Terminal normal mode
 vim.keymap.set('t', '<Esc><Esc>', [[<C-\><C-N>]], { noremap = true, silent = true, desc = 'Terminal: Enter Normal Mode (Dbl Esc)' })
+vim.keymap.set('t', '<C-Space>', [[<C-\><C-N>]], { noremap = true, silent = true, desc = 'Terminal: Enter Normal Mode (Ctrl+Space)' })
 
 -- Launch Host Application
 local custom_actions = require("config.custom_actions")

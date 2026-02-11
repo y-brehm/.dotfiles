@@ -31,6 +31,16 @@ return{
         statuscolumn = { enabled = true },
         words = { enabled = true },
         styles = {
+            notification = {
+                wo = {
+                    winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder",
+                },
+            },
+            input = {
+                wo = {
+                    winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder",
+                },
+            },
             terminal = {
                 bo = {
                     filetype = "snacks_terminal",

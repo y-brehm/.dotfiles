@@ -80,12 +80,13 @@ return {
       local ui = require("dapui")
 
       -- Signs
-      vim.fn.sign_define('DapBreakpoint', { text='●', texthl='LspDiagnosticsDefaultError' })
-      vim.fn.sign_define('DapLogPoint', { text='◉', texthl='LspDiagnosticsDefaultError' })
-      vim.fn.sign_define('DapStopped', { text='➔', texthl='LspDiagnosticsDefaultInformation', linehl='CursorLine' })
+      vim.fn.sign_define('DapBreakpoint', { text='●', texthl='DiagnosticError' })
+      vim.fn.sign_define('DapLogPoint', { text='◉', texthl='DiagnosticError' })
+      vim.fn.sign_define('DapStopped', { text='➔', texthl='DiagnosticInfo', linehl='CursorLine' })
 
       -- UI setup
       ui.setup({
+        expand_lines = false,
         mappings = {
         expand = {'<CR>', '<LeftMouse>'},
           open = {'o'},
@@ -96,16 +97,18 @@ return {
         layouts = {
           {
             elements = {
+              'stacks',
               'breakpoints',
               'watches',
-              'stacks',
-              'scopes',
             },
-            size = 70,
+            size = 50,
             position = 'right',
           },
           {
-            elements = {'repl'},
+            elements = {
+              { id = 'scopes', size = 0.75 },
+              { id = 'repl', size = 0.25 },
+            },
             size = 20,
             position = 'bottom',
           },

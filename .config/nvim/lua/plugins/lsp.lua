@@ -36,87 +36,36 @@ return {
 
       -- ### Language-specific LSP setup (deferred until file type is opened) ###
 
-      -- Python LSP setup (basedpyright + ruff)
+      -- Python LSP setup (ty + ruff)
+      -- Both auto-detect .venv in project root; configure via ty.toml / ruff.toml
       vim.api.nvim_create_autocmd("FileType", {
         pattern = "python",
         once = true,
         callback = function()
-          local venv_utils = require("config.venv_utils")
-
-          -- Helper function to detect Python virtual environment for LSP
-          local function get_python_path()
-            local cwd = vim.fn.getcwd()
-
-            -- 1. Check for project-local venv (highest priority)
-            local python_path = venv_utils.find_project_venv_python(cwd)
-            if python_path then
-              vim.notify("LSP using project venv: " .. python_path, vim.log.levels.INFO)
-              return python_path
-            end
-
-            -- 2. Check for activated venv via VIRTUAL_ENV (but skip Neovim's host venv)
-            local venv = os.getenv("VIRTUAL_ENV")
-            if venv then
-              local neovim_venv = vim.fn.expand("$USERPROFILE") .. "\\.virtualenvs\\neovim"
-              if not venv:match(neovim_venv:gsub("\\", "\\\\")) then
-                local python_exe = is_windows and (venv .. "\\Scripts\\python.exe") or (venv .. "/bin/python")
-                vim.notify("LSP using activated venv: " .. python_exe, vim.log.levels.INFO)
-                return python_exe
-              end
-            end
-
-            -- 3. Fallback to system Python
-            vim.notify("LSP using system Python (no project venv found)", vim.log.levels.WARN)
-            return "python"
-          end
-
-          local python_path = get_python_path()
-
-          -- Extract venv information from python_path for basedpyright
-          local venv_path = nil
-          local venv_name = nil
-
-          if python_path ~= "python" then
-            local venv_dir = vim.fn.fnamemodify(python_path, ":h:h")
-            venv_path = vim.fn.fnamemodify(venv_dir, ":h")
-            venv_name = vim.fn.fnamemodify(venv_dir, ":t")
-          end
-
-          -- Basedpyright setup
-          vim.lsp.config('basedpyright', {
+          vim.lsp.config('ty', {
             capabilities = capabilities,
             filetypes = { "python" },
             position_encoding = "utf-16",
-            cmd = { "basedpyright-langserver", "--stdio" },
             root_markers = {
               "pyproject.toml",
               "setup.py",
               "setup.cfg",
               "requirements.txt",
               "Pipfile",
-              "pyrightconfig.json",
               ".git",
             },
             settings = {
-              python = {
-                pythonPath = python_path,
-                venvPath = venv_path,
-                venv = venv_name,
-              },
-              basedpyright = {
-                typeCheckingMode = "standard",
-                analysis = {
-                  autoSearchPaths = true,
-                  autoImportCompletions = true,
-                  useLibraryCodeForTypes = true,
-                  diagnosticMode = "workspace",
+              ty = {
+                configuration = {
+                  rules = {
+                    all = "warn",
+                  },
                 },
               },
-            }
+            },
           })
-          vim.lsp.enable('basedpyright')
+          vim.lsp.enable('ty')
 
-          -- Ruff LSP setup
           vim.lsp.config('ruff', {
             capabilities = capabilities,
             filetypes = { "python" },
@@ -133,20 +82,31 @@ return {
               ".git",
             },
             settings = {
-              interpreter = { python_path },
-              configuration = nil,
               configurationPreference = "filesystemFirst",
               lineLength = 120,
               lint = {
                 enable = true,
                 select = {
-                  "F", "E", "W", "N", "UP", "B", "A", "C4", "T10",
-                  "ISC", "ICN", "PIE", "PT", "RET", "SIM", "ARG",
-                  "PTH", "PERF", "RUF",
+                  "F", "E", "W",       -- pyflakes, pycodestyle errors/warnings
+                  "N", "UP",            -- pep8-naming, pyupgrade
+                  "B", "A", "C4",       -- bugbear, builtins, comprehensions
+                  "T10", "T20",         -- debugger, print statements
+                  "ISC", "ICN",         -- implicit-str-concat, import-conventions
+                  "PIE", "PT",          -- misc lints, pytest-style
+                  "RET", "SIM",         -- return, simplify
+                  "ARG", "PTH",         -- unused-arguments, pathlib
+                  "PERF", "RUF",        -- performance, ruff-specific
+                  "S",                  -- bandit (security)
+                  "C90",                -- mccabe (complexity)
+                  "I",                  -- isort (import sorting)
+                  "PL",                 -- pylint
+                  "ERA",                -- commented-out code
+                  "TRY",                -- exception handling
+                  "FURB",               -- refurb (modern Python)
+                  "LOG",                -- logging best practices
+                  "FLY",                -- flynt (f-string conversion)
                 },
-                ignore = {
-                  "E501", "PLR0913", "PLR2004",
-                },
+                ignore = {},
               },
               format = {
                 quoteStyle = "double",
@@ -251,38 +211,18 @@ return {
 
         wk.add(keymaps, { buffer = event.buf })
 
+        -- Override built-in gO with a proper description for which-key
+        vim.keymap.set("n", "gO", vim.lsp.buf.document_symbol, { buffer = event.buf, desc = "Document Symbols" })
+
         -- Insert mode signature help (not part of which-key)
         vim.keymap.set("i", "<leader>h", vim.lsp.buf.signature_help, { buffer = event.buf })
 
-        -- Custom format function that calls Ruff directly for Python files
+        -- Format via LSP (ruff handles Python formatting + import sorting)
         local function format_buffer()
-          local filetype = vim.bo.filetype
-
-          if filetype == "python" then
-            -- Save current cursor position
-            local cursor_pos = vim.api.nvim_win_get_cursor(0)
-
-            -- Run ruff format with import sorting on the current file
-            local filepath = vim.fn.expand("%:p")
-            vim.cmd("silent! write")  -- Save file first
-
-            -- Run ruff check --fix to organize imports and fix issues
-            vim.fn.system({"ruff", "check", "--fix", "--select", "I", filepath})
-
-            -- Run ruff format to format the code
-            vim.fn.system({"ruff", "format", filepath})
-
-            -- Reload the buffer to show changes
-            vim.cmd("edit!")
-
-            -- Restore cursor position
-            vim.api.nvim_win_set_cursor(0, cursor_pos)
-
-            vim.notify("Formatted with Ruff", vim.log.levels.INFO)
-          else
-            -- For non-Python files, use standard LSP formatting
-            vim.lsp.buf.format({ async = false })
-          end
+          vim.lsp.buf.format({
+            async = false,
+            filter = function(client) return client.name ~= "ty" end,
+          })
         end
 
         -- Override the format keybinding for this buffer
@@ -299,7 +239,7 @@ return {
       local is_windows = vim.fn.has('win32') == 1 or vim.fn.has('win64') == 1
 
       local ensure_installed = {
-        "basedpyright",
+        "ty",
         "ruff",
         "debugpy",
         "lua-language-server",
@@ -329,9 +269,10 @@ return {
         local home = vim.fn.expand('$USERPROFILE')
         local venv_python = home .. '\\.virtualenvs\\neovim\\Scripts\\python.exe'
 
-        -- Check if virtualenv Python exists, otherwise use system Python
+        -- Check if virtualenv Python exists, add to PATH for Mason
+        -- Note: Do NOT set VIRTUAL_ENV here — it would cause ty/ruff to use
+        -- the neovim venv instead of the project's .venv
         if vim.fn.filereadable(venv_python) == 1 then
-          vim.env.VIRTUAL_ENV = home .. '\\.virtualenvs\\neovim'
           vim.env.PATH = home .. '\\.virtualenvs\\neovim\\Scripts;' .. vim.env.PATH
         end
       end
