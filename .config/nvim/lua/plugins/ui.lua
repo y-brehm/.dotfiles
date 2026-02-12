@@ -51,12 +51,40 @@ return {
         hl.SnacksInputTitle = { fg = colors.info, bg = "#1a1d1a" }
         hl.SnacksInputBorder = { fg = colors.info, bg = "#1a1d1a" }
 
+        -- Snacks notification backgrounds
+        hl.SnacksNotifierInfo = { fg = colors.fg, bg = "#1a1d1a" }
+        hl.SnacksNotifierWarn = { fg = colors.fg, bg = "#1a1d1a" }
+        hl.SnacksNotifierError = { fg = colors.fg, bg = "#1a1d1a" }
+        hl.SnacksNotifierDebug = { fg = colors.fg, bg = "#1a1d1a" }
+        hl.SnacksNotifierTrace = { fg = colors.fg, bg = "#1a1d1a" }
+
         -- Snacks notification title backgrounds
         hl.SnacksNotifierTitleInfo = { fg = colors.info, bg = "#1a1d1a" }
         hl.SnacksNotifierTitleWarn = { fg = colors.warning, bg = "#1a1d1a" }
         hl.SnacksNotifierTitleError = { fg = colors.error, bg = "#1a1d1a" }
         hl.SnacksNotifierTitleDebug = { fg = colors.dark5, bg = "#1a1d1a" }
         hl.SnacksNotifierTitleTrace = { fg = colors.purple, bg = "#1a1d1a" }
+
+        -- Snacks notification border backgrounds
+        hl.SnacksNotifierBorderInfo = { fg = colors.info, bg = "#1a1d1a" }
+        hl.SnacksNotifierBorderWarn = { fg = colors.warning, bg = "#1a1d1a" }
+        hl.SnacksNotifierBorderError = { fg = colors.error, bg = "#1a1d1a" }
+        hl.SnacksNotifierBorderDebug = { fg = colors.dark5, bg = "#1a1d1a" }
+        hl.SnacksNotifierBorderTrace = { fg = colors.purple, bg = "#1a1d1a" }
+
+        -- Snacks notification icon backgrounds
+        hl.SnacksNotifierIconInfo = { fg = colors.info, bg = "#1a1d1a" }
+        hl.SnacksNotifierIconWarn = { fg = colors.warning, bg = "#1a1d1a" }
+        hl.SnacksNotifierIconError = { fg = colors.error, bg = "#1a1d1a" }
+        hl.SnacksNotifierIconDebug = { fg = colors.dark5, bg = "#1a1d1a" }
+        hl.SnacksNotifierIconTrace = { fg = colors.purple, bg = "#1a1d1a" }
+
+        -- Snacks notification footer backgrounds
+        hl.SnacksNotifierFooterInfo = { fg = colors.info, bg = "#1a1d1a" }
+        hl.SnacksNotifierFooterWarn = { fg = colors.warning, bg = "#1a1d1a" }
+        hl.SnacksNotifierFooterError = { fg = colors.error, bg = "#1a1d1a" }
+        hl.SnacksNotifierFooterDebug = { fg = colors.dark5, bg = "#1a1d1a" }
+        hl.SnacksNotifierFooterTrace = { fg = colors.purple, bg = "#1a1d1a" }
 
         -- Diff highlights
         hl.DiffAdd = { bg = "#2a3e2a" }
