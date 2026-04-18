@@ -23,7 +23,7 @@ return {
         comments = { italic = true },
         keywords = { italic = true },
         sidebars = "dark",
-        floats = "normal",
+        floats = "dark",
       },
       on_colors = function(colors)
         colors.bg = "#151815"
@@ -32,79 +32,19 @@ return {
         colors.bg_sidebar = "#1a1d1a"
         colors.bg_statusline = "#1a1d1a"
       end,
-      on_highlights = function(hl, colors)
-        -- Inactive windows: slightly lighter bg + dimmed text
-        hl.NormalNC = { bg = "#1a1d1a", fg = "#8a8ea0" }
-
-        -- Consistent backgrounds (match inactive bg to avoid dark bands)
-        hl.WinSeparator = { fg = "#3a3d3a", bg = "#1a1d1a" }
-        hl.NormalFloat = { bg = "#1a1d1a" }
-        hl.FloatBorder = { fg = "#3a3d3a", bg = "#1a1d1a" }
-        hl.FloatTitle = { fg = colors.fg, bg = "#1a1d1a" }
-        hl.MsgArea = { bg = "#1a1d1a" }
-        hl.StatusLine = { bg = "#1a1d1a" }
-        hl.StatusLineNC = { bg = "#1a1d1a" }
-        hl.WhichKeyFloat = { bg = "#111411" }
-        hl.WhichKeyNormal = { bg = "#111411" }
-
-        -- Snacks input (rename dialog) title/border backgrounds
-        hl.SnacksInputTitle = { fg = colors.info, bg = "#1a1d1a" }
-        hl.SnacksInputBorder = { fg = colors.info, bg = "#1a1d1a" }
-
-        -- Snacks notification backgrounds
-        hl.SnacksNotifierInfo = { fg = colors.fg, bg = "#1a1d1a" }
-        hl.SnacksNotifierWarn = { fg = colors.fg, bg = "#1a1d1a" }
-        hl.SnacksNotifierError = { fg = colors.fg, bg = "#1a1d1a" }
-        hl.SnacksNotifierDebug = { fg = colors.fg, bg = "#1a1d1a" }
-        hl.SnacksNotifierTrace = { fg = colors.fg, bg = "#1a1d1a" }
-
-        -- Snacks notification title backgrounds
-        hl.SnacksNotifierTitleInfo = { fg = colors.info, bg = "#1a1d1a" }
-        hl.SnacksNotifierTitleWarn = { fg = colors.warning, bg = "#1a1d1a" }
-        hl.SnacksNotifierTitleError = { fg = colors.error, bg = "#1a1d1a" }
-        hl.SnacksNotifierTitleDebug = { fg = colors.dark5, bg = "#1a1d1a" }
-        hl.SnacksNotifierTitleTrace = { fg = colors.purple, bg = "#1a1d1a" }
-
-        -- Snacks notification border backgrounds
-        hl.SnacksNotifierBorderInfo = { fg = colors.info, bg = "#1a1d1a" }
-        hl.SnacksNotifierBorderWarn = { fg = colors.warning, bg = "#1a1d1a" }
-        hl.SnacksNotifierBorderError = { fg = colors.error, bg = "#1a1d1a" }
-        hl.SnacksNotifierBorderDebug = { fg = colors.dark5, bg = "#1a1d1a" }
-        hl.SnacksNotifierBorderTrace = { fg = colors.purple, bg = "#1a1d1a" }
-
-        -- Snacks notification icon backgrounds
-        hl.SnacksNotifierIconInfo = { fg = colors.info, bg = "#1a1d1a" }
-        hl.SnacksNotifierIconWarn = { fg = colors.warning, bg = "#1a1d1a" }
-        hl.SnacksNotifierIconError = { fg = colors.error, bg = "#1a1d1a" }
-        hl.SnacksNotifierIconDebug = { fg = colors.dark5, bg = "#1a1d1a" }
-        hl.SnacksNotifierIconTrace = { fg = colors.purple, bg = "#1a1d1a" }
-
-        -- Snacks notification footer backgrounds
-        hl.SnacksNotifierFooterInfo = { fg = colors.info, bg = "#1a1d1a" }
-        hl.SnacksNotifierFooterWarn = { fg = colors.warning, bg = "#1a1d1a" }
-        hl.SnacksNotifierFooterError = { fg = colors.error, bg = "#1a1d1a" }
-        hl.SnacksNotifierFooterDebug = { fg = colors.dark5, bg = "#1a1d1a" }
-        hl.SnacksNotifierFooterTrace = { fg = colors.purple, bg = "#1a1d1a" }
-
-        -- Diff highlights
-        hl.DiffAdd = { bg = "#2a3e2a" }
-        hl.DiffDelete = { bg = "#5f3034" }
-        hl.DiffChange = { bg = "#3a3a20" }
-        hl.DiffText = { bg = "#5c5c30" }
-
-        -- Dashboard highlights - neutral/white text
-        hl.SnacksDashboardNormal = { fg = colors.fg }
-        hl.SnacksDashboardDesc = { fg = colors.fg }
-        hl.SnacksDashboardFile = { fg = colors.fg }
-        hl.SnacksDashboardDir = { fg = colors.fg }
-        hl.SnacksDashboardFooter = { fg = colors.fg }
-        hl.SnacksDashboardHeader = { fg = colors.fg }
-        hl.SnacksDashboardIcon = { fg = colors.fg }
-        hl.SnacksDashboardKey = { fg = colors.fg }
-        hl.SnacksDashboardTerminal = { fg = colors.fg }
-        hl.SnacksDashboardSpecial = { fg = colors.fg }
-        hl.SnacksDashboardTitle = { fg = colors.fg }
-      end,
+    },
+  },
+  {
+    "navarasu/onedark.nvim",
+    lazy = true,
+    opts = {
+      style = "dark",
+      colors = {
+        bg0 = "#151815",
+        bg1 = "#1a1d1a",
+        bg2 = "#1a1d1a",
+        bg3 = "#1a1d1a",
+      },
     },
   },
   {
@@ -149,33 +89,7 @@ return {
                         surface0 = "#313244", -- Another option for sidebar backgrounds
                     },
                 },
-        custom_highlights = function(colors) -- colors is the palette for the current flavour
-          return {
-            DiffAdd = { bg = "#2a3e2a" },
-            DiffDelete = { bg = "#5f3034" },
-            DiffChange = { bg = "#3a3a20" },
-            DiffText = { bg = "#5c5c30" },
-
-            -- Inactive windows: slightly lighter bg + dimmed text
-            NormalNC = { bg = colors.mantle, fg = colors.overlay0 },
-
-            -- Visible window borders
-            WinSeparator = { fg = colors.surface0 },
-
-            -- Dashboard highlights - make everything white/neutral
-            SnacksDashboardNormal = { fg = colors.text },
-            SnacksDashboardDesc = { fg = colors.text },
-            SnacksDashboardFile = { fg = colors.text },
-            SnacksDashboardDir = { fg = colors.text },
-            SnacksDashboardFooter = { fg = colors.text },
-            SnacksDashboardHeader = { fg = colors.text },
-            SnacksDashboardIcon = { fg = colors.text },
-            SnacksDashboardKey = { fg = colors.text },
-            SnacksDashboardTerminal = { fg = colors.text },
-            SnacksDashboardSpecial = { fg = colors.text },
-            SnacksDashboardTitle = { fg = colors.text },
-          }
-        end,
+        -- Highlight overrides handled by lua/config/highlights.lua (ColorScheme autocommand)
         integrations = {
             cmp = true,
             gitsigns = true,

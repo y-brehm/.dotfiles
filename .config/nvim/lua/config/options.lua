@@ -21,6 +21,14 @@ opt.swapfile = false
 opt.clipboard = 'unnamedplus'
 opt.signcolumn = 'yes'
 opt.laststatus = 3
+opt.winbar = "%f"
+
+-- Folding (nvim-ufo): must be set before any buffer loads so window-local
+-- foldlevel is initialized to 99, otherwise ufo's fold refreshes snap folds closed.
+opt.foldcolumn = "1"
+opt.foldlevel = 99
+opt.foldlevelstart = 99
+opt.foldenable = true
 
 g.noswapfile = true
 

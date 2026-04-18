@@ -45,13 +45,8 @@ return {
     },
   },
   config = function(_, opts)
-    -- Set fold options
-    vim.o.foldcolumn = "1"
-    vim.o.foldlevel = 99
-    vim.o.foldlevelstart = 99
-    vim.o.foldenable = true
-
-    -- Setup ufo
+    -- Fold options (foldcolumn/foldlevel/foldlevelstart/foldenable) live in
+    -- lua/config/options.lua so they apply before any buffer loads.
     require("ufo").setup(opts)
 
     -- Override default z-based fold keys to work with ufo
