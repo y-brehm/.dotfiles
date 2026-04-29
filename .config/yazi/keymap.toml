@@ -1,0 +1,6 @@
+[mgr]
+prepend_keymap = [
+    { on = [ "e" ], run = "shell 'start explorer \"%0\"'" },
+    { on = [ "Q" ], run = "shell 'powershell -ExecutionPolicy Bypass -File C:/Users/localadmin/win_dev/QT/open-ui-file.ps1 \"%0\"'", desc = "Open in Qt Designer" },
+    { on = "<Enter>", run = "plugin smart-enter", desc = "Enter the child directory, or open the file" },
+]

@@ -1,0 +1,14 @@
+[[plugin.deps]]
+use = "yazi-rs/plugins:smart-enter"
+rev = "ac82af3"
+hash = "2ede7b0f1beade8390be1b52cfed6a49"
+
+[[flavor.deps]]
+use = "BennyOe/tokyo-night"
+rev = "8e6296f"
+hash = "49258e379077f4b0d2e62dfdb131c7d"
+
+[[flavor.deps]]
+use = "yazi-rs/flavors:catppuccin-mocha"
+rev = "4c57537"
+hash = "eb541426744368b99b827494111ca44d"
