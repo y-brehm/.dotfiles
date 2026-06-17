@@ -66,7 +66,30 @@ end
 map("n", "<leader>dD", prompt_and_diff_dirs, { silent = true, desc = "[D]iff [D]irectories" })
 
 -- Merge conflict resolution mappings
-map("n", "<leader>mo", ":diffget LOCAL<CR>", { desc = "[M]erge get [O]urs (LOCAL)" })
-map("n", "<leader>mt", ":diffget REMOTE<CR>", { desc = "[M]erge get [T]heirs (REMOTE)" })
-map("n", "<leader>mO", ":%diffget LOCAL<CR>", { desc = "[M]erge get ALL [O]urs (LOCAL)" })
-map("n", "<leader>mT", ":%diffget REMOTE<CR>", { desc = "[M]erge get ALL [T]heirs (REMOTE)" })
+-- Uses Lua case-sensitive matching to avoid E93 on Windows (fileignorecase=true
+-- makes :diffget LOCAL match "config.local.json" and similar filenames).
+local function diffget_label(label, all_hunks)
+  local target_buf = nil
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_loaded(buf) then
+      local basename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(buf), ":t")
+      if basename:find(label, 1, true) then
+        if target_buf then
+          vim.notify("Multiple buffers match '" .. label .. "', aborting", vim.log.levels.WARN)
+          return
+        end
+        target_buf = buf
+      end
+    end
+  end
+  if target_buf then
+    vim.cmd((all_hunks and "%" or "") .. "diffget " .. target_buf)
+  else
+    vim.notify("No buffer matching '" .. label .. "' found", vim.log.levels.WARN)
+  end
+end
+
+map("n", "<leader>mo", function() diffget_label("LOCAL", false) end, { desc = "[M]erge get [O]urs (LOCAL)" })
+map("n", "<leader>mt", function() diffget_label("REMOTE", false) end, { desc = "[M]erge get [T]heirs (REMOTE)" })
+map("n", "<leader>mO", function() diffget_label("LOCAL", true) end, { desc = "[M]erge get ALL [O]urs (LOCAL)" })
+map("n", "<leader>mT", function() diffget_label("REMOTE", true) end, { desc = "[M]erge get ALL [T]heirs (REMOTE)" })

@@ -1,13 +1,13 @@
 [opener]
 edit = [
-	{ run = 'nvim "%*"', block = true, for = "windows" },
-	{ run = 'nvim "$@"', block = true, for = "unix" },
+	{ run = 'nvim %s', block = true, for = "windows" },
+	{ run = 'nvim %s', block = true, for = "unix" },
 ]
 
 # C/C++ files: VS Code on Windows, nvim on macOS/Linux
 cpp = [
-	{ run = 'code "%*"', block = false, orphan = true, for = "windows" },
-	{ run = 'nvim "$@"', block = true, for = "unix" },
+	{ run = 'code %s', block = false, orphan = true, for = "windows" },
+	{ run = 'nvim %s', block = true, for = "unix" },
 ]
 
 [open]

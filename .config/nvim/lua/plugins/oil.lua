@@ -1,3 +1,27 @@
+-- Oil records the focused window as the "origin" to open files into.
+-- If that window is a terminal, the file would replace the terminal buffer.
+-- This guard switches focus to a regular window (or creates one) before opening Oil.
+local function ensure_non_terminal_focus()
+  local cur_buf = vim.api.nvim_get_current_buf()
+  if vim.bo[cur_buf].buftype ~= "terminal" then return end
+
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    local buf = vim.api.nvim_win_get_buf(win)
+    local cfg = vim.api.nvim_win_get_config(win)
+    if cfg.relative == "" and vim.bo[buf].buftype ~= "terminal" then
+      vim.api.nvim_set_current_win(win)
+      return
+    end
+  end
+  -- No regular window found — create one so Oil has a valid target
+  vim.cmd("new")
+end
+
+local function open_oil_float()
+  ensure_non_terminal_focus()
+  vim.cmd("Oil --float")
+end
+
 local function toggle_oil_float()
   local oil_wins = vim.tbl_filter(function(win)
     local buf = vim.api.nvim_win_get_buf(win)
@@ -5,13 +29,11 @@ local function toggle_oil_float()
   end, vim.api.nvim_list_wins())
 
   if #oil_wins > 0 then
-    -- Close all oil windows
     for _, win in ipairs(oil_wins) do
       vim.api.nvim_win_close(win, false)
     end
   else
-    -- Open oil in float
-    vim.cmd("Oil --float")
+    open_oil_float()
   end
 end
 
@@ -19,7 +41,7 @@ return {
   "stevearc/oil.nvim",
   keys = {
     { "<leader>e", toggle_oil_float, desc = "Toggle Oil float" },
-    { "-", "<cmd>Oil --float<CR>", mode = "n", desc = "Open parent directory (Oil)" },
+    { "-", open_oil_float, mode = "n", desc = "Open parent directory (Oil)" },
   },
 
   opts = {

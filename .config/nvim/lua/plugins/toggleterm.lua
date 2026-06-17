@@ -50,5 +50,26 @@ return {
     wk.add({
       { "<leader>td", "<cmd>ToggleTermDefault<CR>", desc = "[T]erminal [D]efault" },
     })
+
+    -- Prevent the terminal from becoming the last visible window.
+    -- When all regular windows are closed, open a new empty buffer instead
+    -- of leaving the user stranded in (or quitting from) the terminal.
+    vim.api.nvim_create_autocmd("WinClosed", {
+      group = vim.api.nvim_create_augroup("TerminalLastWindowGuard", { clear = true }),
+      callback = function()
+        vim.schedule(function()
+          local regular_wins = vim.tbl_filter(function(win)
+            if not vim.api.nvim_win_is_valid(win) then return false end
+            local buf = vim.api.nvim_win_get_buf(win)
+            local cfg = vim.api.nvim_win_get_config(win)
+            return cfg.relative == "" and vim.bo[buf].buftype ~= "terminal"
+          end, vim.api.nvim_list_wins())
+
+          if #regular_wins == 0 then
+            vim.cmd("new")
+          end
+        end)
+      end,
+    })
   end,
 }

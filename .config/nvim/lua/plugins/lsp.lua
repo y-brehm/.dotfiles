@@ -148,6 +148,42 @@ return {
         end,
       })
 
+      -- Markdown LSP setup (marksman + harper-ls)
+      -- marksman: link navigation, completion, document symbols (always on)
+      -- harper-ls: grammar/spell checking (off by default, toggle with <leader>mh)
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "markdown",
+        once = true,
+        callback = function()
+          vim.lsp.config('marksman', {
+            capabilities = capabilities,
+            filetypes = { "markdown" },
+            position_encoding = "utf-16",
+            root_markers = { ".marksman.toml", ".git" },
+          })
+          vim.lsp.enable('marksman')
+
+          -- Register harper_ls config but leave it disabled. Toggled on-demand.
+          vim.lsp.config('harper_ls', {
+            capabilities = capabilities,
+            filetypes = { "markdown" },
+            position_encoding = "utf-16",
+            root_markers = { ".git" },
+          })
+
+          vim.keymap.set("n", "<leader>mh", function()
+            local clients = vim.lsp.get_clients({ name = "harper_ls" })
+            if #clients > 0 then
+              vim.lsp.enable('harper_ls', false)
+              vim.notify("Harper grammar checking: OFF")
+            else
+              vim.lsp.enable('harper_ls', true)
+              vim.notify("Harper grammar checking: ON")
+            end
+          end, { desc = "[M]arkdown toggle [H]arper grammar" })
+        end,
+      })
+
       -- C/C++ LSP setup (clangd) - disabled on Windows
       if not is_windows then
         vim.api.nvim_create_autocmd("FileType", {
@@ -214,8 +250,15 @@ return {
         -- Override built-in gO with a proper description for which-key
         vim.keymap.set("n", "gO", vim.lsp.buf.document_symbol, { buffer = event.buf, desc = "Document Symbols" })
 
-        -- Insert mode signature help (not part of which-key)
-        vim.keymap.set("i", "<leader>h", vim.lsp.buf.signature_help, { buffer = event.buf })
+        -- Insert mode signature help. Bound on <C-k> (IDE convention) rather
+        -- than <leader>h, because leader is <Space> and <leader>h in insert
+        -- mode collides with typing any word starting with "h" after a space.
+        -- Only bind when the attached server actually supports the method —
+        -- markdown LSPs (marksman, harper_ls) do not advertise signatureHelpProvider.
+        local client = vim.lsp.get_client_by_id(event.data.client_id)
+        if client and client.server_capabilities.signatureHelpProvider then
+          vim.keymap.set("i", "<C-k>", vim.lsp.buf.signature_help, { buffer = event.buf })
+        end
 
         -- Format via LSP (ruff handles Python formatting + import sorting)
         local function format_buffer()
@@ -244,6 +287,8 @@ return {
         "debugpy",
         "lua-language-server",
         "rust-analyzer",
+        "marksman",
+        "harper-ls",
       }
 
       -- Only add C++ tools on non-Windows platforms
@@ -295,6 +340,11 @@ return {
     "williamboman/mason-lspconfig.nvim",
     opts = {
       automatic_installation = true,
+      -- harper_ls is intentionally off by default; toggle with <leader>mh.
+      -- Without this exclusion, mason-lspconfig would auto-enable it on install.
+      automatic_enable = {
+        exclude = { "harper_ls" },
+      },
     },
   },
   {
