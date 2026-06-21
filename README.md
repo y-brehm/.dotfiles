@@ -15,7 +15,7 @@ Unix) out of the wrong platform.
 | Neovim | `.config/nvim/` (shared) |
 | Terminal | `.config/kitty/` (Unix), `AppData/.../WindowsTerminal/.../settings.json` (Windows) |
 | pip / uv | `.config/pip/pip.conf`, `.config/uv/uv.toml` |
-| Install scripts | `config.{sh,ps1}`, `install_fonts.{sh,ps1}`, `install_prerequisites.sh`, `full_install.sh` |
+| Install scripts | `config.{sh,ps1}`, `install_fonts.{sh,ps1}`, `install_prerequisites.{sh,ps1}`, `full_install.sh` |
 
 ## Install
 
@@ -36,16 +36,24 @@ curl -fsSL https://raw.githubusercontent.com/y-brehm/.dotfiles/main/install_font
 
 ### Windows (PowerShell)
 
-Requires `git` on `PATH` (e.g. `winget install Git.Git`). In a PowerShell session:
+Run from an **elevated** PowerShell (Chocolatey needs admin):
 
 ```powershell
+irm https://raw.githubusercontent.com/y-brehm/.dotfiles/main/install_prerequisites.ps1 | iex
 irm https://raw.githubusercontent.com/y-brehm/.dotfiles/main/config.ps1 | iex
 irm https://raw.githubusercontent.com/y-brehm/.dotfiles/main/install_fonts.ps1 | iex
+nvim --headless "+Lazy! restore" +qa
 ```
 
-`config.ps1` clones the repo, applies the sparse checkout, backs up any conflicting
-existing files to `~/.dotfiles-backup`, and symlinks `~/.config/nvim` into
-`%LOCALAPPDATA%\nvim` so Neovim finds it.
+`install_prerequisites.ps1` installs the toolchain (git, compiler, Neovim, CLI
+tools) via Chocolatey, plus uv (official installer), tree-sitter (npm), conan
+(uv), and yazi (winget). `config.ps1` then clones the repo, applies the sparse
+checkout, backs up any conflicting existing files to `~/.dotfiles-backup`, and
+symlinks `~/.config/nvim` into `%LOCALAPPDATA%\nvim` so Neovim finds it. The final
+`Lazy! restore` installs plugins at the versions pinned in `lazy-lock.json`.
+
+C++ projects additionally need the MSVC build tools (Visual Studio); install those
+separately.
 
 ## How the install works
 
@@ -54,7 +62,7 @@ Each `config` script:
 1. Clones the repo bare into `~/.dotfiles`.
 2. Enables `core.sparseCheckout` and writes `~/.dotfiles/info/sparse-checkout`
    with a denylist: include everything (`/*`), then exclude the *other* OS's files
-   with `!` patterns.
+   with pattern-based `!` rules.
 3. Checks out into `$HOME`, moving any conflicting pre-existing files to
    `~/.dotfiles-backup`.
 4. Sets `status.showUntrackedFiles no` so `$HOME` clutter is hidden.

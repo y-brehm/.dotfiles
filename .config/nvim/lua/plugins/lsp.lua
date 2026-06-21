@@ -14,18 +14,8 @@ return {
       -- Reserve space in the gutter
       vim.opt.signcolumn = 'yes'
 
-      -- Detect OS and set appropriate Python paths
+      -- Detect OS (reused by language-specific setup further down)
       local is_windows = vim.fn.has('win32') == 1 or vim.fn.has('win64') == 1
-
-      if is_windows then
-        -- Windows paths
-        local home = vim.fn.expand('$USERPROFILE')
-        vim.g.python3_host_prog = home .. '\\.virtualenvs\\neovim\\Scripts\\python.exe'
-      else
-        -- Unix paths
-        vim.g.python_host_prog = '/usr/local/bin/python'
-        vim.g.python3_host_prog = '~/.virtualenvs/neovim/bin/python'
-      end
 
       -- Common LSP capabilities setup
       local capabilities = require("cmp_nvim_lsp").default_capabilities()

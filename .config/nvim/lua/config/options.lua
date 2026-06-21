@@ -4,6 +4,11 @@ local g = vim.g
 -- Disable LSP logging to prevent rust-analyzer stderr spam from growing lsp.log to gigabytes
 vim.lsp.set_log_level("OFF")
 
+-- No remote (python3) plugins are used (LSP uses ty/ruff, DAP uses Mason's
+-- debugpy + the project .venv), so disable the provider. Avoids needing a
+-- dedicated ~/.virtualenvs/neovim and speeds startup.
+g.loaded_python3_provider = 0
+
 -- General
 opt.cursorline = false
 opt.updatetime = 300

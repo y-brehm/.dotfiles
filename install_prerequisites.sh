@@ -178,30 +178,6 @@ install_apt_special_cases() {
     fi
 }
 
-# Setup Python environment for Neovim
-setup_python_env() {
-    log_info "Setting up Python environment for Neovim..."
-    
-    # Create directory for virtual environments
-    mkdir -p "$HOME/.virtualenvs"
-    
-    # Create and setup neovim venv
-    if [[ ! -d "$HOME/.virtualenvs/neovim" ]]; then
-        log_info "Creating Neovim Python virtual environment..."
-        python3 -m venv "$HOME/.virtualenvs/neovim"
-        
-        # Activate and install packages
-        source "$HOME/.virtualenvs/neovim/bin/activate"
-        pip install --upgrade pip
-        pip install pynvim neovim
-        deactivate
-        
-        log_info "Neovim Python environment created at ~/.virtualenvs/neovim"
-    else
-        log_info "Neovim Python environment already exists"
-    fi
-}
-
 # Install uv (Python package manager)
 install_uv() {
     if ! command -v uv >/dev/null 2>&1; then
@@ -261,13 +237,6 @@ verify_installation() {
             log_warn "○ $tool not found (optional)"
         fi
     done
-    
-    # Check Python environment
-    if [[ -f "$HOME/.virtualenvs/neovim/bin/python" ]]; then
-        log_info "✓ Neovim Python environment configured"
-    else
-        log_warn "○ Neovim Python environment not found"
-    fi
 }
 
 # Create fd symlink for fd-find on apt systems
@@ -288,7 +257,6 @@ main() {
     setup_directories
     install_packages
     setup_fd_symlink
-    setup_python_env
     install_uv
     verify_installation
     
