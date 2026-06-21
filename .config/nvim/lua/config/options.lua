@@ -2,7 +2,7 @@ local opt = vim.opt
 local g = vim.g
 
 -- Disable LSP logging to prevent rust-analyzer stderr spam from growing lsp.log to gigabytes
-vim.lsp.set_log_level("OFF")
+vim.lsp.log.set_level("OFF")
 
 -- No remote (python3) plugins are used (LSP uses ty/ruff, DAP uses Mason's
 -- debugpy + the project .venv), so disable the provider. Avoids needing a
