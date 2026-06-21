@@ -9,6 +9,13 @@ vim.lsp.log.set_level("OFF")
 -- dedicated ~/.virtualenvs/neovim and speeds startup.
 g.loaded_python3_provider = 0
 
+-- Likewise, no node/perl/ruby remote (rplugin) plugins are used. Disabling these
+-- providers silences the optional checkhealth warnings and skips the host probes
+-- at startup (otherwise nvim looks for the `neovim` npm package, perl, ruby+gem).
+g.loaded_node_provider = 0
+g.loaded_perl_provider = 0
+g.loaded_ruby_provider = 0
+
 -- General
 opt.cursorline = false
 opt.updatetime = 300

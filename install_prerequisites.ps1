@@ -50,9 +50,20 @@ $ChocoPackages = [ordered]@{
     core        = @("git", "git-lfs")
     compiler    = @("llvm")            # clang; needed by nvim-treesitter to build parsers
     dev_tools   = @("cmake", "ninja", "neovim", "luarocks")
+    # Mason ([Core utils] in :checkhealth) shells out to these archivers. curl,
+    # tar and 7z come from Windows/other packages; unzip/gzip/wget do not, so
+    # add them here to silence the warnings and let every Mason package install.
+    mason_utils = @("unzip", "gzip", "wget")
     shell_tools = @("ripgrep", "fd", "fzf", "lazygit", "zoxide", "lsd")
     python      = @("python")
     node        = @("nodejs")
+    # Rust toolchain (cargo, rustc, rustfmt, clippy). rustaceanvim drives
+    # rust-analyzer (installed via Mason) but needs a real toolchain to build,
+    # run and test. rustup also lets rust-analyzer find the std-library source.
+    rust        = @("rustup.install")
+    # ImageMagick provides `magick`, used by snacks.image / render-markdown to
+    # render images inline in graphics-capable terminals (kitty).
+    image       = @("imagemagick.app")
 }
 
 # PowerShell Gallery modules imported by the PowerShell profile (not choco
@@ -130,6 +141,32 @@ function Install-Yazi {
     }
 }
 
+function Install-RustToolchain {
+    # choco's rustup.install installs rustup; ensure a default stable toolchain
+    # plus the components rustaceanvim expects (rustfmt for <leader>fb, clippy).
+    if (-not (Get-Command rustup -ErrorAction SilentlyContinue)) {
+        Log-Warn "rustup not found; skipping Rust toolchain setup"
+        return
+    }
+    Log-Info "Ensuring a default Rust toolchain (stable + rustfmt, clippy)..."
+    rustup default stable
+    rustup component add rustfmt clippy
+    # rust-analyzer (installed via Mason) resolves std sources from this.
+    rustup component add rust-src
+}
+
+# Set $LANG so Neovim reports a UTF-8 locale. Without it :checkhealth flags
+# "Locale does not support UTF-8" and some unicode glyphs may not render.
+function Set-Utf8Locale {
+    if ([Environment]::GetEnvironmentVariable("LANG", "User")) {
+        Log-Info "LANG already set for the user"
+        return
+    }
+    Log-Info "Setting LANG=en_US.UTF-8 (User) for a UTF-8 locale in Neovim"
+    [Environment]::SetEnvironmentVariable("LANG", "en_US.UTF-8", "User")
+    $env:LANG = "en_US.UTF-8"
+}
+
 function Install-PowerShellModules {
     # The PowerShell profile imports these Gallery modules (PSFzf for fzf
     # keybindings, posh-git for git status in the prompt). They are not choco
@@ -160,7 +197,8 @@ function Verify-Installation {
         ninja = "ninja"; clang = "llvm"; rg = "ripgrep"; fd = "fd"; fzf = "fzf";
         lazygit = "lazygit"; zoxide = "zoxide"; lsd = "lsd"; luarocks = "luarocks";
         node = "nodejs"; python = "python"; uv = "uv"; "tree-sitter" = "tree-sitter-cli";
-        conan = "conan"; yazi = "yazi"
+        conan = "conan"; yazi = "yazi"; cargo = "rustup.install"; rustc = "rustup.install";
+        magick = "imagemagick.app"; unzip = "unzip"; gzip = "gzip"; wget = "wget"
     }
     foreach ($cmd in ($tools.Keys | Sort-Object)) {
         if (Get-Command $cmd -ErrorAction SilentlyContinue) {
@@ -188,6 +226,8 @@ Install-Uv
 Install-TreeSitterCli
 Install-Conan
 Install-Yazi
+Install-RustToolchain
+Set-Utf8Locale
 Install-PowerShellModules
 Verify-Installation
 
