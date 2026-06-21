@@ -28,7 +28,8 @@ if (-not (Test-Path $sparseCheckoutDir)) {
 !.zshrc
 !.p10k.zsh
 !.config/kitty/
-"@ | Out-File -FilePath $sparseCheckoutPath -Encoding utf8
+# ASCII (BOM-free) so git parses the first pattern line on every PowerShell version
+"@ | Out-File -FilePath $sparseCheckoutPath -Encoding ascii
 
 # Create a backup directory
 New-Item -Path $HOME\.dotfiles-backup -ItemType Directory -Force | Out-Null

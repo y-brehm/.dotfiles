@@ -9,6 +9,8 @@ return {
     "nvim-lua/plenary.nvim",
     "stevearc/overseer.nvim",
   },
+  -- Builds/configures run through Overseer (see lua/overseer/template/user/).
+  -- cmake-tools is kept only for selecting targets and running/debugging them.
   opts = {
     cmake_build_directory = "build/${variant:buildType}",
     cmake_generate_compile_commands = true,
@@ -58,72 +60,45 @@ return {
   config = function(_, opts)
     require("cmake-tools").setup(opts)
 
-    -- Clean build directory completely
-    local function clean_build_dir()
-      local cmt = require("cmake-tools")
-      local build_dir = cmt.get_build_directory()
-      if build_dir then
-        local dir_str = tostring(build_dir)
-        os.execute('rm -rf "' .. dir_str .. '"')
-        vim.notify("Cleaned build directory: " .. dir_str, vim.log.levels.INFO)
+    -- Fix E141 on every cmake-tools operation.
+    -- Before each command, cmake-tools runs `:wall` (utils.lua) to save buffers.
+    -- `:wall` raises `E141: No file name for buffer 1` whenever a modified,
+    -- no-name normal buffer exists (e.g. the empty startup buffer). That error
+    -- aborts generate/build/run/debug. Clearing the `modified` flag on such
+    -- unnamed buffers lets the plugin's `:wall` save only real, named files.
+    local cmt_utils = require("cmake-tools.utils")
+    local function neutralize_nameless_buffers()
+      for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.api.nvim_buf_is_loaded(buf)
+          and vim.bo[buf].modified
+          and vim.bo[buf].buftype == ""
+          and vim.api.nvim_buf_get_name(buf) == ""
+        then
+          vim.bo[buf].modified = false
+        end
       end
     end
-
-    -- Ensure build directory exists before CMake runs
-    local function ensure_build_dir()
-      local cmt = require("cmake-tools")
-      local build_dir = cmt.get_build_directory()
-      if build_dir then
-        local dir_str = tostring(build_dir)
-        os.execute('mkdir -p "' .. dir_str .. '"')
+    for _, fn in ipairs({ "execute", "run" }) do
+      local original = cmt_utils[fn]
+      cmt_utils[fn] = function(...)
+        neutralize_nameless_buffers()
+        return original(...)
       end
     end
-
-    -- Override CMakeGenerate to ensure directory exists first
-    -- With bang (!), clean build directory completely before generating
-    vim.api.nvim_create_user_command('CMakeGenerate', function(cmd_opts)
-      if cmd_opts.bang then
-        clean_build_dir()
-      end
-      ensure_build_dir()
-      require("cmake-tools").generate({}, function() end)
-    end, { bang = true, nargs = '?' })
-
-    -- Override CMakeBuild to ensure directory exists first
-    -- With bang (!), clean build directory completely before building
-    vim.api.nvim_create_user_command('CMakeBuild', function(cmd_opts)
-      if cmd_opts.bang then
-        clean_build_dir()
-      end
-      ensure_build_dir()
-      require("cmake-tools").build({}, function() end)
-    end, { bang = true, nargs = '?' })
 
     local wk = require("which-key")
     wk.add({
       mode = "n",
       { "<leader>cm", group = "[C][M]ake Tools" },
 
-      -- Configuration / Generation
-      { "<leader>cmg", "<cmd>CMakeGenerate<CR>", desc = "[G]enerate Build System (Configure)" },
-      { "<leader>cmG", "<cmd>CMakeGenerate!<CR>", desc = "Clean & [G]enerate Build System" },
-
-      -- Building
-      { "<leader>cmb", "<cmd>CMakeBuild<CR>", desc = "[B]uild Project" },
-      { "<leader>cmB", "<cmd>CMakeBuild!<CR>", desc = "Clean & [B]uild Project" },
-
-      -- Running & Debugging
+      -- Run & Debug (builds are handled by Overseer)
       { "<leader>cmr", "<cmd>CMakeRun<CR>", desc = "[R]un Launch Target" },
       { "<leader>cmd", "<cmd>CMakeDebug<CR>", desc = "[D]ebug Launch Target" },
-      { "<leader>cma", "<cmd>CMakeLaunchArgs<CR>", desc = "Set Launch [A]rguments" },
 
-      -- Selecting Targets, Types, Kits
+      -- Target / preset selection
       { "<leader>cmt", "<cmd>CMakeSelectBuildTarget<CR>", desc = "Select Build [T]arget" },
       { "<leader>cml", "<cmd>CMakeSelectLaunchTarget<CR>", desc = "Select [L]aunch Target" },
-      { "<leader>cmv", "<cmd>CMakeSelectBuildType<CR>", desc = "Select Build [V]ariant/Type (non-preset only)" },
-      { "<leader>cmk", "<cmd>CMakeSelectKit<CR>", desc = "Select [K]it" },
       { "<leader>cmp", "<cmd>CMakeSelectConfigurePreset<CR>", desc = "Select Configure [P]reset" },
-
     }, { prefix = "<leader>" }) -- which-key prefix
   end,
 }
