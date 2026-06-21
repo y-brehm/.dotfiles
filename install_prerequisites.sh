@@ -94,7 +94,7 @@ setup_package_manager() {
 declare -A PACKAGES_BREW=(
     ["core"]="git git-lfs zsh curl unzip wget"
     ["shell_tools"]="lsd carapace fzf zoxide ripgrep fd lazygit zsh-history-substring-search"
-    ["dev_tools"]="cmake ninja conan neovim luarocks"
+    ["dev_tools"]="cmake ninja conan neovim luarocks tree-sitter yazi"
     ["python"]="python@3.13"
     ["node"]="node"
 )
@@ -169,6 +169,13 @@ install_apt_special_cases() {
         log_info "Installing luarocks..."
         sudo apt-get install -y luarocks
     fi
+
+    # Install tree-sitter CLI (not in apt; needed by nvim-treesitter main branch
+    # to compile parsers on Neovim 0.12)
+    if ! command -v tree-sitter >/dev/null 2>&1; then
+        log_info "Installing tree-sitter CLI via npm..."
+        sudo npm install -g tree-sitter-cli
+    fi
 }
 
 # Setup Python environment for Neovim
@@ -227,7 +234,7 @@ verify_installation() {
     log_info "Verifying installations..."
     
     local required_tools=("git" "zsh" "nvim" "cmake" "ninja" "python3")
-    local optional_tools=("lsd" "carapace" "conan" "fzf" "zoxide" "ripgrep" "fd" "lazygit" "uv" "luarocks")
+    local optional_tools=("lsd" "carapace" "conan" "fzf" "zoxide" "ripgrep" "fd" "lazygit" "uv" "luarocks" "tree-sitter" "yazi")
     
     echo ""
     echo "Required tools:"
