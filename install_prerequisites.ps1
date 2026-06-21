@@ -55,6 +55,10 @@ $ChocoPackages = [ordered]@{
     node        = @("nodejs")
 }
 
+# PowerShell Gallery modules imported by the PowerShell profile (not choco
+# packages). Without these a fresh machine errors on every new shell.
+$PSGalleryModules = @("PSFzf", "posh-git")
+
 function Install-ChocoPackages {
     foreach ($category in $ChocoPackages.Keys) {
         Log-Info "Installing $category packages..."
@@ -126,6 +130,28 @@ function Install-Yazi {
     }
 }
 
+function Install-PowerShellModules {
+    # The PowerShell profile imports these Gallery modules (PSFzf for fzf
+    # keybindings, posh-git for git status in the prompt). They are not choco
+    # packages, so install them from the PowerShell Gallery here.
+    $missing = $PSGalleryModules | Where-Object { -not (Get-Module -ListAvailable -Name $_) }
+    if (-not $missing) {
+        Log-Info "PowerShell modules already installed ($($PSGalleryModules -join ', '))"
+        return
+    }
+    # Bootstrap NuGet provider + trust the gallery so installs run unattended.
+    if (-not (Get-PackageProvider -Name NuGet -ErrorAction SilentlyContinue)) {
+        Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force | Out-Null
+    }
+    if ((Get-PSRepository -Name PSGallery).InstallationPolicy -ne "Trusted") {
+        Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+    }
+    foreach ($module in $missing) {
+        Log-Info "Installing $module module from the PowerShell Gallery..."
+        Install-Module -Name $module -Scope CurrentUser -Force -AcceptLicense
+    }
+}
+
 # --- verification ------------------------------------------------------------
 function Verify-Installation {
     Log-Info "Verifying installations..."
@@ -143,6 +169,13 @@ function Verify-Installation {
             Log-Warn "[missing] $cmd ($($tools[$cmd]))"
         }
     }
+    foreach ($module in $PSGalleryModules) {
+        if (Get-Module -ListAvailable -Name $module) {
+            Log-Info "[ok] $module (module)"
+        } else {
+            Log-Warn "[missing] $module (module)"
+        }
+    }
 }
 
 # --- main --------------------------------------------------------------------
@@ -155,6 +188,7 @@ Install-Uv
 Install-TreeSitterCli
 Install-Conan
 Install-Yazi
+Install-PowerShellModules
 Verify-Installation
 
 Log-Info "Setup complete. Restart your shell so PATH changes take effect."
