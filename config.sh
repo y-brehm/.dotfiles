@@ -12,15 +12,17 @@ function config
 # Set up sparse checkout
 config config core.sparseCheckout true
 
-# Create the sparse-checkout file with the files to include
-# We'll use the inverse approach - specify what to exclude using negative patterns
+# Create the sparse-checkout file: include everything (/*), then exclude
+# Windows-only files by *pattern* rather than naming each file. Any new
+# Windows file that matches these shapes is excluded automatically, so the
+# two OS install scripts don't drift out of sync.
 mkdir -p "$HOME/.dotfiles/info"
 cat > "$HOME/.dotfiles/info/sparse-checkout" << EOF
 /*
-!install_fonts.ps1
-!config.ps1
-!Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1
-!.config/oh-my-posh/powerlevel10k_lean.omp.json
+!*.ps1
+!AppData/
+!Documents/WindowsPowerShell/
+!.config/oh-my-posh/
 EOF
 
 # Create a backup directory

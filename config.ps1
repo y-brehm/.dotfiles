@@ -9,8 +9,10 @@ function config {
 # Set up sparse checkout
 config config core.sparseCheckout true
 
-# Create the sparse-checkout file with the files to include
-# We'll use the inverse approach - specify what to exclude using negative patterns
+# Create the sparse-checkout file: include everything (/*), then exclude
+# Unix-only files by *pattern* rather than naming each file. Any new Unix
+# file that matches these shapes is excluded automatically, so the two OS
+# install scripts don't drift out of sync.
 $sparseCheckoutPath = "$HOME\.dotfiles\info\sparse-checkout"
 $sparseCheckoutDir = Split-Path -Path $sparseCheckoutPath -Parent
 
@@ -19,16 +21,12 @@ if (-not (Test-Path $sparseCheckoutDir)) {
     New-Item -Path $sparseCheckoutDir -ItemType Directory -Force | Out-Null
 }
 
-# Add patterns to sparse-checkout file (exclude specific files/folders)
+# Add patterns to sparse-checkout file (exclude Unix-only files/folders)
 @"
 /*
-!README.md
-!config.sh
-!install_fonts.sh
+!*.sh
 !.zshrc
 !.p10k.zsh
-!install_prerequisites.sh
-!full_install.sh
 !.config/kitty/
 "@ | Out-File -FilePath $sparseCheckoutPath -Encoding utf8
 
