@@ -94,7 +94,7 @@ setup_package_manager() {
 declare -A PACKAGES_BREW=(
     ["core"]="git git-lfs zsh curl unzip wget"
     ["shell_tools"]="lsd carapace fzf zoxide ripgrep fd lazygit zsh-history-substring-search"
-    ["dev_tools"]="cmake ninja conan neovim luarocks tree-sitter yazi"
+    ["dev_tools"]="cmake ninja conan neovim luarocks tree-sitter-cli yazi"
     ["python"]="python@3.13"
     ["node"]="node"
 )
