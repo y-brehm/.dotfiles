@@ -27,7 +27,6 @@ if (-not (Test-Path $sparseCheckoutDir)) {
 !*.sh
 !.zshrc
 !.p10k.zsh
-!.config/kitty/
 # ASCII (BOM-free) so git parses the first pattern line on every PowerShell version
 "@ | Out-File -FilePath $sparseCheckoutPath -Encoding ascii
 
