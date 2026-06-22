@@ -23,7 +23,7 @@
 | Kitty | `~/.config/kitty/` |
 | pip / uv | `~/.config/pip/pip.conf`, `~/.config/uv/uv.toml` |
 | Scripts | `~/bin/concat_files`, `~/config.sh`, `~/full_install.sh`, `~/install_fonts.sh`, `~/install_prerequisites.sh` |
-| Windows (sparse-excluded on macOS) | `AppData/…`, `Documents/WindowsPowerShell/…`, `config.ps1`, `install_fonts.ps1` |
+| Windows (sparse-excluded on macOS) | `AppData/…`, `Documents/PowerShell/…` (PowerShell 7 profile), `config.ps1`, `install_fonts.ps1` |
 
 ## Key conventions
 - Editor: `nvim` (set as `$EDITOR` / `$VISUAL`)

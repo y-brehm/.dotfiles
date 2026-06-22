@@ -60,4 +60,13 @@ config.keys = {
 
 -- Copy/paste on macOS uses Cmd+C / Cmd+V (defaults). Selecting text copies it.
 
+-- Shell ----------------------------------------------------------------------
+-- On Windows WezTerm otherwise defaults to %ComSpec% (cmd.exe), which never
+-- loads the PowerShell profile (so aliases like `ls`->lsd are missing). Launch
+-- PowerShell 7 instead. On macOS/Linux WezTerm uses your login shell ($SHELL),
+-- so this branch is skipped there.
+if wezterm.target_triple:find('windows') then
+  config.default_prog = { 'pwsh.exe', '-NoLogo' }
+end
+
 return config

@@ -72,10 +72,40 @@ $ChocoPackages = [ordered]@{
 # packages). Without these a fresh machine errors on every new shell.
 $PSGalleryModules = @("PSFzf", "posh-git")
 
+# Probe command each choco package provides. Used to detect a pre-existing
+# install from ANY source (scoop, winget, a standalone installer) so we never
+# stack a second, choco-managed copy on top of a tool you already have. That
+# duplication causes nondeterministic PATH shadowing - the exact problem this
+# guard prevents. Note: GUI-only tools (wezterm) put nothing on PATH, so they
+# can only be deduped against a prior *choco* install, not a standalone one.
+$ChocoProbe = @{
+    "git" = "git"; "git-lfs" = "git-lfs"; "llvm" = "clang"; "cmake" = "cmake";
+    "ninja" = "ninja"; "neovim" = "nvim"; "luarocks" = "luarocks";
+    "unzip" = "unzip"; "gzip" = "gzip"; "wget" = "wget"; "ripgrep" = "rg";
+    "fd" = "fd"; "fzf" = "fzf"; "lazygit" = "lazygit"; "zoxide" = "zoxide";
+    "lsd" = "lsd"; "python" = "python"; "nodejs" = "node"; "wezterm" = "wezterm";
+    "rustup.install" = "rustup"; "imagemagick.app" = "magick"
+}
+
 function Install-ChocoPackages {
+    # Snapshot what Chocolatey already manages so re-runs are true no-ops.
+    $chocoInstalled = @{}
+    foreach ($line in (choco list --limit-output 2>$null)) {
+        $id = ($line -split '\|')[0]
+        if ($id) { $chocoInstalled[$id.ToLower()] = $true }
+    }
     foreach ($category in $ChocoPackages.Keys) {
         Log-Info "Installing $category packages..."
         foreach ($pkg in $ChocoPackages[$category]) {
+            if ($chocoInstalled.ContainsKey($pkg.ToLower())) {
+                Log-Info "  $pkg already managed by Chocolatey; skipping"
+                continue
+            }
+            $probe = $ChocoProbe[$pkg]
+            if ($probe -and (Get-Command $probe -ErrorAction SilentlyContinue)) {
+                Log-Info "  $pkg already present as '$probe' (installed outside Chocolatey); skipping to avoid a duplicate"
+                continue
+            }
             choco install $pkg -y --no-progress
         }
     }
@@ -143,6 +173,31 @@ function Install-Yazi {
     }
 }
 
+# Resolve pwsh.exe even when a just-installed copy isn't on this session's PATH
+# yet (winget drops it in Program Files\PowerShell\7). Returns $null if absent.
+function Get-PwshPath {
+    $cmd = Get-Command pwsh -ErrorAction SilentlyContinue
+    if ($cmd) { return $cmd.Source }
+    $default = Join-Path $env:ProgramFiles "PowerShell\7\pwsh.exe"
+    if (Test-Path $default) { return $default }
+    return $null
+}
+
+function Install-PowerShell7 {
+    # The interactive shell is now PowerShell 7: WezTerm launches pwsh and the
+    # profile lives in Documents\PowerShell. Install it via winget (preferred for
+    # supply-chain trust) rather than choco. Windows PowerShell 5.1 ships with
+    # Windows but PS7 does not, so a fresh machine needs this explicitly.
+    if (Get-Command pwsh -ErrorAction SilentlyContinue) {
+        Log-Info "PowerShell 7 (pwsh) already installed"
+    } elseif (Get-Command winget -ErrorAction SilentlyContinue) {
+        Log-Info "Installing PowerShell 7 via winget..."
+        winget install --id Microsoft.PowerShell -e --accept-source-agreements --accept-package-agreements
+    } else {
+        Log-Warn "winget not found; install PowerShell 7 manually (https://aka.ms/powershell)"
+    }
+}
+
 function Install-RustToolchain {
     # choco's rustup.install installs rustup; ensure a default stable toolchain
     # plus the components rustaceanvim expects (rustfmt for <leader>fb, clippy).
@@ -171,23 +226,36 @@ function Set-Utf8Locale {
 
 function Install-PowerShellModules {
     # The PowerShell profile imports these Gallery modules (PSFzf for fzf
-    # keybindings, posh-git for git status in the prompt). They are not choco
-    # packages, so install them from the PowerShell Gallery here.
-    $missing = $PSGalleryModules | Where-Object { -not (Get-Module -ListAvailable -Name $_) }
-    if (-not $missing) {
-        Log-Info "PowerShell modules already installed ($($PSGalleryModules -join ', '))"
-        return
+    # keybindings, posh-git for git status in the prompt). They must land in
+    # PowerShell 7's module path (Documents\PowerShell\Modules), which differs
+    # from Windows PowerShell 5.1's (Documents\WindowsPowerShell\Modules). Run
+    # the install *through pwsh* so -Scope CurrentUser resolves to PS7's path
+    # even when this bootstrap script is launched from 5.1.
+    $names = ($PSGalleryModules | ForEach-Object { "'" + $_ + "'" }) -join ','
+    $body = @"
+`$ErrorActionPreference = 'Stop'
+if (-not (Get-PackageProvider -Name NuGet -ErrorAction SilentlyContinue)) {
+    Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Scope CurrentUser | Out-Null
+}
+if ((Get-PSRepository -Name PSGallery -ErrorAction SilentlyContinue).InstallationPolicy -ne 'Trusted') {
+    Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+}
+foreach (`$m in @($names)) {
+    if (Get-Module -ListAvailable -Name `$m) {
+        Write-Host "[INFO] `$m module already installed" -ForegroundColor Green
+    } else {
+        Write-Host "[INFO] Installing `$m module from the PowerShell Gallery..." -ForegroundColor Green
+        Install-Module -Name `$m -Scope CurrentUser -Force -AcceptLicense -Repository PSGallery
     }
-    # Bootstrap NuGet provider + trust the gallery so installs run unattended.
-    if (-not (Get-PackageProvider -Name NuGet -ErrorAction SilentlyContinue)) {
-        Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force | Out-Null
-    }
-    if ((Get-PSRepository -Name PSGallery).InstallationPolicy -ne "Trusted") {
-        Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-    }
-    foreach ($module in $missing) {
-        Log-Info "Installing $module module from the PowerShell Gallery..."
-        Install-Module -Name $module -Scope CurrentUser -Force -AcceptLicense
+}
+"@
+    $pwsh = Get-PwshPath
+    if ($pwsh) {
+        Log-Info "Installing PowerShell modules into the PS7 module path: $($PSGalleryModules -join ', ')"
+        & $pwsh -NoLogo -NoProfile -Command $body
+    } else {
+        Log-Warn "pwsh not found; installing modules for the current PowerShell ($($PSVersionTable.PSVersion))"
+        Invoke-Expression $body
     }
 }
 
@@ -210,12 +278,18 @@ function Verify-Installation {
             Log-Warn "[missing] $cmd ($($tools[$cmd]))"
         }
     }
+    # PowerShell 7 (installed via winget, may not be on this session's PATH yet).
+    if (Get-PwshPath) { Log-Info "[ok] pwsh (PowerShell 7)" } else { Log-Warn "[missing] pwsh (Microsoft.PowerShell)" }
+    # Verify the Gallery modules in PS7 (that's where they were installed and
+    # where the profile loads them); fall back to the current shell if no pwsh.
+    $pwsh = Get-PwshPath
     foreach ($module in $PSGalleryModules) {
-        if (Get-Module -ListAvailable -Name $module) {
-            Log-Info "[ok] $module (module)"
+        $present = if ($pwsh) {
+            (& $pwsh -NoLogo -NoProfile -Command "[bool](Get-Module -ListAvailable -Name '$module')") -eq 'True'
         } else {
-            Log-Warn "[missing] $module (module)"
+            [bool](Get-Module -ListAvailable -Name $module)
         }
+        if ($present) { Log-Info "[ok] $module (module)" } else { Log-Warn "[missing] $module (module)" }
     }
 }
 
@@ -229,6 +303,7 @@ Install-Uv
 Install-TreeSitterCli
 Install-Conan
 Install-Yazi
+Install-PowerShell7
 Install-RustToolchain
 Set-Utf8Locale
 Install-PowerShellModules
