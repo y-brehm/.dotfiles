@@ -90,31 +90,33 @@ setup_package_manager() {
     log_info "Package manager: $PKG_MANAGER"
 }
 
-# Data-driven package definitions
-declare -A PACKAGES_BREW=(
-    ["core"]="git git-lfs zsh curl unzip wget"
-    ["shell_tools"]="lsd carapace fzf zoxide ripgrep fd lazygit zsh-history-substring-search"
-    ["dev_tools"]="cmake ninja conan neovim luarocks tree-sitter-cli yazi"
-    ["python"]="python@3.13"
-    ["node"]="node"
-)
+# Data-driven package definitions.
+# NOTE: macOS ships bash 3.2, which lacks `declare -A` (associative arrays).
+# We therefore use plain category lists + per-category variables and resolve
+# them via indirect expansion (${!var}), which works on bash 3.2+.
+BREW_CATEGORIES="core shell_tools dev_tools python node"
+BREW_core="git git-lfs zsh curl unzip wget"
+BREW_shell_tools="lsd carapace fzf zoxide ripgrep fd lazygit zsh-history-substring-search"
+BREW_dev_tools="cmake ninja conan neovim luarocks tree-sitter-cli yazi"
+BREW_python="python@3.13"
+BREW_node="node"
 
-declare -A PACKAGES_APT=(
-    ["core"]="git git-lfs zsh curl unzip wget"
-    ["shell_tools"]="lsd carapace-bin fzf ripgrep fd-find"
-    ["dev_tools"]="cmake ninja-build neovim"
-    ["python"]="python3 python3-pip python3-venv"
-    ["node"]="nodejs npm"
-    ["lua"]="liblua5.1-0-dev"
-    ["wsl_specific"]="keychain"
-)
+APT_CATEGORIES="core shell_tools dev_tools python node lua wsl_specific"
+APT_core="git git-lfs zsh curl unzip wget"
+APT_shell_tools="lsd carapace-bin fzf ripgrep fd-find"
+APT_dev_tools="cmake ninja-build neovim"
+APT_python="python3 python3-pip python3-venv"
+APT_node="nodejs npm"
+APT_lua="liblua5.1-0-dev"
+APT_wsl_specific="keychain"
 
 # Install packages based on package manager
 install_packages() {
     if [[ "$PKG_MANAGER" == "brew" ]]; then
-        for category in "${!PACKAGES_BREW[@]}"; do
+        for category in $BREW_CATEGORIES; do
             log_info "Installing $category packages..."
-            for package in ${PACKAGES_BREW[$category]}; do
+            local brew_var="BREW_$category"
+            for package in ${!brew_var}; do
                 if ! brew list "$package" &>/dev/null; then
                     $PKG_INSTALL_CMD "$package"
                 else
@@ -123,14 +125,15 @@ install_packages() {
             done
         done
     elif [[ "$PKG_MANAGER" == "apt" ]]; then
-        for category in "${!PACKAGES_APT[@]}"; do
+        for category in $APT_CATEGORIES; do
             # Skip WSL-specific unless we're in WSL
             if [[ "$category" == "wsl_specific" ]] && [[ "$IS_WSL" != "true" ]]; then
                 continue
             fi
-            
+
             log_info "Installing $category packages..."
-            for package in ${PACKAGES_APT[$category]}; do
+            local apt_var="APT_$category"
+            for package in ${!apt_var}; do
                 $PKG_INSTALL_CMD "$package"
             done
         done
