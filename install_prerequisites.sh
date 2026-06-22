@@ -234,6 +234,9 @@ verify_installation() {
         # Special case for fd which might be fd-find
         if [[ "$tool" == "fd" ]] && command -v fd-find >/dev/null 2>&1; then
             log_info "✓ fd (as fd-find) installed"
+        # Special case for ripgrep whose binary is named rg
+        elif [[ "$tool" == "ripgrep" ]] && command -v rg >/dev/null 2>&1; then
+            log_info "✓ ripgrep (as rg) installed"
         elif command -v "$tool" >/dev/null 2>&1; then
             log_info "✓ $tool installed"
         else
