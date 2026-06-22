@@ -38,6 +38,7 @@ export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export CONAN_REVISIONS_ENABLED=1
 export TERM=xterm-256color
+export TERMINAL=wezterm
 
 # --- PATH Setup ---
 export PATH="$HOME/bin:$PATH"
