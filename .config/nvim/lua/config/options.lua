@@ -78,8 +78,12 @@ vim.api.nvim_create_autocmd("VimLeave", {
 
 -- In options.lua
 if vim.fn.has('win32') == 1 then
-    -- Use PowerShell as the default shell on Windows
-    opt.shell = "powershell"
+    -- Use PowerShell 7 (pwsh) as the default shell on Windows.
+    -- NOTE: "powershell" is Windows PowerShell 5.1, which loads a different
+    -- profile (Documents\WindowsPowerShell\) than pwsh 7 (Documents\PowerShell\).
+    -- Our oh-my-posh + posh-git prompt lives only in the pwsh 7 profile, so the
+    -- shell name must match what WezTerm launches or the prompt glyphs won't render.
+    opt.shell = "pwsh"
     opt.shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;"
     opt.shellredir = "2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode"
     opt.shellpipe = "2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode"
