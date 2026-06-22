@@ -100,6 +100,8 @@ BREW_shell_tools="lsd carapace fzf zoxide ripgrep fd lazygit zsh-history-substri
 BREW_dev_tools="cmake ninja conan neovim luarocks tree-sitter-cli yazi"
 BREW_python="python@3.13"
 BREW_node="node"
+# GUI apps installed as casks (separate `brew install --cask` path below).
+BREW_CASKS="wezterm"
 
 APT_CATEGORIES="core shell_tools dev_tools python node lua wsl_specific"
 APT_core="git git-lfs zsh curl unzip wget"
@@ -123,6 +125,15 @@ install_packages() {
                     log_info "$package already installed"
                 fi
             done
+        done
+        # GUI casks (e.g. WezTerm terminal emulator)
+        for cask in $BREW_CASKS; do
+            if ! brew list --cask "$cask" &>/dev/null; then
+                log_info "Installing cask $cask..."
+                brew install --cask "$cask"
+            else
+                log_info "$cask already installed"
+            fi
         done
     elif [[ "$PKG_MANAGER" == "apt" ]]; then
         for category in $APT_CATEGORIES; do
@@ -213,7 +224,7 @@ verify_installation() {
     log_info "Verifying installations..."
     
     local required_tools=("git" "zsh" "nvim" "cmake" "ninja" "python3")
-    local optional_tools=("lsd" "carapace" "conan" "fzf" "zoxide" "ripgrep" "fd" "lazygit" "uv" "luarocks" "tree-sitter" "yazi")
+    local optional_tools=("lsd" "carapace" "conan" "fzf" "zoxide" "ripgrep" "fd" "lazygit" "uv" "luarocks" "tree-sitter" "yazi" "wezterm")
     
     echo ""
     echo "Required tools:"

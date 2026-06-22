@@ -57,12 +57,14 @@ $ChocoPackages = [ordered]@{
     shell_tools = @("ripgrep", "fd", "fzf", "lazygit", "zoxide", "lsd")
     python      = @("python")
     node        = @("nodejs")
+    # WezTerm GPU terminal emulator (signed/notarized; replaces Windows Terminal).
+    terminal    = @("wezterm")
     # Rust toolchain (cargo, rustc, rustfmt, clippy). rustaceanvim drives
     # rust-analyzer (installed via Mason) but needs a real toolchain to build,
     # run and test. rustup also lets rust-analyzer find the std-library source.
     rust        = @("rustup.install")
     # ImageMagick provides `magick`, used by snacks.image / render-markdown to
-    # render images inline in graphics-capable terminals (kitty).
+    # render images inline in graphics-capable terminals (WezTerm).
     image       = @("imagemagick.app")
 }
 
@@ -198,7 +200,8 @@ function Verify-Installation {
         lazygit = "lazygit"; zoxide = "zoxide"; lsd = "lsd"; luarocks = "luarocks";
         node = "nodejs"; python = "python"; uv = "uv"; "tree-sitter" = "tree-sitter-cli";
         conan = "conan"; yazi = "yazi"; cargo = "rustup.install"; rustc = "rustup.install";
-        magick = "imagemagick.app"; unzip = "unzip"; gzip = "gzip"; wget = "wget"
+        magick = "imagemagick.app"; unzip = "unzip"; gzip = "gzip"; wget = "wget";
+        wezterm = "wezterm"
     }
     foreach ($cmd in ($tools.Keys | Sort-Object)) {
         if (Get-Command $cmd -ErrorAction SilentlyContinue) {
