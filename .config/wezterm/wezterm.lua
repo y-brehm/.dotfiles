@@ -14,6 +14,12 @@ config.font_size = 16.0
 -- another, e.g. 'Catppuccin Mocha'. List all: `wezterm ls-fonts` / docs.
 config.color_scheme = 'Tokyo Night'
 
+-- Start maximized (fills the screen but keeps decorations — not fullscreen) ---
+wezterm.on('gui-startup', function(cmd)
+  local _, _, window = wezterm.mux.spawn_window(cmd or {})
+  window:gui_window():maximize()
+end)
+
 -- Window ---------------------------------------------------------------------
 config.window_padding = { left = 8, right = 8, top = 8, bottom = 8 }
 config.window_decorations = 'RESIZE'  -- clean/frameless, still resizable (cross-platform)
@@ -54,8 +60,12 @@ config.keys = {
   { key = 'l', mods = 'ALT', action = act.ActivatePaneDirection('Right') },
 
   -- Search + vi copy-mode (the Alacritty feel you liked: hjkl, / to search, v select, y yank)
-  { key = 'f',     mods = 'CTRL|SHIFT', action = act.Search('CurrentSelectionOrEmptyString') },
-  { key = 'Space', mods = 'CTRL|SHIFT', action = act.ActivateCopyMode },
+  -- Copy-mode on '[' (tmux-style). NOT Space: macOS IME swallows Ctrl+Shift+Space.
+  { key = 'f',     mods = 'CTRL|SHIFT',     action = act.Search('CurrentSelectionOrEmptyString') },
+  { key = '[',     mods = 'CTRL|SHIFT',     action = act.ActivateCopyMode },
+
+  -- Debug overlay (Lua REPL + logs). Ctrl+Shift+D is taken by split-down, so add Alt.
+  { key = 'd',     mods = 'CTRL|SHIFT|ALT', action = act.ShowDebugOverlay },
 }
 
 -- Copy/paste on macOS uses Cmd+C / Cmd+V (defaults). Selecting text copies it.

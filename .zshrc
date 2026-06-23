@@ -64,6 +64,16 @@ alias config="git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
 alias ll='ls -lG'
 
 # --- Functions ---
+# yazi wrapper: `y` opens yazi and cd's to its last directory on quit
+y() {
+    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+    yazi "$@" --cwd-file="$tmp"
+    if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+        builtin cd -- "$cwd"
+    fi
+    rm -f -- "$tmp"
+}
+
 venv() {
     if [ -f ".venv/bin/activate" ]; then
         source .venv/bin/activate
