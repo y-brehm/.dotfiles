@@ -11,7 +11,7 @@
   ```
   The alias expands to: `git --git-dir=$HOME/.dotfiles --work-tree=$HOME`
 - Remote: `git@github.com:y-brehm/.dotfiles.git` (SSH, owner-only writes)
-- Sparse checkout — only explicitly listed paths are checked out (see `~/.dotfiles/info/sparse-checkout`)
+- Sparse checkout (non-cone, `/*` + exclusions) — everything under `$HOME` is in scope *except* the `!`-negated paths in `~/.dotfiles/info/sparse-checkout` (currently `*.ps1`, `AppData/`, `Documents/WindowsPowerShell/`, `.config/oh-my-posh/`). New files elsewhere are trackable without editing that file.
 - `showUntrackedFiles = no` — untracked files are hidden by default in `config status`
 
 ## Tracked files
