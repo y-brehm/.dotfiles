@@ -20,6 +20,10 @@ curl -fsSL https://raw.githubusercontent.com/y-brehm/.dotfiles/main/install_font
 echo "Step 4: Initializing Neovim plugins..."
 nvim --headless "+Lazy! sync" +qa
 
+# 5. Install yazi plugins and flavors
+echo "Step 5: Installing yazi plugins and flavors..."
+ya pkg install
+
 echo "==================================="
 echo "Setup complete!"
 echo "Please restart your terminal or run: source ~/.zshrc"

@@ -87,4 +87,14 @@ if (Test-Path $nvimConfigSource) {
     Write-Output "Warning: Neovim configuration not found in dotfiles at $nvimConfigSource"
 }
 
+# Install yazi plugins and flavors declared in .config\yazi\package.toml (just
+# deployed by the checkout above). Needs yazi from install_prerequisites.ps1;
+# `ya` may not be on PATH until the shell is restarted, so guard on it.
+if (Get-Command ya -ErrorAction SilentlyContinue) {
+    Write-Output "Installing yazi plugins and flavors..."
+    ya pkg install
+} else {
+    Write-Output "Warning: 'ya' not found; restart your shell and run 'ya pkg install' to install yazi plugins."
+}
+
 Write-Output "Dotfiles setup complete. macOS-specific files have been excluded."
