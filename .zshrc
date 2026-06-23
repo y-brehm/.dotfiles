@@ -74,6 +74,14 @@ y() {
     rm -f -- "$tmp"
 }
 
+# Pull dotfiles and re-sync Neovim plugins to the committed lazy-lock.json.
+# lazy.nvim does not auto-revert installed plugins to the lockfile, so plugins
+# can silently drift behind the committed lock after a pull on another machine.
+dotpull() {
+    git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" pull && \
+        nvim --headless +"Lazy! restore" +qa
+}
+
 venv() {
     if [ -f ".venv/bin/activate" ]; then
         source .venv/bin/activate
@@ -94,7 +102,7 @@ install_req() {
 
 cc_vim() {
     conan install . -s build_type=Debug --install-folder=cmake-build-debug
-    
+
     local cmake_args=("-G" "Ninja" "-DCMAKE_EXPORT_COMPILE_COMMANDS=1" "-DCMAKE_BUILD_TYPE=Debug" "-B" "cmake-build-debug" ".")
     if [[ "$(uname -s)" == "Darwin" ]] && [[ "$(uname -m)" == "arm64" ]]; then
         cmake_args+=("-DCMAKE_OSX_ARCHITECTURES=arm64")
@@ -107,43 +115,6 @@ ciab() {
     cmake -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_BUILD_TYPE=Debug -B cmake-build-debug .
     ln -sf "$(pwd)/cmake-build-debug/compile_commands.json" "$(pwd)/"
     cmake --build cmake-build-debug --target "${1:-all}"
-}
-
-pip_manage_urls() {
-    local action="$1"
-    local url="$2"
-    local config_file="$HOME/.pip/pip.conf"
-    
-    if [[ "$action" == "add" ]]; then
-        if [[ -z "$url" ]]; then
-            echo "Usage: pip_manage_urls add <url>"
-            return 1
-        fi
-        mkdir -p "$(dirname "$config_file")"
-        if [[ ! -f "$config_file" ]]; then
-            cat > "$config_file" << EOF
-[global]
-extra-index-url = $url
-EOF
-        else
-            if grep -q "extra-index-url" "$config_file"; then
-                if ! grep -q "$url" "$config_file"; then
-                    sed -i.bak "s|extra-index-url = \(.*\)|extra-index-url = \1 $url|" "$config_file"
-                fi
-            else
-                echo "extra-index-url = $url" >> "$config_file"
-            fi
-        fi
-        echo "Added $url to pip configuration"
-    elif [[ "$action" == "remove" ]]; then
-        if [[ -f "$config_file" ]]; then
-            sed -i.bak "s| $url||g; s|$url ||g; s|^extra-index-url = $url$||" "$config_file"
-            echo "Removed $url from pip configuration"
-        fi
-    else
-        echo "Usage: pip_manage_urls {add|remove} <url>"
-        return 1
-    fi
 }
 
 # --- OS-Specific Configuration ---
