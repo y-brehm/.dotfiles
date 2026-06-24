@@ -1,5 +1,16 @@
 oh-my-posh init pwsh --config ~/.config/oh-my-posh/powerlevel10k_lean.omp.json | Invoke-Expression
 
+# Emit OSC 7 (working-dir reporting) so WezTerm knows our cwd. oh-my-posh owns
+# the `prompt` function, so wrap it to prepend the sequence each redraw. This is
+# what lets WezTerm open splits and the Ctrl+Shift+D dev layout in the dir the
+# shell is actually in (e.g. after `y` cd's the shell on yazi exit).
+$__base_prompt = $function:prompt
+function prompt {
+    $p = ($PWD.ProviderPath -replace '\\', '/') -replace ' ', '%20'
+    $osc7 = "$([char]27)]7;file://$env:COMPUTERNAME/$p$([char]27)\"
+    "$osc7$(& $__base_prompt)"
+}
+
 # Set EDITOR for Claude Code and other CLI tools
 $env:EDITOR = "nvim"
 

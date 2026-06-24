@@ -20,13 +20,14 @@
 | Shell | `~/.zshrc`, `~/.p10k.zsh` |
 | Git | `~/.gitconfig`, `~/.gitignore` |
 | Neovim | `~/.config/nvim/` |
-| Kitty | `~/.config/kitty/` |
+| WezTerm | `~/.config/wezterm/wezterm.lua` |
 | pip / uv | `~/.config/pip/pip.conf`, `~/.config/uv/uv.toml` |
 | Scripts | `~/bin/concat_files`, `~/config.sh`, `~/full_install.sh`, `~/install_fonts.sh`, `~/install_prerequisites.sh` |
 | Windows (sparse-excluded on macOS) | `AppData/…`, `Documents/PowerShell/…` (PowerShell 7 profile), `config.ps1`, `install_fonts.ps1` |
 
 ## Key conventions
 - Editor: `nvim` (set as `$EDITOR` / `$VISUAL`)
+- Terminal: **WezTerm** (`~/.config/wezterm/wezterm.lua`) is the goto terminal on all platforms. **Windows Terminal and Kitty are deprecated** — no longer tracked or maintained.
 - Shell: `zsh` with [Zap](https://github.com/zap-zsh/zap) plugin manager and Powerlevel10k prompt
 - Package manager: Homebrew (`/opt/homebrew` on macOS arm64, linuxbrew on Linux x86)
 - Build system for C++ projects: Conan + CMake + Ninja
