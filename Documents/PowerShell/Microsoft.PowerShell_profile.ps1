@@ -11,8 +11,15 @@ function prompt {
     "$osc7$(& $__base_prompt)"
 }
 
-# Set EDITOR for Claude Code and other CLI tools
-$env:EDITOR = "nvim"
+# Set EDITOR for Claude Code and other CLI tools.
+# Windows-only: neovide (GUI Neovim), NOT terminal nvim. Claude Code's Ctrl+G
+# ("edit prompt in editor") hands the ConPTY to the child editor; a terminal
+# TUI (nvim) crashes stable WezTerm and can't receive input even on nightly,
+# while neovide opens in its own window and sidesteps the broken handoff.
+# neovide blocks by default (--no-fork is the default), so no flag is needed.
+# git is unaffected: it uses core.editor = nvim from .gitconfig, so commits/
+# rebases still open terminal nvim.
+$env:EDITOR = "neovide"
 
 # Function to manage dotfiles
 function config {

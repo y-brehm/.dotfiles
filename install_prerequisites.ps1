@@ -1,7 +1,8 @@
 # Windows development environment prerequisites.
 # Mirror of install_prerequisites.sh for Unix. Uses Chocolatey for the main
 # toolchain, with tool-native installers where choco is unsuitable
-# (tree-sitter via npm, conan via uv, yazi via winget per its docs).
+# (tree-sitter via npm, conan via uv, yazi via winget per its docs, and
+# neovide + nightly WezTerm via scoop — see Install-ScoopApps).
 #
 # Run from an *elevated* PowerShell (choco needs admin):
 #   irm https://raw.githubusercontent.com/y-brehm/.dotfiles/main/install_prerequisites.ps1 | iex
@@ -57,8 +58,7 @@ $ChocoPackages = [ordered]@{
     shell_tools = @("ripgrep", "fd", "fzf", "lazygit", "zoxide", "lsd")
     python      = @("python")
     node        = @("nodejs")
-    # WezTerm GPU terminal emulator (signed/notarized; replaces Windows Terminal).
-    terminal    = @("wezterm")
+    # WezTerm is installed via scoop (nightly), not choco — see Install-ScoopApps.
     # Rust toolchain (cargo, rustc, rustfmt, clippy). rustaceanvim drives
     # rust-analyzer (installed via Mason) but needs a real toolchain to build,
     # run and test. rustup also lets rust-analyzer find the std-library source.
@@ -76,14 +76,13 @@ $PSGalleryModules = @("PSFzf", "posh-git")
 # install from ANY source (scoop, winget, a standalone installer) so we never
 # stack a second, choco-managed copy on top of a tool you already have. That
 # duplication causes nondeterministic PATH shadowing - the exact problem this
-# guard prevents. Note: GUI-only tools (wezterm) put nothing on PATH, so they
-# can only be deduped against a prior *choco* install, not a standalone one.
+# guard prevents.
 $ChocoProbe = @{
     "git" = "git"; "git-lfs" = "git-lfs"; "llvm" = "clang"; "cmake" = "cmake";
     "ninja" = "ninja"; "neovim" = "nvim"; "luarocks" = "luarocks";
     "unzip" = "unzip"; "gzip" = "gzip"; "wget" = "wget"; "ripgrep" = "rg";
     "fd" = "fd"; "fzf" = "fzf"; "lazygit" = "lazygit"; "zoxide" = "zoxide";
-    "lsd" = "lsd"; "python" = "python"; "nodejs" = "node"; "wezterm" = "wezterm";
+    "lsd" = "lsd"; "python" = "python"; "nodejs" = "node";
     "rustup.install" = "rustup"; "imagemagick.app" = "magick"
 }
 
@@ -171,6 +170,38 @@ function Install-Yazi {
         Log-Info "Setting YAZI_FILE_ONE to Git's file.exe"
         [Environment]::SetEnvironmentVariable("YAZI_FILE_ONE", $gitFile, "User")
     }
+}
+
+function Install-ScoopApps {
+    # neovide (GUI Neovim) + nightly WezTerm, both via scoop.
+    #
+    # Why scoop and not choco/winget: neither packages WezTerm *nightly*, and we
+    # need it. On Windows, Claude Code's Ctrl+G ("edit prompt in editor") hands
+    # the ConPTY to the child editor. Terminal nvim crashes stable WezTerm on
+    # that handoff and can't receive input even on nightly; neovide opens in its
+    # own window and sidesteps it. So the working combo is nightly WezTerm as the
+    # terminal + neovide as $EDITOR (set in the PowerShell profile).
+    #
+    # scoop refuses to run elevated and these are user-scope GUI apps, so this
+    # step cannot run inside the elevated choco bootstrap. When we're admin (the
+    # normal case here), print the one-liner to run in a NON-admin shell instead.
+    $apps = "scoop bucket add extras; scoop bucket add versions; scoop install neovide wezterm-nightly"
+    if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {
+        Log-Warn "scoop not found. In a NON-admin shell, install scoop then the apps:"
+        Log-Warn "  irm get.scoop.sh | iex"
+        Log-Warn "  $apps"
+        return
+    }
+    if (Test-Admin) {
+        Log-Warn "neovide + nightly WezTerm need scoop, which won't run elevated."
+        Log-Warn "In a NON-admin shell run:"
+        Log-Warn "  $apps"
+        return
+    }
+    Log-Info "Installing neovide + nightly WezTerm via scoop..."
+    scoop bucket add extras 2>$null
+    scoop bucket add versions 2>$null
+    scoop install neovide wezterm-nightly
 }
 
 # Resolve pwsh.exe even when a just-installed copy isn't on this session's PATH
@@ -269,7 +300,7 @@ function Verify-Installation {
         node = "nodejs"; python = "python"; uv = "uv"; "tree-sitter" = "tree-sitter-cli";
         conan = "conan"; yazi = "yazi"; cargo = "rustup.install"; rustc = "rustup.install";
         magick = "imagemagick.app"; unzip = "unzip"; gzip = "gzip"; wget = "wget";
-        wezterm = "wezterm"
+        wezterm = "wezterm-nightly (scoop)"; neovide = "neovide (scoop)"
     }
     foreach ($cmd in ($tools.Keys | Sort-Object)) {
         if (Get-Command $cmd -ErrorAction SilentlyContinue) {
@@ -303,6 +334,7 @@ Install-Uv
 Install-TreeSitterCli
 Install-Conan
 Install-Yazi
+Install-ScoopApps
 Install-PowerShell7
 Install-RustToolchain
 Set-Utf8Locale

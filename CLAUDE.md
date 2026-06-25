@@ -26,8 +26,8 @@
 | Windows (sparse-excluded on macOS) | `AppData/…`, `Documents/PowerShell/…` (PowerShell 7 profile), `config.ps1`, `install_fonts.ps1` |
 
 ## Key conventions
-- Editor: `nvim` (set as `$EDITOR` / `$VISUAL`)
-- Terminal: **WezTerm** (`~/.config/wezterm/wezterm.lua`) is the goto terminal on all platforms. **Windows Terminal and Kitty are deprecated** — no longer tracked or maintained.
+- Editor: `nvim`. On macOS/Linux it's `$EDITOR` / `$VISUAL`. On **Windows** `$EDITOR=neovide` (GUI) instead — Claude Code's Ctrl+G editor handoff crashes WezTerm / can't receive input with terminal nvim under ConPTY; git still uses nvim via `core.editor`.
+- Terminal: **WezTerm** (`~/.config/wezterm/wezterm.lua`) is the goto terminal on all platforms. **Windows Terminal and Kitty are deprecated** — no longer tracked or maintained. On **Windows** use the **nightly** WezTerm (installed via scoop) — stable WezTerm crashes on Claude Code's Ctrl+G; see `install_prerequisites.ps1` (`Install-ScoopApps`).
 - Shell: `zsh` with [Zap](https://github.com/zap-zsh/zap) plugin manager and Powerlevel10k prompt
 - Package manager: Homebrew (`/opt/homebrew` on macOS arm64, linuxbrew on Linux x86)
 - Build system for C++ projects: Conan + CMake + Ninja
