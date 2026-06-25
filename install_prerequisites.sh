@@ -101,7 +101,10 @@ BREW_dev_tools="cmake ninja conan neovim luarocks tree-sitter-cli yazi"
 BREW_python="python@3.13"
 BREW_node="node"
 # GUI apps installed as casks (separate `brew install --cask` path below).
-BREW_CASKS="wezterm"
+# WezTerm: use the @nightly cask. Upstream's "stable" cask is frozen at the
+# 2024-02-03 release (no new stable since), and current Nerd Font / glyph
+# handling only ships via nightly.
+BREW_CASKS="wezterm@nightly"
 
 APT_CATEGORIES="core shell_tools dev_tools python node lua wsl_specific"
 APT_core="git git-lfs zsh curl unzip wget"
