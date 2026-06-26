@@ -4,6 +4,15 @@ local g = vim.g
 -- Disable LSP logging to prevent rust-analyzer stderr spam from growing lsp.log to gigabytes
 vim.lsp.log.set_level("OFF")
 
+-- GUI font. Terminal nvim inherits WezTerm's font (CodeNewRoman Nerd Font Mono,
+-- see ~/.config/wezterm/wezterm.lua), but GUI frontends like Neovide pick their
+-- own font via 'guifont'. With no value set, Neovide falls back to a default
+-- monospace font that lacks Nerd Font glyphs, so mini.icons / devicons render as
+-- placeholder boxes. Point it at the same Nerd Font WezTerm uses so glyphs match.
+if g.neovide then
+    opt.guifont = "CodeNewRoman Nerd Font Mono:h16"
+end
+
 -- No remote (python3) plugins are used (LSP uses ty/ruff, DAP uses Mason's
 -- debugpy + the project .venv), so disable the provider. Avoids needing a
 -- dedicated ~/.virtualenvs/neovim and speeds startup.
@@ -23,6 +32,11 @@ opt.number = true
 opt.relativenumber = true
 opt.tabstop = 4
 opt.softtabstop = 4
+-- Line endings: auto-detect and preserve a file's existing format on save
+-- (CRLF stays CRLF, LF stays LF). For new/empty buffers the FIRST entry wins,
+-- so putting "unix" first makes new files default to LF. Without this, Windows
+-- defaults to "dos,unix" and writes new files with CRLF.
+opt.fileformats = "unix,dos"
 opt.shiftwidth = 4
 opt.expandtab = true
 opt.smartindent = true
